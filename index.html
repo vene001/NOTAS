@@ -7,43 +7,47 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: #0f172a; color: #f1f5f9; height: 100vh; overflow: hidden; user-select: none; }
-    .app-layout { display: flex; height: 100vh; width: 100vw; }
+    .app-layout { display: flex; height: 100vh; width: 100vw; position: relative; }
 
-    /* Sidebar */
-    .sidebar { width: 330px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; }
+    /* Sidebar Deslizante / Drawer */
+    .sidebar { width: 320px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; position: absolute; left: 0; top: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; }
+    .sidebar.closed { transform: translateX(-100%); }
+    .sidebar-toggle-btn { position: absolute; right: -36px; top: 12px; background: #1e293b; border: 1px solid #334155; border-left: none; color: #38bdf8; width: 36px; height: 36px; border-radius: 0 8px 8px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; z-index: 201; }
+
     .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
     .brand { display: flex; align-items: center; gap: 8px; }
-    .brand h2 { font-size: 18px; font-weight: 700; color: #38bdf8; letter-spacing: -0.5px; }
+    .brand h2 { font-size: 18px; font-weight: 700; color: #38bdf8; }
 
-    /* Profile Card */
-    .user-card-container { position: relative; margin-bottom: 16px; }
-    .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; }
-    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 15px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
+    /* Card do Perfil */
+    .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; margin-bottom: 16px; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
     .user-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
     .user-name-box { display: flex; align-items: center; gap: 6px; }
     .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; }
     .user-bio { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+    .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 15px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
     .menu-dots-btn:hover { background: #334155; color: #fff; }
 
     .section-title { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 8px; }
     .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
     .icon-btn:hover { background: #2563eb; }
 
+    /* Listas Arrastáveis (Folders / Notes / Audios) */
     .folder-tree, .note-list, .audio-list { list-style: none; margin-bottom: 12px; }
-    .tree-item, .note-item, .audio-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; border: 1px solid transparent; }
+    .tree-item, .note-item, .audio-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: grab; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; border: 1px solid transparent; }
+    .tree-item.dragging { opacity: 0.5; border: 1px dashed #38bdf8; }
+    .tree-item.subfolder { margin-left: 16px; border-left: 2px solid #334155; }
     .tree-item:hover, .note-item:hover, .audio-item:hover { border-color: #3b82f6; }
     .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
 
-    .audio-item { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .audio-item { flex-direction: column; align-items: flex-start; gap: 6px; cursor: default; }
     .audio-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-    .audio-title { font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; align-items: center; gap: 4px; }
 
-    /* Area Principal */
-    .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; }
-    .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+    /* Área Principal */
+    .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; margin-left: 0; transition: margin-left 0.3s ease; }
+    .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 48px; }
     #note-title-input { background: transparent; border: 1px solid transparent; color: #f8fafc; font-size: 16px; font-weight: 600; padding: 4px 8px; border-radius: 4px; outline: none; }
     #note-title-input:focus { border-color: #3b82f6; background: #0f172a; }
 
@@ -51,9 +55,9 @@
     .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     .btn-secondary { background: #334155; color: #f8fafc; }
     .btn-secondary:hover { background: #475569; }
-    .btn-danger-soft { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .btn-chat { background: #059669; color: white; border-radius: 50%; width: 34px; height: 34px; justify-content: center; font-size: 16px; border: none; cursor: pointer; }
 
-    /* Painel do Gravador */
+    /* Gravador */
     .audio-panel { background: #182232; padding: 8px 16px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; font-size: 12px; }
     #rec-timer { font-family: monospace; font-size: 14px; color: #ef4444; font-weight: bold; }
 
@@ -68,49 +72,56 @@
     .color-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
     .color-dot.active { border-color: #ffffff; transform: scale(1.15); }
 
-    /* Viewport / Caderno */
+    /* Viewport Caderno */
     .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; transform-origin: top center; transition: transform 0.05s ease-out; }
+    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; transform-origin: top center; }
     .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
     .paint-canvas { display: block; touch-action: none; cursor: crosshair; }
 
-    /* Dropdown Context Menu */
-    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100; min-width: 160px; overflow: hidden; }
+    /* Chat Geral Modal/Painel Lateral */
+    .chat-drawer { position: fixed; right: -360px; top: 0; bottom: 0; width: 340px; background: #1e293b; border-left: 1px solid #334155; z-index: 300; display: flex; flex-direction: column; transition: right 0.3s ease; }
+    .chat-drawer.open { right: 0; }
+    .chat-header { padding: 14px; background: #0f172a; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+    .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .chat-msg { background: #0f172a; padding: 8px 12px; border-radius: 8px; font-size: 12px; max-width: 85%; }
+    .chat-msg.me { align-self: flex-end; background: #2563eb; }
+    .chat-footer { padding: 10px; background: #0f172a; border-top: 1px solid #334155; display: flex; gap: 6px; align-items: center; }
+    .chat-input { flex: 1; background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
+
+    /* Context Menu / Modais */
+    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 160px; overflow: hidden; }
     .dropdown-menu.show { display: block; }
     .dropdown-item { padding: 10px 14px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     .dropdown-item:hover { background: #2563eb; color: #fff; }
 
-    /* Modais */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
     .modal-card { background: #1e293b; width: 360px; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 14px; }
-    .modal-card h3 { font-size: 16px; color: #f8fafc; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group label { font-size: 12px; color: #94a3b8; }
     .form-group input, .form-group textarea { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 13px; }
-    .details-row { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid #334155; padding-bottom: 6px; color: #cbd5e1; }
   </style>
 </head>
 <body>
   <div class="app-layout">
-    <aside class="sidebar">
+    <!-- Sidebar Deslizante com Puxador -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-toggle-btn" id="btn-toggle-sidebar">📁</button>
       <div class="sidebar-header">
         <div class="brand"><span>📚</span><h2>Estudus_bem</h2></div>
       </div>
 
-      <!-- Card do Usuário com ID e Três Pontinhos -->
-      <div class="user-card-container">
-        <div class="user-profile" id="user-profile-card">
-          <div class="user-avatar" id="user-avatar">U</div>
-          <div class="user-info">
-            <div class="user-name-box">
-              <span class="user-name" id="user-name">Carregando...</span>
-              <span class="user-id-badge" id="user-id-badge">ID: 22</span>
-            </div>
-            <span class="user-bio" id="user-bio">...</span>
+      <!-- Profile Card -->
+      <div class="user-profile" id="user-profile-card">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <div class="user-info">
+          <div class="user-name-box">
+            <span class="user-name" id="user-name">Carregando...</span>
+            <span class="user-id-badge" id="user-id-badge">ID: 22</span>
           </div>
-          <button class="menu-dots-btn" id="btn-profile-options">⋮</button>
+          <span class="user-bio" id="user-bio">...</span>
         </div>
+        <button class="menu-dots-btn" id="btn-profile-options">⋮</button>
       </div>
 
       <div class="section-title">PASTAS <button id="btn-add-folder" class="icon-btn">+ Pasta</button></div>
@@ -128,6 +139,8 @@
         <div class="note-info" style="display:flex; align-items:center; gap:8px;">
           <input type="text" id="note-title-input" value="Minha Nota">
           <button id="btn-rename-note-top" class="btn btn-secondary" title="Renomear Nota">✏️</button>
+          <!-- Ícone do Chat Geral -->
+          <button id="btn-open-chat" class="btn-chat" style="display:none;" title="Chat Geral">💬</button>
         </div>
 
         <div class="actions-bar">
@@ -135,19 +148,18 @@
         </div>
       </header>
 
-      <!-- Gravador de Voz -->
+      <!-- Gravador de Áudio -->
       <div class="audio-panel">
         <span>🎙️ Gravador de Áudio:</span>
         <button id="btn-rec-audio" class="btn btn-secondary">🔴 Iniciar Gravação</button>
-        <button id="btn-stop-audio" class="btn btn-danger-soft" disabled>⏹️ Parar e Salvar</button>
+        <button id="btn-stop-audio" class="btn btn-secondary" style="background:rgba(239,68,68,0.2); color:#fca5a5;" disabled>⏹️ Parar e Salvar</button>
         <span id="rec-timer" style="display:none;">00:00</span>
       </div>
 
       <!-- Barra de Ferramentas de Escrita -->
       <div class="drawing-toolbar">
         <div class="tool-group">
-          <button class="tool-btn active" data-type="pen">✏️ Caneta Fina</button>
-          <button class="tool-btn" data-type="fountain">🖋️ Tinteiro</button>
+          <button class="tool-btn active" data-type="pen">✏️ Caneta Suave</button>
           <button class="tool-btn" data-type="highlighter">🖍️ Marca-texto</button>
           <button class="tool-btn" data-type="eraser">🧹 Borracha</button>
         </div>
@@ -169,7 +181,7 @@
           <input type="color" id="custom-color-picker" value="#ffffff" style="width:20px; height:20px; border:none; background:none;">
         </div>
 
-        <!-- Zoom Corrigido -->
+        <!-- Zoom -->
         <div class="tool-group" style="margin-left: auto;">
           <button id="btn-zoom-out" class="tool-btn">🔍 -</button>
           <span id="zoom-val" style="font-size: 11px; color: #38bdf8; font-weight:bold;">100%</span>
@@ -185,13 +197,29 @@
     </main>
   </div>
 
+  <!-- Chat Geral Aba Lateral -->
+  <div class="chat-drawer" id="chat-drawer">
+    <div class="chat-header">
+      <h3 style="font-size:14px; color:#38bdf8;">💬 Chat Geral (Estudus_bem)</h3>
+      <button class="menu-dots-btn" id="btn-close-chat">✖</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-msg"><b>Comunidade:</b> Bem-vindo ao Chat Geral do Estudus_bem!</div>
+    </div>
+    <div class="chat-footer">
+      <button class="btn btn-secondary" onclick="alert('Figurinhas são exclusivas do Plano Premium!')">😃 Premium</button>
+      <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem...">
+      <button class="btn" style="background:#2563eb; color:white;" id="btn-send-chat">Enviar</button>
+    </div>
+  </div>
+
   <!-- Menu Dropdown Genérico -->
   <div class="dropdown-menu" id="app-dropdown"></div>
 
   <!-- Modal do Perfil -->
   <div class="modal-overlay" id="profile-modal">
     <div class="modal-card">
-      <h3>Editar Perfil</h3>
+      <h3 style="color:#fff;">Editar Perfil</h3>
       <div class="form-group">
         <label>ID do Perfil</label>
         <input type="number" id="input-prof-id" value="22" min="1">
@@ -215,15 +243,11 @@
     </div>
   </div>
 
-  <!-- Modal de Detalhes do Áudio -->
-  <div class="modal-overlay" id="audio-details-modal">
+  <!-- Modal Detalhes -->
+  <div class="modal-overlay" id="details-modal">
     <div class="modal-card">
-      <h3>Detalhes da Gravação</h3>
-      <div class="details-row"><span>Duração:</span><b id="det-duration">-</b></div>
-      <div class="details-row"><span>Horário:</span><b id="det-time">-</b></div>
-      <div class="details-row"><span>Dia:</span><b id="det-day">-</b></div>
-      <div class="details-row"><span>Mês:</span><b id="det-month">-</b></div>
-      <div class="details-row"><span>Ano:</span><b id="det-year">-</b></div>
+      <h3 style="color:#fff;" id="det-title">Detalhes</h3>
+      <div style="display:flex; flex-direction:column; gap:8px; font-size:13px; color:#cbd5e1;" id="det-body"></div>
       <div style="display:flex; justify-content:flex-end; margin-top:10px;">
         <button class="btn btn-secondary" id="btn-close-details">Fechar</button>
       </div>
@@ -231,18 +255,26 @@
   </div>
 
   <script>
-    // Sistema de Cálculo de Cor do ID
     function getIdColor(id) {
       const numId = parseInt(id) || 1;
-      if (numId >= 1 && numId <= 50) return '#8b5cf6';   // Roxa
-      if (numId >= 51 && numId <= 100) return '#22c55e';  // Verde
-      if (numId >= 101 && numId <= 200) return '#f97316'; // Laranja / Destaque
-      return '#ffffff';                                   // Branca
+      if (numId >= 1 && numId <= 50) return '#8b5cf6';
+      if (numId >= 51 && numId <= 100) return '#22c55e';
+      if (numId >= 101 && numId <= 200) return '#f97316';
+      return '#ffffff';
+    }
+
+    function hexToRgba(hex, alpha) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
     }
 
     const appState = {
       profile: { id: 22, name: 'Veneza_ kw', bio: 'Estudando com Estudus_bem', avatarImg: null, chatEnabled: true },
-      folders: [{ id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8' }],
+      folders: [
+        { id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null, date: new Date().toLocaleDateString() }
+      ],
       notes: [{ id: 'n_1', folderId: 'f_root', title: 'Minha primeira nota', pagesData: [] }],
       audios: [],
       activeFolderId: 'f_root',
@@ -253,15 +285,15 @@
       zoom: 1.0,
       isDrawing: false,
       activeCanvasCtx: null,
-      lastPoint: null,
+      pointsBuffer: [],
       isAddingPage: false,
-      selectedAudioId: null
+      draggedFolderId: null
     };
 
     let mediaRecorder, audioChunks = [], recInterval, recSeconds = 0;
 
     function loadState() {
-      const saved = localStorage.getItem('estudus_bem_data');
+      const saved = localStorage.getItem('estudus_bem_v3_data');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -278,7 +310,7 @@
 
     function saveState() {
       saveCurrentNoteData();
-      localStorage.setItem('estudus_bem_data', JSON.stringify(appState));
+      localStorage.setItem('estudus_bem_v3_data', JSON.stringify(appState));
     }
 
     function saveCurrentNoteData() {
@@ -311,21 +343,158 @@
         avatarEl.style.backgroundImage = 'none';
         avatarEl.textContent = (p.name || 'U').charAt(0).toUpperCase();
       }
+
+      document.getElementById('btn-open-chat').style.display = p.chatEnabled !== false ? 'flex' : 'none';
     }
 
-    /* Pastas e Notas */
+    /* Gestão e Renderização de Pastas / Subpastas Arrastáveis */
     function renderFolders() {
       const container = document.getElementById('folder-tree');
       container.innerHTML = '';
-      appState.folders.forEach(folder => {
-        const li = document.createElement('li');
-        li.className = `tree-item ${folder.id === appState.activeFolderId ? 'active' : ''}`;
-        li.innerHTML = `<span style="color:${folder.color || '#38bdf8'}; font-weight:bold;">${folder.icon || '📁'} ${folder.name}</span>`;
-        li.onclick = () => { appState.activeFolderId = folder.id; renderFolders(); renderNotes(); };
-        container.appendChild(li);
+
+      const roots = appState.folders.filter(f => !f.parentId);
+      roots.forEach(parent => {
+        container.appendChild(createFolderDOM(parent, false));
+        const subs = appState.folders.filter(f => f.parentId === parent.id);
+        subs.forEach(sub => container.appendChild(createFolderDOM(sub, true)));
+      });
+
+      initFolderDragEvents();
+    }
+
+    function createFolderDOM(folder, isSub) {
+      const li = document.createElement('li');
+      li.className = `tree-item ${isSub ? 'subfolder' : ''} ${folder.id === appState.activeFolderId ? 'active' : ''}`;
+      li.draggable = true;
+      li.dataset.id = folder.id;
+
+      li.innerHTML = `
+        <span style="color:${folder.color || '#38bdf8'}; font-weight:bold;">${folder.icon || '📁'} ${folder.name}</span>
+        <button class="menu-dots-btn" onclick="openFolderMenu(event, '${folder.id}', ${isSub})">⋮</button>
+      `;
+
+      li.onclick = () => {
+        appState.activeFolderId = folder.id;
+        renderFolders();
+        renderNotes();
+      };
+
+      // Long Press (Segurar pasta)
+      let timer;
+      li.addEventListener('touchstart', (e) => {
+        timer = setTimeout(() => openFolderMenu(e.touches[0], folder.id, isSub), 600);
+      });
+      li.addEventListener('touchend', () => clearTimeout(timer));
+      li.addEventListener('mousedown', (e) => {
+        if(e.button === 0) timer = setTimeout(() => openFolderMenu(e, folder.id, isSub), 600);
+      });
+      li.addEventListener('mouseup', () => clearTimeout(timer));
+
+      return li;
+    }
+
+    function openFolderMenu(e, folderId, isSub) {
+      if(e.stopPropagation) e.stopPropagation();
+      const menu = document.getElementById('app-dropdown');
+      
+      if (!isSub) {
+        menu.innerHTML = `
+          <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
+          <div class="dropdown-item" onclick="createSubfolder('${folderId}')">➕ Criar Subpasta</div>
+          <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
+        `;
+      } else {
+        menu.innerHTML = `
+          <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
+          <div class="dropdown-item" onclick="changeFolderColor('${folderId}')">🎨 Trocar Cor</div>
+          <div class="dropdown-item" onclick="showFolderDetails('${folderId}')">ℹ️ Detalhes</div>
+          <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
+        `;
+      }
+
+      menu.style.top = e.clientY + 'px';
+      menu.style.left = e.clientX + 'px';
+      menu.classList.add('show');
+    }
+
+    function renameFolder(id) {
+      const f = appState.folders.find(item => item.id === id);
+      if(!f) return;
+      const name = prompt('Novo nome para a pasta:', f.name);
+      if(name && name.trim()) { f.name = name.trim(); renderFolders(); saveState(); }
+      closeDropdown();
+    }
+
+    function createSubfolder(parentId) {
+      const name = prompt('Nome da subpasta:');
+      if(name && name.trim()) {
+        appState.folders.push({
+          id: 'f_' + Date.now(),
+          name: name.trim(),
+          icon: '📂',
+          color: '#22c55e',
+          parentId: parentId,
+          date: new Date().toLocaleDateString()
+        });
+        renderFolders(); saveState();
+      }
+      closeDropdown();
+    }
+
+    function changeFolderColor(id) {
+      const f = appState.folders.find(item => item.id === id);
+      if(!f) return;
+      const color = prompt('Informe a cor hexadecimal (ex: #ef4444):', f.color || '#22c55e');
+      if(color) { f.color = color; renderFolders(); saveState(); }
+      closeDropdown();
+    }
+
+    function showFolderDetails(id) {
+      const f = appState.folders.find(item => item.id === id);
+      if(!f) return;
+      document.getElementById('det-title').textContent = 'Detalhes da Subpasta';
+      document.getElementById('det-body').innerHTML = `
+        <div><b>Nome:</b> ${f.name}</div>
+        <div><b>Criada em:</b> ${f.date || 'Hoje'}</div>
+        <div><b>Cor Hex:</b> <span style="color:${f.color}">${f.color}</span></div>
+      `;
+      document.getElementById('details-modal').classList.add('open');
+      closeDropdown();
+    }
+
+    function deleteFolder(id) {
+      if(confirm('Tem certeza que deseja excluir esta pasta e suas subpastas?')) {
+        appState.folders = appState.folders.filter(f => f.id !== id && f.parentId !== id);
+        renderFolders(); saveState();
+      }
+      closeDropdown();
+    }
+
+    /* Arrastar e Reorganizar Pastas */
+    function initFolderDragEvents() {
+      const items = document.querySelectorAll('.tree-item');
+      items.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+          appState.draggedFolderId = item.dataset.id;
+          item.classList.add('dragging');
+        });
+        item.addEventListener('dragend', () => item.classList.remove('dragging'));
+        item.addEventListener('dragover', (e) => e.preventDefault());
+        item.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const targetId = item.dataset.id;
+          if(appState.draggedFolderId && appState.draggedFolderId !== targetId) {
+            const dragIdx = appState.folders.findIndex(f => f.id === appState.draggedFolderId);
+            const targetIdx = appState.folders.findIndex(f => f.id === targetId);
+            const [moved] = appState.folders.splice(dragIdx, 1);
+            appState.folders.splice(targetIdx, 0, moved);
+            renderFolders(); saveState();
+          }
+        });
       });
     }
 
+    /* Renderizar Notas */
     function renderNotes() {
       const list = document.getElementById('note-list');
       list.innerHTML = '';
@@ -355,12 +524,11 @@
         if (note.id === appState.activeNoteId) {
           document.getElementById('note-title-input').value = note.title;
         }
-        renderNotes();
-        saveState();
+        renderNotes(); saveState();
       }
     }
 
-    /* Renderização do Caderno & Início das Páginas */
+    /* Caderno & Páginas Infinitas */
     function createPageElement(initialData = null) {
       const container = document.getElementById('pages-container');
       const sheet = document.createElement('div');
@@ -398,27 +566,10 @@
       }
     }
 
-    function initInfiniteScroll() {
-      const viewport = document.getElementById('viewport');
-      viewport.onscroll = () => {
-        if (appState.isAddingPage) return;
-        if (viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 150) {
-          appState.isAddingPage = true;
-          createPageElement();
-          saveState();
-          setTimeout(() => appState.isAddingPage = false, 500);
-        }
-      };
-    }
-
-    /* Desenho com Cálculo de Coordenadas Ajustado ao Zoom */
+    /* Motor de Desenho Ultra-Suave e Marca-texto Reformulado */
     function bindCanvasEvents(canvas, ctx) {
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
       function getCoords(e) {
         const rect = canvas.getBoundingClientRect();
-        // Divisão pelo fator de zoom garante alinhamento do traço em qualquer zoom
         return {
           x: (e.clientX - rect.left) / appState.zoom,
           y: (e.clientY - rect.top) / appState.zoom
@@ -428,54 +579,67 @@
       function startStroke(e) {
         appState.isDrawing = true;
         appState.activeCanvasCtx = ctx;
-        appState.lastPoint = getCoords(e);
+        appState.pointsBuffer = [getCoords(e)];
       }
 
       function drawStroke(e) {
         if (!appState.isDrawing || appState.activeCanvasCtx !== ctx) return;
-        const currentPoint = getCoords(e);
+        
+        const pt = getCoords(e);
+        appState.pointsBuffer.push(pt);
 
         if (appState.tool === 'eraser') {
           ctx.globalCompositeOperation = 'destination-out';
           ctx.lineWidth = appState.brushSize * 8;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          
+          const p1 = appState.pointsBuffer[appState.pointsBuffer.length - 2];
+          const p2 = appState.pointsBuffer[appState.pointsBuffer.length - 1];
           ctx.beginPath();
-          ctx.moveTo(appState.lastPoint.x, appState.lastPoint.y);
-          ctx.lineTo(currentPoint.x, currentPoint.y);
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
           ctx.stroke();
+
         } else if (appState.tool === 'highlighter') {
-          ctx.globalCompositeOperation = 'darken';
-          ctx.strokeStyle = appState.color;
-          ctx.lineWidth = appState.brushSize * 6;
-          ctx.globalAlpha = 0.35;
-          ctx.beginPath();
-          ctx.moveTo(appState.lastPoint.x, appState.lastPoint.y);
-          ctx.lineTo(currentPoint.x, currentPoint.y);
-          ctx.stroke();
-        } else {
           ctx.globalCompositeOperation = 'source-over';
-          ctx.globalAlpha = 1.0;
-          ctx.strokeStyle = appState.color;
-          ctx.lineWidth = appState.tool === 'fountain' ? appState.brushSize * 1.5 : appState.brushSize;
+          ctx.strokeStyle = hexToRgba(appState.color, 0.35);
+          ctx.lineWidth = appState.brushSize * 8;
+          ctx.lineCap = 'butt';
+          ctx.lineJoin = 'bevel';
 
-          const midPoint = {
-            x: (appState.lastPoint.x + currentPoint.x) / 2,
-            y: (appState.lastPoint.y + currentPoint.y) / 2
-          };
-
+          const p1 = appState.pointsBuffer[appState.pointsBuffer.length - 2];
+          const p2 = appState.pointsBuffer[appState.pointsBuffer.length - 1];
           ctx.beginPath();
-          ctx.moveTo(appState.lastPoint.x, appState.lastPoint.y);
-          ctx.quadraticCurveTo(appState.lastPoint.x, appState.lastPoint.y, midPoint.x, midPoint.y);
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
           ctx.stroke();
-        }
 
-        appState.lastPoint = currentPoint;
+        } else { // Caneta Suave sem Pulos
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.strokeStyle = appState.color;
+          ctx.lineWidth = appState.brushSize;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+
+          if (appState.pointsBuffer.length > 2) {
+            const pts = appState.pointsBuffer;
+            const lastIdx = pts.length - 1;
+            const xc = (pts[lastIdx].x + pts[lastIdx - 1].x) / 2;
+            const yc = (pts[lastIdx].y + pts[lastIdx - 1].y) / 2;
+
+            ctx.beginPath();
+            ctx.moveTo(pts[lastIdx - 2].x, pts[lastIdx - 2].y);
+            ctx.quadraticCurveTo(pts[lastIdx - 1].x, pts[lastIdx - 1].y, xc, yc);
+            ctx.stroke();
+          }
+        }
       }
 
       function stopStroke() {
         if (appState.isDrawing) {
           appState.isDrawing = false;
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.globalAlpha = 1.0;
+          appState.pointsBuffer = [];
           saveState();
         }
       }
@@ -486,7 +650,7 @@
       canvas.addEventListener('pointerleave', stopStroke);
     }
 
-    /* Gravador com Captura Avançada de Microfone */
+    /* Gravador de Áudio */
     function initAudioRecorder() {
       const btnRec = document.getElementById('btn-rec-audio');
       const btnStop = document.getElementById('btn-stop-audio');
@@ -494,69 +658,39 @@
 
       btnRec.onclick = async () => {
         try {
-          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            alert('Atenção: A permissão de áudio está ativa, mas a captura nativa exige acesso HTTPS ou servidor local.');
-            return;
-          }
-
-          // Restrições explícitas de áudio ativas
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: {
-              echoCancellation: true,
-              noiseSuppression: true,
-              autoGainControl: true
-            }
-          });
-
-          // Garantia de habilitação da faixa de áudio
-          const audioTrack = stream.getAudioTracks()[0];
-          if (audioTrack) audioTrack.enabled = true;
-
-          let mimeType = 'audio/webm';
-          if (!MediaRecorder.isTypeSupported('audio/webm')) {
-            if (MediaRecorder.isTypeSupported('audio/mp4')) mimeType = 'audio/mp4';
-            else mimeType = '';
-          }
-
-          mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
           audioChunks = [];
 
-          mediaRecorder.ondataavailable = e => {
-            if (e.data.size > 0) audioChunks.push(e.data);
-          };
-
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
           mediaRecorder.onstop = () => {
-            const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
             const reader = new FileReader();
             reader.onloadend = () => {
               const now = new Date();
-              const mins = Math.floor(recSeconds / 60).toString().padStart(2, '0');
-              const secs = (recSeconds % 60).toString().padStart(2, '0');
-
-              const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+              const m = Math.floor(recSeconds / 60).toString().padStart(2, '0');
+              const s = (recSeconds % 60).toString().padStart(2, '0');
 
               appState.audios.unshift({
                 id: 'aud_' + Date.now(),
-                name: `Gravação ${appState.audios.length + 1}`,
-                duration: `${mins}:${secs}`,
-                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                name: `Áudio ${appState.audios.length + 1}`,
+                duration: `${m}:${s}`,
+                time: now.toLocaleTimeString(),
                 day: now.getDate().toString().padStart(2, '0'),
-                month: months[now.getMonth()],
+                month: (now.getMonth() + 1).toString().padStart(2, '0'),
                 year: now.getFullYear(),
                 src: reader.result
               });
 
-              renderAudioList();
-              saveState();
+              renderAudioList(); saveState();
             };
             reader.readAsDataURL(blob);
             stream.getTracks().forEach(t => t.stop());
           };
 
-          mediaRecorder.start(200); // Coleta dados a cada 200ms
+          mediaRecorder.start();
           recSeconds = 0;
           timer.style.display = 'inline';
-          timer.textContent = '00:00';
           recInterval = setInterval(() => {
             recSeconds++;
             const m = Math.floor(recSeconds / 60).toString().padStart(2, '0');
@@ -567,7 +701,7 @@
           btnRec.disabled = true;
           btnStop.disabled = false;
         } catch(err) {
-          alert('Erro ao capturar áudio do microfone: Verifique se outro aplicativo não está utilizando o microfone.');
+          alert('Permissão para gravação de microfone indisponível.');
         }
       };
 
@@ -583,16 +717,12 @@
     function renderAudioList() {
       const list = document.getElementById('audio-list');
       list.innerHTML = '';
-      if (appState.audios.length === 0) {
-        list.innerHTML = '<li style="font-size:11px; color:#64748b; padding:4px;">Nenhum áudio gravado</li>';
-        return;
-      }
       appState.audios.forEach((aud) => {
         const li = document.createElement('li');
         li.className = 'audio-item';
         li.innerHTML = `
           <div class="audio-header-row">
-            <span class="audio-title">🎙️ ${aud.name}</span>
+            <span style="font-weight:600; font-size:12px; color:#38bdf8;">🎙️ ${aud.name}</span>
             <button class="menu-dots-btn" onclick="openAudioMenu(event, '${aud.id}')">⋮</button>
           </div>
           <audio src="${aud.src}" controls style="width:100%; height:26px; margin-top:4px;"></audio>
@@ -601,15 +731,13 @@
       });
     }
 
-    /* Menu Dropdown e Opções de Áudio */
-    function openAudioMenu(e, audioId) {
+    function openAudioMenu(e, id) {
       e.stopPropagation();
-      appState.selectedAudioId = audioId;
       const menu = document.getElementById('app-dropdown');
       menu.innerHTML = `
-        <div class="dropdown-item" onclick="renameAudio('${audioId}')">✏️ Renomear</div>
-        <div class="dropdown-item" onclick="showAudioDetails('${audioId}')">ℹ️ Detalhes</div>
-        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteAudio('${audioId}')">🗑️ Excluir</div>
+        <div class="dropdown-item" onclick="renameAudio('${id}')">✏️ Renomear</div>
+        <div class="dropdown-item" onclick="showAudioDetails('${id}')">ℹ️ Detalhes</div>
+        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteAudio('${id}')">🗑️ Excluir</div>
       `;
       menu.style.top = e.clientY + 'px';
       menu.style.left = e.clientX + 'px';
@@ -618,102 +746,75 @@
 
     function renameAudio(id) {
       const aud = appState.audios.find(a => a.id === id);
-      if (!aud) return;
+      if(!aud) return;
       const name = prompt('Novo nome para o áudio:', aud.name);
-      if (name && name.trim()) {
-        aud.name = name.trim();
-        renderAudioList();
-        saveState();
-      }
+      if(name && name.trim()) { aud.name = name.trim(); renderAudioList(); saveState(); }
       closeDropdown();
     }
 
     function showAudioDetails(id) {
       const aud = appState.audios.find(a => a.id === id);
-      if (!aud) return;
-      document.getElementById('det-duration').textContent = aud.duration || '00:00';
-      document.getElementById('det-time').textContent = aud.time || 'N/A';
-      document.getElementById('det-day').textContent = aud.day || 'N/A';
-      document.getElementById('det-month').textContent = aud.month || 'N/A';
-      document.getElementById('det-year').textContent = aud.year || 'N/A';
-      
-      document.getElementById('audio-details-modal').classList.add('open');
+      if(!aud) return;
+      document.getElementById('det-title').textContent = 'Detalhes do Áudio';
+      document.getElementById('det-body').innerHTML = `
+        <div><b>Duração:</b> ${aud.duration}</div>
+        <div><b>Horário:</b> ${aud.time}</div>
+        <div><b>Data:</b> ${aud.day}/${aud.month}/${aud.year}</div>
+      `;
+      document.getElementById('details-modal').classList.add('open');
       closeDropdown();
     }
 
     function deleteAudio(id) {
-      if (confirm('Deseja excluir esta gravação de áudio?')) {
+      if(confirm('Excluir este áudio?')) {
         appState.audios = appState.audios.filter(a => a.id !== id);
-        renderAudioList();
-        saveState();
+        renderAudioList(); saveState();
       }
       closeDropdown();
+    }
+
+    /* Sidebar Arrastável & Controles de Interface */
+    function initSidebarDrawer() {
+      const sidebar = document.getElementById('sidebar');
+      const btnToggle = document.getElementById('btn-toggle-sidebar');
+
+      btnToggle.onclick = () => sidebar.classList.toggle('closed');
+
+      // Suporte para abrir ao arrastar a partir do canto esquerdo
+      let startX = 0;
+      window.addEventListener('touchstart', (e) => startX = e.touches[0].clientX);
+      window.addEventListener('touchend', (e) => {
+        const diffX = e.changedTouches[0].clientX - startX;
+        if (startX < 40 && diffX > 60) sidebar.classList.remove('closed');
+        if (startX > 200 && diffX < -60) sidebar.classList.add('closed');
+      });
+    }
+
+    /* Chat Geral */
+    function initChatEvents() {
+      const drawer = document.getElementById('chat-drawer');
+      document.getElementById('btn-open-chat').onclick = () => drawer.classList.add('open');
+      document.getElementById('btn-close-chat').onclick = () => drawer.classList.remove('open');
+
+      document.getElementById('btn-send-chat').onclick = () => {
+        const input = document.getElementById('chat-input-text');
+        if(input.value.trim()) {
+          const msgBox = document.getElementById('chat-messages');
+          const msg = document.createElement('div');
+          msg.className = 'chat-msg me';
+          msg.innerHTML = `<b>${appState.profile.name}:</b> ${input.value.trim()}`;
+          msgBox.appendChild(msg);
+          input.value = '';
+          msgBox.scrollTop = msgBox.scrollHeight;
+        }
+      };
     }
 
     function closeDropdown() {
       document.getElementById('app-dropdown').classList.remove('show');
     }
 
-    /* Modal do Perfil e Menu dos Três Pontinhos no Perfil */
-    function initProfileEvents() {
-      const btnProfileDots = document.getElementById('btn-profile-options');
-      const profileModal = document.getElementById('profile-modal');
-
-      btnProfileDots.onclick = (e) => {
-        e.stopPropagation();
-        const menu = document.getElementById('app-dropdown');
-        const isChatOn = appState.profile.chatEnabled !== false;
-        menu.innerHTML = `
-          <div class="dropdown-item" onclick="openProfileEdit()">✏️ Editar Perfil</div>
-          <div class="dropdown-item" onclick="toggleGeneralChat()">💬 Chat Geral: ${isChatOn ? '🟢 Ativo' : '🔴 Desativado'}</div>
-        `;
-        menu.style.top = e.clientY + 'px';
-        menu.style.left = e.clientX + 'px';
-        menu.classList.add('show');
-      };
-
-      document.getElementById('btn-cancel-prof').onclick = () => profileModal.classList.remove('open');
-      document.getElementById('btn-close-details').onclick = () => document.getElementById('audio-details-modal').classList.remove('open');
-
-      document.getElementById('btn-save-prof').onclick = () => {
-        appState.profile.id = parseInt(document.getElementById('input-prof-id').value) || 22;
-        appState.profile.name = document.getElementById('input-prof-name').value;
-        appState.profile.bio = document.getElementById('input-prof-bio').value;
-
-        const avatarInput = document.getElementById('input-prof-avatar');
-        if (avatarInput.files && avatarInput.files[0]) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            appState.profile.avatarImg = e.target.result;
-            updateProfileUI();
-            saveState();
-            profileModal.classList.remove('open');
-          };
-          reader.readAsDataURL(avatarInput.files[0]);
-        } else {
-          updateProfileUI();
-          saveState();
-          profileModal.classList.remove('open');
-        }
-      };
-    }
-
-    function openProfileEdit() {
-      document.getElementById('input-prof-id').value = appState.profile.id || 22;
-      document.getElementById('input-prof-name').value = appState.profile.name || '';
-      document.getElementById('input-prof-bio').value = appState.profile.bio || '';
-      document.getElementById('profile-modal').classList.add('open');
-      closeDropdown();
-    }
-
-    function toggleGeneralChat() {
-      appState.profile.chatEnabled = !(appState.profile.chatEnabled !== false);
-      alert(`Opção de Chat Geral ${appState.profile.chatEnabled ? 'ATIVADA' : 'DESATIVADA'} com sucesso!`);
-      saveState();
-      closeDropdown();
-    }
-
-    /* Zoom sem Desproporção */
+    /* Zoom sem deslocamento */
     function initZoom() {
       const val = document.getElementById('zoom-val');
       const pagesContainer = document.getElementById('pages-container');
@@ -730,6 +831,8 @@
 
     function initControls() {
       window.onclick = () => closeDropdown();
+
+      document.getElementById('btn-close-details').onclick = () => document.getElementById('details-modal').classList.remove('open');
 
       document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(btn => {
         btn.onclick = () => {
@@ -761,9 +864,16 @@
       document.getElementById('custom-color-picker').oninput = (e) => appState.color = e.target.value;
 
       document.getElementById('btn-add-folder').onclick = () => {
-        const name = prompt('Nome do Caderno:');
+        const name = prompt('Nome da Pasta:');
         if (name) {
-          appState.folders.push({ id: 'f_' + Date.now(), name, icon: '📁', color: '#38bdf8' });
+          appState.folders.push({
+            id: 'f_' + Date.now(),
+            name: name.trim(),
+            icon: '📁',
+            color: '#38bdf8',
+            parentId: null,
+            date: new Date().toLocaleDateString()
+          });
           renderFolders(); saveState();
         }
       };
@@ -774,8 +884,39 @@
         renderNotes(); loadActiveNoteContent(); saveState();
       };
 
-      document.getElementById('btn-rename-note-top').onclick = () => renameNotePrompt(appState.activeNoteId);
-      document.getElementById('note-title-input').onchange = () => { saveState(); renderNotes(); };
+      document.getElementById('btn-profile-options').onclick = (e) => {
+        e.stopPropagation();
+        const menu = document.getElementById('app-dropdown');
+        const isChatOn = appState.profile.chatEnabled !== false;
+        menu.innerHTML = `
+          <div class="dropdown-item" onclick="openProfileEdit()">✏️ Editar Perfil</div>
+          <div class="dropdown-item" onclick="toggleGeneralChat()">💬 Chat Geral: ${isChatOn ? '🟢 Ativo' : '🔴 Desativado'}</div>
+        `;
+        menu.style.top = e.clientY + 'px';
+        menu.style.left = e.clientX + 'px';
+        menu.classList.add('show');
+      };
+
+      document.getElementById('btn-cancel-prof').onclick = () => document.getElementById('profile-modal').classList.remove('open');
+      document.getElementById('btn-save-prof').onclick = () => {
+        appState.profile.id = parseInt(document.getElementById('input-prof-id').value) || 22;
+        appState.profile.name = document.getElementById('input-prof-name').value;
+        appState.profile.bio = document.getElementById('input-prof-bio').value;
+
+        const avatarInput = document.getElementById('input-prof-avatar');
+        if (avatarInput.files && avatarInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            appState.profile.avatarImg = e.target.result;
+            updateProfileUI(); saveState();
+            document.getElementById('profile-modal').classList.remove('open');
+          };
+          reader.readAsDataURL(avatarInput.files[0]);
+        } else {
+          updateProfileUI(); saveState();
+          document.getElementById('profile-modal').classList.remove('open');
+        }
+      };
 
       document.getElementById('btn-export-pdf').onclick = () => {
         const { jsPDF } = window.jspdf;
@@ -787,15 +928,28 @@
           pdf.addImage(c.toDataURL('image/png'), 'PNG', 10, 10, 190, 250);
         });
 
-        pdf.save('estudus_bem_caderno.pdf');
+        pdf.save('estudus_bem_anotacoes.pdf');
       };
+    }
+
+    function openProfileEdit() {
+      document.getElementById('input-prof-id').value = appState.profile.id || 22;
+      document.getElementById('input-prof-name').value = appState.profile.name || '';
+      document.getElementById('input-prof-bio').value = appState.profile.bio || '';
+      document.getElementById('profile-modal').classList.add('open');
+      closeDropdown();
+    }
+
+    function toggleGeneralChat() {
+      appState.profile.chatEnabled = !(appState.profile.chatEnabled !== false);
+      updateProfileUI(); saveState(); closeDropdown();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       loadState();
+      initSidebarDrawer();
       initAudioRecorder();
-      initInfiniteScroll();
-      initProfileEvents();
+      initChatEvents();
       initZoom();
       initControls();
       renderFolders();
