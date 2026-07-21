@@ -10,7 +10,7 @@
     .app-layout { display: flex; height: 100vh; width: 100vw; }
 
     /* Sidebar */
-    .sidebar { width: 300px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; }
+    .sidebar { width: 320px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; }
     .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
     .brand { display: flex; align-items: center; gap: 8px; }
     .brand h2 { font-size: 16px; font-weight: 700; color: #f8fafc; }
@@ -26,12 +26,9 @@
     .icon-btn:hover { background: #2563eb; }
 
     .folder-tree, .note-list, .audio-list { list-style: none; margin-bottom: 12px; }
-    .tree-item, .note-item, .audio-item { padding: 6px 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+    .tree-item, .note-item, .audio-item { padding: 6px 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
     .tree-item:hover, .note-item:hover, .audio-item:hover { background: #334155; }
     .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
-    .subfolder { margin-left: 14px; border-left: 1px dashed #475569; padding-left: 6px; }
-    .item-actions { display: none; gap: 4px; }
-    .tree-item:hover .item-actions, .note-item:hover .item-actions, .audio-item:hover .item-actions { display: flex; }
 
     .audio-item { background: #0f172a; border: 1px solid #334155; flex-direction: column; align-items: flex-start; gap: 4px; }
     .audio-item-header { display: flex; justify-content: space-between; width: 100%; font-size: 11px; color: #38bdf8; }
@@ -64,9 +61,12 @@
     .color-dot.active { border-color: #ffffff; transform: scale(1.15); }
 
     /* Viewport e Zoom */
-    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; justify-content: center; align-items: flex-start; padding: 20px; position: relative; }
+    .canvas-viewport { flex: 1; overflow-y: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 20px; }
     .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; transform-origin: top center; transition: transform 0.1s ease-out; }
-    #paint-canvas { display: block; cursor: crosshair; touch-action: none; }
+    .paint-canvas { display: block; touch-action: none; }
+    
+    .btn-add-page { margin: 10px 0 30px 0; padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .btn-add-page:hover { background: #1d4ed8; }
   </style>
 </head>
 <body>
@@ -102,11 +102,6 @@
 
         <div class="actions-bar">
           <button id="btn-export-pdf" class="btn btn-secondary">📄 Exportar PDF</button>
-          <button id="btn-transfer-export" class="btn btn-secondary">🔄 Exportar (JSON)</button>
-          <label class="btn btn-secondary">
-            📥 Importar
-            <input type="file" id="btn-transfer-import" accept=".json" style="display:none;">
-          </label>
         </div>
       </header>
 
@@ -118,7 +113,7 @@
         <span id="rec-timer" style="display:none;">00:00</span>
       </div>
 
-      <!-- Barra de Ferramentas de Escrita (Estilo Caderno) -->
+      <!-- Barra de Ferramentas de Escrita -->
       <div class="drawing-toolbar">
         <div class="tool-group">
           <button class="tool-btn active" data-type="pen">✏️ Esferográfica</button>
@@ -127,7 +122,7 @@
           <button class="tool-btn" data-type="eraser">🧹 Borracha</button>
         </div>
 
-        <!-- Atributos de Caneta (Fina / Média / Grossa) -->
+        <!-- Atributos de Caneta -->
         <div class="tool-group">
           <span style="font-size: 11px; color: #94a3b8;">Espessura:</span>
           <button class="preset-btn active" data-size="2">Fina</button>
@@ -155,11 +150,10 @@
         </div>
       </div>
 
-      <!-- Caderno / Folha de Escrever -->
+      <!-- Caderno / Container de Páginas -->
       <div class="canvas-viewport" id="viewport">
-        <div class="page-sheet" id="sheet">
-          <canvas id="paint-canvas" width="750" height="1000"></canvas>
-        </div>
+        <div id="pages-container" style="display:flex; flex-direction:column; gap:20px; align-items:center;"></div>
+        <button id="btn-add-page" class="btn-add-page">+ Adicionar Nova Página</button>
       </div>
     </main>
   </div>
@@ -171,21 +165,18 @@
         { id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null }
       ],
       notes: [
-        { id: 'n_1', folderId: 'f_root', title: 'Minhas Anotações com Caneta', canvasData: null }
+        { id: 'n_1', folderId: 'f_root', title: 'Minhas Anotações com Caneta', pagesData: [] }
       ],
-      audios: [], // Áudios gravados salvos
+      audios: [],
       activeFolderId: 'f_root',
       activeNoteId: 'n_1',
       tool: 'pen',
       color: '#ffffff',
       brushSize: 2,
       zoom: 1,
-      isDrawing: false
+      isDrawing: false,
+      activeCanvasCtx: null
     };
-
-    const canvas = document.getElementById('paint-canvas');
-    const ctx = canvas.getContext('2d');
-    const sheet = document.getElementById('sheet');
 
     let mediaRecorder, audioChunks = [], recInterval, recSeconds = 0;
 
@@ -215,25 +206,29 @@
     function saveCurrentNoteData() {
       const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
       if (currentNote) {
-        currentNote.canvasData = canvas.toDataURL();
+        const canvases = document.querySelectorAll('.paint-canvas');
+        currentNote.pagesData = Array.from(canvases).map(c => c.toDataURL());
         currentNote.title = document.getElementById('note-title-input').value || 'Sem Título';
       }
     }
 
-    /* Pastas e Árvore */
+    /* Gestão de Pastas com Escolha de Cor */
     function renderFolders() {
       const container = document.getElementById('folder-tree');
       container.innerHTML = '';
       appState.folders.forEach(folder => {
         const li = document.createElement('li');
         li.className = `tree-item ${folder.id === appState.activeFolderId ? 'active' : ''}`;
-        li.innerHTML = `<span style="color:${folder.color};">${folder.icon} ${folder.name}</span>`;
+        li.innerHTML = `
+          <span style="color:${folder.color || '#38bdf8'}; font-weight:bold;">
+            ${folder.icon || '📁'} ${folder.name}
+          </span>
+        `;
         li.onclick = () => { appState.activeFolderId = folder.id; renderFolders(); renderNotes(); };
         container.appendChild(li);
       });
     }
 
-    /* Notas */
     function renderNotes() {
       const list = document.getElementById('note-list');
       list.innerHTML = '';
@@ -251,76 +246,95 @@
       });
     }
 
-    function loadActiveNoteContent() {
-      const note = appState.notes.find(n => n.id === appState.activeNoteId);
-      if (!note) return;
-      document.getElementById('note-title-input').value = note.title;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (note.canvasData) {
+    /* Criação e Renderização Dinâmica de Páginas */
+    function createPageElement(initialData = null) {
+      const container = document.getElementById('pages-container');
+      const sheet = document.createElement('div');
+      sheet.className = 'page-sheet';
+      sheet.style.transform = `scale(${appState.zoom})`;
+
+      const canvas = document.createElement('canvas');
+      canvas.className = 'paint-canvas';
+      canvas.width = 750;
+      canvas.height = 1000;
+      sheet.appendChild(canvas);
+      container.appendChild(sheet);
+
+      const ctx = canvas.getContext('2d');
+      if (initialData) {
         const img = new Image();
         img.onload = () => ctx.drawImage(img, 0, 0);
-        img.src = note.canvasData;
+        img.src = initialData;
+      }
+
+      bindCanvasEvents(canvas, ctx);
+    }
+
+    function loadActiveNoteContent() {
+      const container = document.getElementById('pages-container');
+      container.innerHTML = '';
+      const note = appState.notes.find(n => n.id === appState.activeNoteId);
+      if (!note) return;
+
+      document.getElementById('note-title-input').value = note.title;
+
+      if (note.pagesData && note.pagesData.length > 0) {
+        note.pagesData.forEach(pageImg => createPageElement(pageImg));
+      } else {
+        createPageElement();
       }
     }
 
-    /* Pasta de Áudios Gravados */
-    function renderAudioList() {
-      const list = document.getElementById('audio-list');
-      list.innerHTML = '';
-      if (appState.audios.length === 0) {
-        list.innerHTML = '<li style="font-size:11px; color:#64748b; padding:4px;">Nenhum áudio gravado</li>';
-        return;
-      }
-      appState.audios.forEach((aud, idx) => {
-        const li = document.createElement('li');
-        li.className = 'audio-item';
-        li.innerHTML = `
-          <div class="audio-item-header">
-            <span>🎙️ ${aud.name}</span>
-            <span>⏱️ ${aud.duration}</span>
-          </div>
-          <audio src="${aud.src}" controls style="width:100%; height:26px; margin-top:4px;"></audio>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    /* Motor de Escrita Estilo Caderno (Vision Pen / Tablet) */
-    function initCanvasEngine() {
+    /* Motor de Escrita (Somente Caneta + Correção de Borracha e Marca-texto) */
+    function bindCanvasEvents(canvas, ctx) {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
       function getCoords(e) {
         const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         return {
-          x: (clientX - rect.left) / appState.zoom,
-          y: (clientY - rect.top) / appState.zoom
+          x: (e.clientX - rect.left) / appState.zoom,
+          y: (e.clientY - rect.top) / appState.zoom
         };
       }
 
       function startStroke(e) {
+        // Bloqueia interações que não venham de uma caneta (stylus)
+        if (e.pointerType !== 'pen' && e.pointerType !== 'stylus') {
+          return; 
+        }
+
         appState.isDrawing = true;
+        appState.activeCanvasCtx = ctx;
         const p = getCoords(e);
+
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
       }
 
       function drawStroke(e) {
-        if (!appState.isDrawing) return;
+        if (!appState.isDrawing || appState.activeCanvasCtx !== ctx) return;
         const p = getCoords(e);
 
         if (appState.tool === 'eraser') {
-          ctx.strokeStyle = '#18181b';
-          ctx.lineWidth = appState.brushSize * 5;
+          // Borracha real: Apaga os pixels em vez de pintar
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.lineWidth = appState.brushSize * 8;
+          ctx.strokeStyle = 'rgba(0,0,0,1)';
         } else if (appState.tool === 'highlighter') {
-          ctx.strokeStyle = appState.color + '33'; // Transparência
-          ctx.lineWidth = appState.brushSize * 4;
+          // Marca-texto real: Transparente com efeito Multiply
+          ctx.globalCompositeOperation = 'multiply';
+          ctx.strokeStyle = appState.color;
+          ctx.lineWidth = appState.brushSize * 5;
+          ctx.globalAlpha = 0.35;
         } else if (appState.tool === 'fountain') {
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = 1.0;
           ctx.strokeStyle = appState.color;
           ctx.lineWidth = appState.brushSize * 1.5;
         } else { // Esferográfica
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = 1.0;
           ctx.strokeStyle = appState.color;
           ctx.lineWidth = appState.brushSize;
         }
@@ -332,18 +346,19 @@
       function stopStroke() {
         if (appState.isDrawing) {
           appState.isDrawing = false;
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = 1.0;
           saveState();
         }
       }
 
-      // Suporte a Caneta (Stylus) e Toque
       canvas.addEventListener('pointerdown', startStroke);
       canvas.addEventListener('pointermove', drawStroke);
       canvas.addEventListener('pointerup', stopStroke);
       canvas.addEventListener('pointerleave', stopStroke);
     }
 
-    /* Gravador de Áudio Funcional */
+    /* Gravador de Áudio Corrigido */
     function initAudioRecorder() {
       const btnRec = document.getElementById('btn-rec-audio');
       const btnStop = document.getElementById('btn-stop-audio');
@@ -351,6 +366,11 @@
 
       btnRec.onclick = async () => {
         try {
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Seu navegador ou dispositivo bloqueou a captura de áudio.');
+            return;
+          }
+
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
           mediaRecorder = new MediaRecorder(stream);
           audioChunks = [];
@@ -362,14 +382,12 @@
             reader.onloadend = () => {
               const mins = Math.floor(recSeconds / 60).toString().padStart(2, '0');
               const secs = (recSeconds % 60).toString().padStart(2, '0');
-              const durationStr = `${mins}:${secs}`;
               
               const newAudio = {
                 id: 'aud_' + Date.now(),
                 name: `Áudio ${appState.audios.length + 1}`,
-                duration: durationStr,
-                src: reader.result,
-                date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                duration: `${mins}:${secs}`,
+                src: reader.result
               };
 
               appState.audios.unshift(newAudio);
@@ -377,6 +395,7 @@
               saveState();
             };
             reader.readAsDataURL(blob);
+            stream.getTracks().forEach(track => track.stop());
           };
 
           mediaRecorder.start();
@@ -392,8 +411,8 @@
 
           btnRec.disabled = true;
           btnStop.disabled = false;
-        } catch(e) {
-          alert('Erro ao acessar o microfone para gravação!');
+        } catch(err) {
+          alert('Erro ao acessar o microfone! Verifique se deu permissão de áudio no navegador.');
         }
       };
 
@@ -406,22 +425,44 @@
       };
     }
 
+    function renderAudioList() {
+      const list = document.getElementById('audio-list');
+      list.innerHTML = '';
+      if (appState.audios.length === 0) {
+        list.innerHTML = '<li style="font-size:11px; color:#64748b; padding:4px;">Nenhum áudio gravado</li>';
+        return;
+      }
+      appState.audios.forEach((aud) => {
+        const li = document.createElement('li');
+        li.className = 'audio-item';
+        li.innerHTML = `
+          <div class="audio-item-header">
+            <span>🎙️ ${aud.name}</span>
+            <span>⏱️ ${aud.duration}</span>
+          </div>
+          <audio src="${aud.src}" controls style="width:100%; height:26px; margin-top:4px;"></audio>
+        `;
+        list.appendChild(li);
+      });
+    }
+
     /* Sistema de Zoom */
     function initZoom() {
       const val = document.getElementById('zoom-val');
       function updateZoom() {
-        sheet.style.transform = `scale(${appState.zoom})`;
+        document.querySelectorAll('.page-sheet').forEach(sheet => {
+          sheet.style.transform = `scale(${appState.zoom})`;
+        });
         val.textContent = Math.round(appState.zoom * 100) + '%';
       }
 
-      document.getElementById('btn-zoom-in').onclick = () => { appState.zoom = Math.min(2.5, appState.zoom + 0.15); updateZoom(); };
-      document.getElementById('btn-zoom-out').onclick = () => { appState.zoom = Math.max(0.5, appState.zoom - 0.15); updateZoom(); };
+      document.getElementById('btn-zoom-in').onclick = () => { appState.zoom = Math.min(2.0, appState.zoom + 0.1); updateZoom(); };
+      document.getElementById('btn-zoom-out').onclick = () => { appState.zoom = Math.max(0.5, appState.zoom - 0.1); updateZoom(); };
       document.getElementById('btn-zoom-reset').onclick = () => { appState.zoom = 1; updateZoom(); };
     }
 
-    /* Controles de UI */
+    /* Controles da Interface */
     function initControls() {
-      // Tipo de Caneta
       document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(btn => {
         btn.onclick = () => {
           document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(b => b.classList.remove('active'));
@@ -430,7 +471,6 @@
         };
       });
 
-      // Espessuras Predefinidas
       document.querySelectorAll('.preset-btn').forEach(btn => {
         btn.onclick = () => {
           document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
@@ -442,7 +482,6 @@
 
       document.getElementById('brush-size').oninput = (e) => appState.brushSize = parseInt(e.target.value);
 
-      // Cores
       document.querySelectorAll('.color-dot').forEach(dot => {
         dot.onclick = () => {
           document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
@@ -453,35 +492,47 @@
 
       document.getElementById('custom-color-picker').oninput = (e) => appState.color = e.target.value;
 
+      /* Adicionar Pasta com Opção de Cor */
       document.getElementById('btn-add-folder').onclick = () => {
-        const name = prompt('Nome do Caderno:');
+        const name = prompt('Nome do Caderno/Pasta:');
         if (name) {
-          appState.folders.push({ id: 'f_' + Date.now(), name, icon: '📘', color: '#38bdf8', parentId: null });
+          const color = prompt('Informe uma cor Hexadecimal para a pasta (ex: #ef4444, #22c55e, #38bdf8):', '#38bdf8') || '#38bdf8';
+          appState.folders.push({ id: 'f_' + Date.now(), name, icon: '📁', color: color, parentId: null });
           renderFolders(); saveState();
         }
       };
 
       document.getElementById('btn-add-note').onclick = () => {
-        const n = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title: 'Página de Caderno', canvasData: null };
+        const n = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title: 'Nova Página', pagesData: [] };
         appState.notes.push(n); appState.activeNoteId = n.id;
         renderNotes(); loadActiveNoteContent(); saveState();
       };
 
+      document.getElementById('btn-add-page').onclick = () => {
+        createPageElement();
+        saveState();
+      };
+
       document.getElementById('note-title-input').onchange = () => { saveState(); renderNotes(); };
 
-      // PDF
+      // Exportar PDF Multipáginas
       document.getElementById('btn-export-pdf').onclick = () => {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgData = canvas.toDataURL('image/png');
-        pdf.addImage(imgData, 'PNG', 10, 10, 190, 250);
+        const canvases = document.querySelectorAll('.paint-canvas');
+
+        canvases.forEach((c, index) => {
+          if (index > 0) pdf.addPage();
+          const imgData = c.toDataURL('image/png');
+          pdf.addImage(imgData, 'PNG', 10, 10, 190, 250);
+        });
+
         pdf.save('caderno_anotacoes.pdf');
       };
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       loadState();
-      initCanvasEngine();
       initAudioRecorder();
       initZoom();
       initControls();
