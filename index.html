@@ -1,1147 +1,839 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Estudus_bem</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estudy-Site</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: #0f172a; color: #f1f5f9; height: 100vh; overflow: hidden; user-select: none; }
-    .app-layout { display: flex; height: 100vh; width: 100vw; position: relative; }
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --accent: #58a6ff;
+      --accent-glow: #1f6feb;
+      --text: #c9d1d9;
+      --gold: #ffd700;
+      --danger: #f85149;
+      --success: #2ea043;
+    }
 
-    /* Sidebar Deslizante */
-    .sidebar { width: 320px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; position: absolute; left: 0; top: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; }
-    .sidebar.closed { transform: translateX(-100%); }
-    
-    .sidebar-toggle-btn { position: fixed; left: 0; top: 12px; background: #1e293b; border: 1px solid #334155; border-left: none; color: #38bdf8; width: 38px; height: 38px; border-radius: 0 8px 8px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; z-index: 250; box-shadow: 2px 0 10px rgba(0,0,0,0.3); }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
-    .brand { display: flex; align-items: center; gap: 8px; }
-    .brand h2 { font-size: 18px; font-weight: 700; color: #38bdf8; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
 
-    /* Card do Perfil */
-    .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; margin-bottom: 16px; position: relative; }
-    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
-    .user-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-    .user-name-box { display: flex; align-items: center; gap: 6px; }
-    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
-    .user-name.gold-name { background: linear-gradient(90deg, #ffd700, #ffa500, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; animation: shimmer 2s infinite linear; }
-    
-    @keyframes shimmer { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+    /* Animação Dinossauro e Dinheiro no Fundo do Chat Geral */
+    .falling-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
 
-    .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; }
-    .user-bio { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
-    .social-icons-preview { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
-    .social-link-icon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; cursor: pointer; transition: transform 0.2s; }
-    .social-link-icon:hover { transform: scale(1.2); }
-    .social-link-icon svg { width: 100%; height: 100%; }
+    .falling-item {
+      position: absolute;
+      top: -50px;
+      font-size: 24px;
+      animation: fall linear infinite;
+    }
 
-    .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 15px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
-    .menu-dots-btn:hover { background: #334155; color: #fff; }
+    @keyframes fall {
+      to {
+        transform: translateY(105vh) rotate(360deg);
+      }
+    }
 
-    .section-title { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 8px; }
-    .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      position: relative;
+      z-index: 2;
+      margin-bottom: 20px;
+    }
 
-    /* Folder e Note Lists */
-    .folder-tree, .note-list { list-style: none; margin-bottom: 12px; }
-    .tree-item, .note-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; }
-    .tree-item.subfolder { margin-left: 16px; border-left: 2px solid #38bdf8; }
-    .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
+    /* Cabeçalho e Perfil */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
 
-    /* Pasta de Áudios Retrátil com Borda Premium */
-    .audio-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
-    .audio-folder-header.premium-border { border: 2px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
-    .audio-folder-content { display: none; margin-top: 6px; flex-direction: column; gap: 6px; }
-    .audio-folder-content.open { display: flex; }
-    .audio-card { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
-    .audio-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #f1f5f9; }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
 
-    /* Main Editor */
-    .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; }
-    .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 52px; position: relative; }
-    #note-title-input { background: transparent; border: 1px solid transparent; color: #f8fafc; font-size: 16px; font-weight: 600; padding: 4px 8px; border-radius: 4px; outline: none; }
+    .profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+    }
 
-    .header-center-chat { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; }
-    .btn-chat-center { background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px; padding: 6px 16px; font-size: 14px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+    .user-details {
+      display: flex;
+      flex-direction: column;
+    }
 
-    .actions-bar { display: flex; gap: 8px; align-items: center; }
-    .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-    .btn-secondary { background: #334155; color: #f8fafc; }
+    .user-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #fff;
+    }
 
-    /* Gravador */
-    .audio-panel { background: #182232; padding: 8px 16px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; font-size: 12px; }
+    .user-bio {
+      font-size: 0.85rem;
+      color: #8b949e;
+    }
 
-    /* Toolbars & Drawing */
-    .drawing-toolbar { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 16px; }
-    .tool-group { display: flex; align-items: center; gap: 6px; }
-    .tool-btn { background: #334155; color: #cbd5e1; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-    .tool-btn.active { background: #2563eb; color: #ffffff; font-weight: 600; }
-    .preset-btn { background: #0f172a; border: 1px solid #334155; color: #cbd5e1; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+    .badge-premium {
+      background: linear-gradient(45deg, #ffd700, #ffa500);
+      color: #000;
+      font-size: 0.7rem;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 5px;
+      display: none;
+    }
 
-    .single-color-wrapper { position: relative; display: flex; align-items: center; gap: 6px; cursor: pointer; background: #0f172a; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; }
-    .current-color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
-    .color-dropdown-palette { display: none; position: absolute; top: 36px; left: 0; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; gap: 8px; grid-template-columns: repeat(4, 1fr); z-index: 400; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-    .color-dropdown-palette.show { display: grid; }
-    .palette-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+    /* Ícone de Solicitações/Notificações ao Lado/Cima do Chat */
+    .notification-wrapper {
+      position: relative;
+      cursor: pointer;
+    }
 
-    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; }
-    .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
-    .paint-canvas { display: block; touch-action: none; cursor: crosshair; }
+    .notification-icon {
+      font-size: 1.5rem;
+      background: #21262d;
+      padding: 8px;
+      border-radius: 50%;
+      border: 1px solid #30363d;
+    }
 
-    /* Chat Estilo Telegram com Borda Premium */
-    .chat-drawer { position: fixed; right: -380px; top: 0; bottom: 0; width: 360px; background: #0f172a; border-left: 1px solid #334155; z-index: 300; display: flex; flex-direction: column; transition: right 0.3s ease; }
-    .chat-drawer.open { right: 0; }
-    .chat-header { padding: 14px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
-    
-    .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 16px 16px; }
-    
-    .telegram-msg { max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; word-break: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.3); border: 1px solid transparent; }
-    .telegram-msg.other { align-self: flex-start; background: #1e293b; color: #f1f5f9; border-bottom-left-radius: 2px; }
-    .telegram-msg.me { align-self: flex-end; background: #2b5278; color: #ffffff; border-bottom-right-radius: 2px; }
-    
-    /* Efeito de Borda Neon no Chat para Usuários Premium */
-    .telegram-msg.premium-glow-border { border: 1.5px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--danger);
+      color: white;
+      font-size: 0.75rem;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-weight: bold;
+      display: none;
+    }
 
-    .telegram-msg-author { font-weight: 700; font-size: 11px; margin-bottom: 2px; cursor: pointer; }
-    .telegram-msg-author:hover { text-decoration: underline; }
-    .telegram-msg-time { font-size: 10px; color: rgba(255,255,255,0.6); align-self: flex-end; margin-top: 4px; }
-    .telegram-msg a { color: #38bdf8; text-decoration: underline; }
+    /* Seção de Mídia e Pastas */
+    .accordion-item {
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
 
-    /* Cores Brilhantes Neon para Nomes Premium */
-    .chat-name-purple { color: #c084fc; text-shadow: 0 0 8px #a855f7; }
-    .chat-name-white { color: #ffffff; text-shadow: 0 0 8px #ffffff; }
-    .chat-name-green { color: #4ade80; text-shadow: 0 0 8px #22c55e; }
-    .chat-name-pink { color: #f472b6; text-shadow: 0 0 8px #ec4899; }
-    .chat-name-pink-stickers { color: #ff69b4; text-shadow: 0 0 10px #ff1493; }
+    .accordion-header {
+      background: #21262d;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-    .chat-footer { padding: 10px; background: #1e293b; border-top: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; position: relative; }
-    .chat-input-row { display: flex; gap: 6px; align-items: center; }
-    .chat-input { flex: 1; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 20px; outline: none; font-size: 13px; }
+    .accordion-header .arrow {
+      transition: transform 0.3s;
+    }
 
-    /* Botão Flutuante de Modo de Chat Privado / Grupo */
-    .chat-float-btn { position: absolute; bottom: 70px; right: 16px; width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 10; }
-    .chat-mode-popup { display: none; position: absolute; bottom: 120px; right: 16px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 6px; flex-direction: column; gap: 4px; z-index: 20; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
-    .chat-mode-popup.show { display: flex; }
-    .chat-mode-item { padding: 8px 12px; font-size: 12px; color: #cbd5e1; cursor: pointer; border-radius: 4px; white-space: nowrap; }
-    .chat-mode-item:hover { background: #2563eb; color: white; }
+    .accordion-header.active .arrow {
+      transform: rotate(180deg);
+    }
 
-    /* Modais e Dropdowns */
-    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 170px; }
-    .dropdown-menu.show { display: block; }
-    .dropdown-item { padding: 10px 14px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    .dropdown-item:hover { background: #2563eb; color: #fff; }
+    .accordion-content {
+      display: none;
+      padding: 12px;
+      background: #161b22;
+    }
 
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
-    .modal-overlay.open { display: flex; }
-    .modal-card { background: #1e293b; width: 440px; max-height: 90vh; overflow-y: auto; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 12px; }
-    .form-group { display: flex; flex-direction: column; gap: 4px; }
-    .form-group label { font-size: 11px; color: #94a3b8; }
-    .form-group input, .form-group textarea, .form-group select { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
+    /* Barra de Pesquisa de Grupos */
+    .search-bar-container {
+      margin: 15px 0;
+      position: relative;
+    }
 
-    .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-    .modal-social-left { display: flex; gap: 8px; align-items: center; }
+    .search-input {
+      width: 100%;
+      padding: 12px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.95rem;
+      user-select: none;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Lista de Grupos Pesquisados */
+    .group-list {
+      margin-top: 10px;
+    }
+
+    .group-item {
+      background: #21262d;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Botões Gerais */
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-success { background: var(--success); }
+    .btn-danger { background: var(--danger); }
+    .btn-gold { background: var(--gold); color: #000; }
+
+    /* Modais / Abas Pop-up */
+    .modal-overlay {
+      position: fixed;
+      top:0; left:0; width:100vw; height:100vh;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 450px;
+      position: relative;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    /* Modal Criar Grupo com Bordas Brilhantes (Apenas Premium) */
+    .modal-premium-glow {
+      border: 2px solid transparent;
+      animation: glowBorder 2s linear infinite alternate;
+    }
+
+    @keyframes glowBorder {
+      0% {
+        border-color: var(--accent);
+        box-shadow: 0 0 10px var(--accent);
+      }
+      50% {
+        border-color: #a855f7;
+        box-shadow: 0 0 20px #a855f7;
+      }
+      100% {
+        border-color: var(--gold);
+        box-shadow: 0 0 15px var(--gold);
+      }
+    }
+
+    .modal-content h3 {
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group input, .form-group textarea {
+      padding: 8px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #fff;
+    }
+
+    /* Cards de Solicitação com Foto, Nome e ID */
+    .request-card {
+      background: #21262d;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      user-select: none;
+    }
+
+    .request-user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .request-user-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--accent);
+    }
+
+    .request-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    /* Chat Geral */
+    .chat-section {
+      margin-top: 20px;
+      border-top: 1px solid #30363d;
+      padding-top: 15px;
+    }
+
+    .chat-box {
+      height: 200px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 10px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chat-message {
+      background: #21262d;
+      padding: 8px 12px;
+      border-radius: 6px;
+      max-width: 80%;
+      word-break: break-word;
+    }
+
+    .chat-input-area {
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: 8px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #fff;
+    }
+
+    /* Menu de contexto ao segurar mensagem */
+    .context-menu {
+      position: fixed;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 5px;
+      display: none;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
-  <div class="app-layout">
-    <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Abrir/Fechar Pastas">📁</button>
 
-    <!-- Sidebar Deslizante -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <div class="brand"><span>📚</span><h2>Estudus_bem</h2></div>
-      </div>
+  <!-- Efeito Visual no Chat Geral (Dinossauro e Dinheiro) -->
+  <div class="falling-container" id="fallingContainer"></div>
 
-      <!-- Profile Card -->
-      <div class="user-profile" id="user-profile-card">
-        <div class="user-avatar" id="user-avatar">U</div>
-        <div class="user-info">
-          <div class="user-name-box">
-            <span class="user-name" id="user-name">Carregando...</span>
-            <span class="user-id-badge" id="user-id-badge">ID: 22</span>
+  <div class="container">
+    <!-- Cabeçalho com Perfil e Solicitações -->
+    <div class="header">
+      <div class="profile-info" onclick="openProfileModal()">
+        <img src="https://via.placeholder.com/50" id="userPhoto" class="profile-pic" alt="Foto" />
+        <div class="user-details">
+          <div>
+            <span id="userNameDisplay" class="user-name">Usuário</span>
+            <span id="premiumBadge" class="badge-premium">PREMIUM</span>
           </div>
-          <span class="user-bio" id="user-bio">...</span>
-          <div class="social-icons-preview" id="social-icons-preview"></div>
-        </div>
-        <button class="menu-dots-btn" id="btn-profile-options">⋮</button>
-      </div>
-
-      <div class="section-title">PASTAS <button id="btn-add-folder" class="icon-btn">+ Pasta</button></div>
-      <ul id="folder-tree" class="folder-tree"></ul>
-
-      <div class="section-title">NOTAS <button id="btn-add-note" class="icon-btn">+ Nota</button></div>
-      <ul id="note-list" class="note-list"></ul>
-
-      <!-- Pasta Retrátil de Áudios -->
-      <div class="audio-folder-header" id="btn-toggle-audio-folder">
-        <span>🎙️ Pasta de Áudios Gravados (<span id="audio-count">0</span>)</span>
-        <span id="audio-folder-arrow">▾</span>
-      </div>
-      <div class="audio-folder-content" id="audio-folder-content"></div>
-    </aside>
-
-    <main class="main-editor">
-      <header class="editor-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-          <input type="text" id="note-title-input" value="Minha Nota">
-        </div>
-
-        <div class="header-center-chat">
-          <button id="btn-open-chat" class="btn-chat-center">💬 Chat Geral</button>
-        </div>
-
-        <div class="actions-bar">
-          <button id="btn-export-pdf" class="btn btn-secondary">📄 Exportar PDF</button>
-        </div>
-      </header>
-
-      <!-- Gravador de Áudio -->
-      <div class="audio-panel">
-        <span>🎙️ Gravador de Áudio:</span>
-        <button id="btn-rec-audio" class="btn btn-secondary">🔴 Iniciar Gravação</button>
-        <button id="btn-stop-audio" class="btn btn-secondary" style="background:rgba(239,68,68,0.2); color:#fca5a5;" disabled>⏹️ Parar e Salvar</button>
-        <span id="rec-timer" style="display:none; font-family:monospace; font-weight:bold; color:#ef4444;">00:00</span>
-      </div>
-
-      <!-- Barra de Ferramentas de Escrita -->
-      <div class="drawing-toolbar">
-        <div class="tool-group">
-          <button class="tool-btn active" data-type="pen">✏️ Caneta Suave</button>
-          <button class="tool-btn" data-type="eraser">🧹 Borracha</button>
-        </div>
-
-        <div class="tool-group">
-          <span style="font-size: 11px; color: #94a3b8;">Espessura:</span>
-          <button class="preset-btn active" data-size="2">Fina</button>
-          <button class="preset-btn" data-size="5">Média</button>
-          <button class="preset-btn" data-size="12">Grossa</button>
-          <input type="range" id="brush-size" min="1" max="30" value="2" style="width:60px;">
-        </div>
-
-        <!-- Seletor Único de Cores -->
-        <div class="single-color-wrapper" id="color-picker-trigger">
-          <div class="current-color-dot" id="current-color-display" style="background:#ffffff;"></div>
-          <span style="font-size:11px; color:#cbd5e1;">Cor ▾</span>
-
-          <div class="color-dropdown-palette" id="color-palette-menu">
-            <div class="palette-dot" data-color="#ffffff" style="background:#ffffff;"></div>
-            <div class="palette-dot" data-color="#38bdf8" style="background:#38bdf8;"></div>
-            <div class="palette-dot" data-color="#ef4444" style="background:#ef4444;"></div>
-            <div class="palette-dot" data-color="#22c55e" style="background:#22c55e;"></div>
-            <div class="palette-dot" data-color="#eab308" style="background:#eab308;"></div>
-            <div class="palette-dot" data-color="#a855f7" style="background:#a855f7;"></div>
-            <div class="palette-dot" data-color="#ec4899" style="background:#ec4899;"></div>
-            <div class="palette-dot" data-color="#000000" style="background:#000000;"></div>
-          </div>
+          <span id="userBioDisplay" class="user-bio">Sua bio aparecerá aqui...</span>
         </div>
       </div>
 
-      <!-- Viewport Caderno -->
-      <div class="canvas-viewport" id="viewport">
-        <div class="pages-wrapper" id="pages-container"></div>
+      <!-- Ícone de Solicitações (Acima/Ao lado do Chat) -->
+      <div class="notification-wrapper" onclick="openRequestsModal()">
+        <div class="notification-icon">💬</div>
+        <span class="notification-badge" id="notifBadge">0</span>
       </div>
-    </main>
-  </div>
-
-  <!-- Chat Geral Estilo Telegram -->
-  <div class="chat-drawer" id="chat-drawer">
-    <div class="chat-header">
-      <h3 style="font-size:14px; color:#38bdf8;" id="chat-title-heading">💬 Chat Geral</h3>
-      <button class="menu-dots-btn" id="btn-close-chat">✖</button>
-    </div>
-    <div class="chat-messages" id="chat-messages"></div>
-    
-    <!-- Menu Flutuante de Modos de Chat (Privado e Grupo) -->
-    <button class="chat-float-btn" id="btn-chat-float-menu" title="Modos de Chat">💬</button>
-    <div class="chat-mode-popup" id="chat-mode-popup">
-      <div class="chat-mode-item" onclick="switchChatMode('geral')">🌐 Chat Geral</div>
-      <div class="chat-mode-item" onclick="switchChatMode('privado')">🔒 Chat Privado (DM)</div>
-      <div class="chat-mode-item" onclick="switchChatMode('grupo')">👥 Grupos de Estudo</div>
     </div>
 
-    <div class="chat-footer">
-      <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:4px;">
-        <button class="btn btn-secondary" onclick="appendEmoji('🦖')">🦖</button>
-        <button class="btn btn-secondary" onclick="appendEmoji('🔥')">🔥</button>
-        <button class="btn btn-secondary" onclick="appendEmoji('✨')">✨</button>
-        <button class="btn btn-secondary" onclick="appendEmoji('🌸')">🌸</button>
-        <button class="btn btn-secondary" onclick="appendEmoji('📚')">📚</button>
+    <!-- Seção de Áudios Gravados -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🎙️ Áudios Gravados</span>
+        <span class="arrow">▼</span>
       </div>
-      <div class="chat-input-row">
-        <button class="btn btn-secondary" id="btn-chat-voice" title="Mandar áudio no Chat" onclick="alert('Gravação rápida de áudio ativada!')">🎙️</button>
-        <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem ou link...">
-        <button class="btn" style="background:#2b5278; color:white; border-radius:50%; width:36px; height:36px; justify-content:center;" id="btn-send-chat">➔</button>
+      <div class="accordion-content">
+        <p style="font-size: 0.85rem; color: #8b949e;">Nenhum áudio gravado no momento.</p>
+      </div>
+    </div>
+
+    <!-- Barra de Pesquisa de Grupos (Após a pasta de áudios) -->
+    <div class="search-bar-container">
+      <input 
+        type="text" 
+        id="groupSearchInput" 
+        class="search-input" 
+        placeholder="Pesquisar grupo por nome... (Pressione e segure para criar grupo)" 
+        oninput="searchGroups()"
+      />
+      <div class="group-list" id="groupList"></div>
+    </div>
+
+    <!-- Botão de Ativação Premium com Pagamento PIX -->
+    <div style="margin-bottom: 15px;">
+      <button class="btn btn-gold" style="width: 100%;" onclick="openPixModal()">⚡ Adquirir Premium (PIX)</button>
+    </div>
+
+    <!-- Chat Geral -->
+    <div class="chat-section">
+      <h3>Chat Geral</h3>
+      <div class="chat-box" id="chatBox"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Digite sua mensagem..." />
+        <button class="btn" onclick="sendMessage()">Enviar</button>
       </div>
     </div>
   </div>
 
-  <!-- Menu Dropdown Genérico -->
-  <div class="dropdown-menu" id="app-dropdown"></div>
-
-  <!-- Modal do Perfil do Usuário -->
-  <div class="modal-overlay" id="profile-modal">
-    <div class="modal-card">
-      <h3 style="color:#fff;">Editar Perfil</h3>
+  <!-- MODAL: Perfil -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-content">
+      <h3>Editar Perfil</h3>
       <div class="form-group">
-        <label>ID do Perfil (Fixo)</label>
-        <input type="number" id="input-prof-id" disabled style="opacity:0.6;">
+        <label>URL da Foto:</label>
+        <input type="text" id="editPhoto" />
       </div>
       <div class="form-group">
-        <label>Nome do Usuário (Limite 7 dias)</label>
-        <input type="text" id="input-prof-name">
+        <label>Nome:</label>
+        <input type="text" id="editName" />
       </div>
       <div class="form-group">
-        <label>Biografia (Bio)</label>
-        <textarea id="input-prof-bio" rows="2"></textarea>
+        <label>Bio:</label>
+        <textarea id="editBio" rows="3"></textarea>
       </div>
-      <div class="form-group">
-        <label>Foto de Perfil</label>
-        <input type="file" id="input-prof-avatar" accept="image/*">
-      </div>
-
-      <!-- Configuração de Redes Sociais e Cor do Chat Premium -->
-      <div id="premium-social-section" class="form-group" style="display:none; border-top:1px solid #334155; padding-top:10px; margin-top:6px;">
-        <label style="color:#ffd700; font-weight:bold;">👑 Redes Sociais Premium (Selecione até 3):</label>
-        
-        <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;" id="social-inputs-container">
-          <div class="social-input-row">
-            <label><input type="checkbox" class="social-check" value="TikTok" data-key="tiktok"> 🎵 TikTok</label>
-            <input type="text" id="url-tiktok" placeholder="https://tiktok.com/@seu_perfil" style="display:none;">
-          </div>
-          <div class="social-input-row">
-            <label><input type="checkbox" class="social-check" value="Instagram" data-key="instagram"> 📸 Instagram</label>
-            <input type="text" id="url-instagram" placeholder="https://instagram.com/seu_perfil" style="display:none;">
-          </div>
-          <div class="social-input-row">
-            <label><input type="checkbox" class="social-check" value="X (Twitter)" data-key="twitter"> 🐦 X (Twitter)</label>
-            <input type="text" id="url-twitter" placeholder="https://x.com/seu_perfil" style="display:none;">
-          </div>
-          <div class="social-input-row">
-            <label><input type="checkbox" class="social-check" value="Facebook" data-key="facebook"> 📘 Facebook</label>
-            <input type="text" id="url-facebook" placeholder="https://facebook.com/seu_perfil" style="display:none;">
-          </div>
-          <div class="social-input-row">
-            <label><input type="checkbox" class="social-check" value="Discord" data-key="discord"> 👾 Discord</label>
-            <input type="text" id="url-discord" placeholder="Link do perfil/servidor Discord" style="display:none;">
-          </div>
-        </div>
-
-        <label style="color:#ffd700; font-weight:bold; margin-top:12px;">👑 Cor Brilhante do Nome no Chat:</label>
-        <select id="premium-chat-color-select">
-          <option value="chat-name-purple">🟣 Roxo Neon Brilhante</option>
-          <option value="chat-name-white">⚪ Branco Brilhante Light</option>
-          <option value="chat-name-green">🟢 Verde Neon Glow</option>
-          <option value="chat-name-pink">💖 Rosa Chiclete Sparkle</option>
-          <option value="chat-name-pink-stickers">🌸 Rosa com Figurinhas ✨</option>
-        </select>
-      </div>
-
-      <div class="modal-footer">
-        <div class="modal-social-left" id="modal-social-left-display"></div>
-        <div style="display:flex; gap:8px;">
-          <button class="btn btn-secondary" id="btn-cancel-prof">Cancelar</button>
-          <button class="btn" style="background:#2563eb; color:white;" id="btn-save-prof">Salvar</button>
-        </div>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+        <button class="btn btn-danger" onclick="closeModal('profileModal')">Cancelar</button>
+        <button class="btn btn-success" onclick="saveProfile()">Salvar</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Visualizador de Perfil de Outros Usuários -->
-  <div class="modal-overlay" id="view-user-modal">
-    <div class="modal-card" style="text-align:center; align-items:center;">
-      <div class="user-avatar" id="view-user-avatar" style="width:70px; height:70px; font-size:24px;">U</div>
-      <h3 style="color:#fff;" id="view-user-name">Nome</h3>
-      <span class="user-id-badge" id="view-user-id" style="width:fit-content;">ID: 00</span>
-      <p style="font-size:13px; color:#cbd5e1; margin-top:8px;" id="view-user-bio">Biografia...</p>
-
-      <div style="margin-top:12px;" class="form-group">
-        <label style="color:#ffd700;">Redes Sociais:</label>
-        <div class="social-icons-preview" id="view-user-socials" style="justify-content:center; margin-top:6px;"></div>
+  <!-- MODAL: Criar Grupo (Apenas Premium / Bordas Brilhantes) -->
+  <div class="modal-overlay" id="createGroupModal">
+    <div class="modal-content modal-premium-glow">
+      <h3>Criar Grupo <span style="font-size: 0.8rem; color: var(--gold);">(Somente Premium)</span></h3>
+      <div class="form-group">
+        <label>Nome do Grupo:</label>
+        <input type="text" id="groupNameInput" />
       </div>
-
-      <button class="btn btn-secondary" onclick="document.getElementById('view-user-modal').classList.remove('open')" style="margin-top:14px;">Fechar</button>
+      <div class="form-group">
+        <label>Bio do Grupo:</label>
+        <textarea id="groupBioInput" rows="2"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Id-g (ID do Grupo Aleatório):</label>
+        <input type="text" id="groupIdInput" readonly />
+      </div>
+      <div class="form-group">
+        <label>Adicionar Membro (Nome ou ID):</label>
+        <input type="text" id="groupMemberInput" placeholder="Digite o nome ou ID..." />
+      </div>
+      <div class="form-group">
+        <label>Foto de Perfil do Membro (URL):</label>
+        <input type="text" id="groupMemberPicInput" placeholder="https://exemplo.com/foto.jpg" />
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+        <button class="btn btn-danger" onclick="closeModal('createGroupModal')">Cancelar</button>
+        <button class="btn btn-success" onclick="confirmCreateGroup()">Criar e Convidar</button>
+      </div>
     </div>
+  </div>
+
+  <!-- MODAL: Solicitações de Adição em Grupos -->
+  <div class="modal-overlay" id="requestsModal">
+    <div class="modal-content">
+      <h3>Convites para Grupos</h3>
+      <div id="requestsList">
+        <!-- Notificações aparecem aqui -->
+      </div>
+      <button class="btn btn-danger" style="width: 100%; margin-top: 10px;" onclick="closeModal('requestsModal')">Fechar</button>
+    </div>
+  </div>
+
+  <!-- MODAL: Pagamento PIX -->
+  <div class="modal-overlay" id="pixModal">
+    <div class="modal-content" style="text-align: center;">
+      <h3>Pagamento via PIX</h3>
+      <p style="font-size: 0.9rem; margin: 10px 0;">Escaneie ou copie a chave PIX abaixo para ativar seu status **Premium**:</p>
+      <div style="background: #fff; padding: 10px; display: inline-block; border-radius: 8px; margin: 10px 0;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=ESTUDY-SITE-PREMIUM-PAYMENT" alt="QR Code PIX" />
+      </div>
+      <div class="form-group">
+        <input type="text" id="pixKey" value="00020126360014BR.GOV.BCB.PIX0114+5500000000000520400005303986540510.005802BR5913Estudy-Site6008BRASILIA62070503***6304E2CA" readonly />
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
+        <button class="btn" onclick="copyPix()">Copiar Chave</button>
+        <button class="btn btn-success" onclick="simulatePixPayment()">Confirmar Pagamento</button>
+      </div>
+      <button class="btn btn-danger" style="width: 100%; margin-top: 10px;" onclick="closeModal('pixModal')">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Menu de Contexto para Excluir Mensagem/Solicitação ao Segurar -->
+  <div class="context-menu" id="contextMenu">
+    <button class="btn btn-danger" onclick="deleteTargetItem()">Excluir Mensagem</button>
   </div>
 
   <script>
-    const SOCIAL_SVGS = {
-      TikTok: `<svg viewBox="0 0 24 24" fill="#ffffff"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-2.81V7.6a6.34 6.34 0 0 0-5.36 6.25 6.34 6.34 0 1 0 10.66-4.63 8.28 8.28 0 0 0 4.81 1.51V7.27a4.85 4.85 0 0 1-1-.58z"/></svg>`,
-      Instagram: `<svg viewBox="0 0 24 24" fill="#e1306c"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
-      'X (Twitter)': `<svg viewBox="0 0 24 24" fill="#1da1f2"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
-      Facebook: `<svg viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
-      Discord: `<svg viewBox="0 0 24 24" fill="#5865f2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`
+    // --- ESTADOS NATIVOS E PERSISTÊNCIA DE DADOS ---
+    let userData = {
+      name: "Usuário",
+      bio: "Sua bio aparecerá aqui...",
+      photo: "https://via.placeholder.com/50",
+      isPremium: false
     };
 
-    function getIdColor(id) {
-      const numId = parseInt(id) || 1;
-      if (numId >= 1 && numId <= 50) return '#8b5cf6';
-      if (numId >= 51 && numId <= 100) return '#22c55e';
-      if (numId >= 101 && numId <= 200) return '#f97316';
-      return '#ffffff';
-    }
+    let groups = [
+      { id: "1092", name: "Grupo de Estudos TI", bio: "Focado em programação" },
+      { id: "4839", name: "Matemática Avançada", bio: "Resolução de cálculos" }
+    ];
 
-    const appState = {
-      profile: {
-        id: 22,
-        name: 'Veneza_ kw',
-        bio: 'Estudando com Estudus_bem',
-        avatarImg: null,
-        isPremium: true,
-        lastNameChange: null,
-        socials: [],
-        chatColorClass: 'chat-name-purple'
-      },
-      folders: [{ id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null, date: new Date().toLocaleDateString() }],
-      notes: [{ id: 'n_1', folderId: 'f_root', title: 'Minha primeira nota', pagesData: [] }],
-      audios: [],
-      chatMessages: [
-        { sender: 'Comunidade', text: 'Bem-vindo ao Chat Geral do Estudus_bem! Visite https://estudus.com 🦖', time: '10:00', isPremium: false, nameClass: '', userId: 5, userBio: 'Membro da comunidade', userSocials: [] }
-      ],
-      activeFolderId: 'f_root',
-      activeNoteId: 'n_1',
-      tool: 'pen',
-      color: '#ffffff',
-      brushSize: 2,
-      isDrawing: false,
-      activeCanvasCtx: null,
-      pointsBuffer: []
+    let requests = [
+      { 
+        id: 1, 
+        senderName: "Fulano", 
+        senderId: "9982", 
+        senderPic: "https://via.placeholder.com/40", 
+        groupName: "Grupo de Estudos TI" 
+      }
+    ];
+
+    let targetToDelete = null;
+    let holdTimer = null;
+
+    // --- CARREGAMENTO INICIAL ---
+    window.onload = function() {
+      loadProfile();
+      renderRequests();
+      initFallingEffects();
+      setupHoldToCreateGroup();
     };
 
-    let mediaRecorder, audioChunks = [], recInterval, recSeconds = 0;
-
-    function loadState() {
-      const saved = localStorage.getItem('estudus_bem_v6_data');
+    function loadProfile() {
+      const saved = localStorage.getItem("estudy_user");
       if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (parsed.profile) {
-            appState.profile = { ...appState.profile, ...parsed.profile };
-          }
-          appState.folders = parsed.folders || appState.folders;
-          appState.notes = parsed.notes || appState.notes;
-          appState.audios = parsed.audios || [];
-          appState.chatMessages = parsed.chatMessages || appState.chatMessages;
-          appState.activeFolderId = parsed.activeFolderId || appState.folders[0].id;
-          appState.activeNoteId = parsed.activeNoteId || appState.notes[0]?.id;
-        } catch(e) {}
+        userData = JSON.parse(saved);
       }
-      updateProfileUI();
-      renderChatMessages();
-    }
-
-    function saveState() {
-      saveCurrentNoteData();
-      localStorage.setItem('estudus_bem_v6_data', JSON.stringify({
-        profile: appState.profile,
-        folders: appState.folders,
-        notes: appState.notes,
-        audios: appState.audios,
-        chatMessages: appState.chatMessages,
-        activeFolderId: appState.activeFolderId,
-        activeNoteId: appState.activeNoteId
-      }));
-    }
-
-    function saveCurrentNoteData() {
-      const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
-      if (currentNote) {
-        const canvases = document.querySelectorAll('.paint-canvas');
-        currentNote.pagesData = Array.from(canvases).map(c => c.toDataURL());
-        currentNote.title = document.getElementById('note-title-input').value || 'Sem Título';
+      document.getElementById("userNameDisplay").innerText = userData.name;
+      document.getElementById("userBioDisplay").innerText = userData.bio;
+      document.getElementById("userPhoto").src = userData.photo;
+      if (userData.isPremium) {
+        document.getElementById("premiumBadge").style.display = "inline-block";
       }
     }
 
-    function updateProfileUI() {
-      const p = appState.profile;
-      const color = getIdColor(p.id);
-
-      const nameEl = document.getElementById('user-name');
-      nameEl.textContent = p.name || 'Usuário';
-      if (p.isPremium) nameEl.classList.add('gold-name');
-      else nameEl.classList.remove('gold-name');
-
-      document.getElementById('user-bio').textContent = p.bio || 'Sem biografia';
+    function saveProfile() {
+      userData.name = document.getElementById("editName").value || userData.name;
+      userData.bio = document.getElementById("editBio").value || userData.bio;
+      userData.photo = document.getElementById("editPhoto").value || userData.photo;
       
-      const badge = document.getElementById('user-id-badge');
-      badge.textContent = `ID: ${p.id}`;
-      badge.style.color = color;
-      badge.style.borderColor = color;
+      localStorage.setItem("estudy_user", JSON.stringify(userData));
+      loadProfile();
+      closeModal("profileModal");
+    }
 
-      const avatarEl = document.getElementById('user-avatar');
-      avatarEl.style.backgroundColor = color;
-      if (p.avatarImg) {
-        avatarEl.style.backgroundImage = `url(${p.avatarImg})`;
-        avatarEl.textContent = '';
-      } else {
-        avatarEl.style.backgroundImage = 'none';
-        avatarEl.textContent = (p.name || 'U').charAt(0).toUpperCase();
-      }
+    function openProfileModal() {
+      document.getElementById("editName").value = userData.name;
+      document.getElementById("editBio").value = userData.bio;
+      document.getElementById("editPhoto").value = userData.photo;
+      document.getElementById("profileModal").style.display = "flex";
+    }
 
-      // Efeito de Borda Premium na Pasta de Áudios Gravados
-      const audioHeader = document.getElementById('btn-toggle-audio-folder');
-      if (p.isPremium) audioHeader.classList.add('premium-border');
-      else audioHeader.classList.remove('premium-border');
+    // --- ACCORDION (PASTA DE ÁUDIOS) ---
+    function toggleAccordion(header) {
+      header.classList.toggle("active");
+      const content = header.nextElementSibling;
+      content.style.display = content.style.display === "block" ? "none" : "block";
+    }
 
-      // Logos Reais com Links Ativos Diretos
-      const socialContainer = document.getElementById('social-icons-preview');
-      socialContainer.innerHTML = '';
-      (p.socials || []).forEach(soc => {
-        if (SOCIAL_SVGS[soc.name]) {
-          const a = document.createElement('a');
-          a.className = 'social-link-icon';
-          a.href = soc.url || '#';
-          a.target = '_blank';
-          a.title = soc.name;
-          a.innerHTML = SOCIAL_SVGS[soc.name];
-          socialContainer.appendChild(a);
-        }
+    // --- BARRA DE PESQUISA & SEGURAR PARA CRIAR GRUPO ---
+    function searchGroups() {
+      const query = document.getElementById("groupSearchInput").value.toLowerCase().trim();
+      const listContainer = document.getElementById("groupList");
+      listContainer.innerHTML = "";
+
+      if (query === "") return;
+
+      const filtered = groups.filter(g => g.name.toLowerCase().includes(query));
+      filtered.forEach(g => {
+        const item = document.createElement("div");
+        item.className = "group-item";
+        item.innerHTML = `<div><strong>${g.name}</strong> (Id-g: ${g.id})<br><small>${g.bio}</small></div>`;
+        listContainer.appendChild(item);
       });
     }
 
-    /* Pastas e Subpastas com Três Pontinhos */
-    function renderFolders() {
-      const container = document.getElementById('folder-tree');
-      container.innerHTML = '';
-      const roots = appState.folders.filter(f => !f.parentId);
-      roots.forEach(parent => {
-        container.appendChild(createFolderDOM(parent, false));
-        const subs = appState.folders.filter(f => f.parentId === parent.id);
-        subs.forEach(sub => container.appendChild(createFolderDOM(sub, true)));
-      });
-    }
+    function setupHoldToCreateGroup() {
+      const searchBar = document.getElementById("groupSearchInput");
 
-    function createFolderDOM(folder, isSub) {
-      const li = document.createElement('li');
-      li.className = `tree-item ${isSub ? 'subfolder' : ''} ${folder.id === appState.activeFolderId ? 'active' : ''}`;
-      li.innerHTML = `
-        <span style="color:${folder.color || '#38bdf8'}; font-weight:bold;">${folder.icon || '📁'} ${folder.name}</span>
-        <button class="menu-dots-btn" onclick="openFolderMenu(event, '${folder.id}', ${isSub})">⋮</button>
-      `;
-      li.onclick = (e) => {
-        if (e.target.classList.contains('menu-dots-btn')) return;
-        appState.activeFolderId = folder.id;
-        renderFolders(); renderNotes();
-      };
-      return li;
-    }
-
-    function openFolderMenu(e, folderId, isSub) {
-      e.stopPropagation();
-      const menu = document.getElementById('app-dropdown');
-      let options = `
-        <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
-        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
-      `;
-      if (!isSub) {
-        options = `<div class="dropdown-item" onclick="createSubFolder('${folderId}')">📂 Criar Subpasta</div>` + options;
-      }
-
-      menu.innerHTML = options;
-      menu.style.top = e.clientY + 'px';
-      menu.style.left = e.clientX + 'px';
-      menu.classList.add('show');
-    }
-
-    function createSubFolder(parentId) {
-      const name = prompt('Nome da Subpasta:');
-      if (name) {
-        appState.folders.push({
-          id: 'f_' + Date.now(),
-          name: name.trim(),
-          icon: '📂',
-          color: '#38bdf8',
-          parentId: parentId,
-          date: new Date().toLocaleDateString()
-        });
-        renderFolders(); saveState();
-      }
-      closeDropdown();
-    }
-
-    function renameFolder(id) {
-      const folder = appState.folders.find(f => f.id === id);
-      if (folder) {
-        const newName = prompt('Novo nome da pasta:', folder.name);
-        if (newName) { folder.name = newName.trim(); renderFolders(); saveState(); }
-      }
-      closeDropdown();
-    }
-
-    function deleteFolder(id) {
-      if (confirm('Deseja excluir esta pasta e suas subpastas/notas?')) {
-        appState.folders = appState.folders.filter(f => f.id !== id && f.parentId !== id);
-        appState.notes = appState.notes.filter(n => n.folderId !== id);
-        renderFolders(); renderNotes(); saveState();
-      }
-      closeDropdown();
-    }
-
-    function renderNotes() {
-      const list = document.getElementById('note-list');
-      list.innerHTML = '';
-      const filtered = appState.notes.filter(n => n.folderId === appState.activeFolderId);
-      filtered.forEach(note => {
-        const li = document.createElement('li');
-        li.className = `note-item ${note.id === appState.activeNoteId ? 'active' : ''}`;
-        li.innerHTML = `<span>📝 ${note.title}</span>`;
-        li.onclick = () => {
-          saveCurrentNoteData();
-          appState.activeNoteId = note.id;
-          renderNotes(); loadActiveNoteContent(); saveState();
-        };
-        list.appendChild(li);
-      });
-    }
-
-    /* Desenho no Caderno com Suporte a Toque/Dedo */
-    function createPageElement(initialData = null) {
-      const container = document.getElementById('pages-container');
-      const sheet = document.createElement('div');
-      sheet.className = 'page-sheet';
-
-      const canvas = document.createElement('canvas');
-      canvas.className = 'paint-canvas';
-      canvas.width = 750;
-      canvas.height = 1000;
-      sheet.appendChild(canvas);
-      container.appendChild(sheet);
-
-      const ctx = canvas.getContext('2d');
-      if (initialData) {
-        const img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0);
-        img.src = initialData;
-      }
-
-      bindCanvasEvents(canvas, ctx);
-    }
-
-    function loadActiveNoteContent() {
-      const container = document.getElementById('pages-container');
-      container.innerHTML = '';
-      const note = appState.notes.find(n => n.id === appState.activeNoteId);
-      if (!note) return;
-
-      document.getElementById('note-title-input').value = note.title;
-      if (note.pagesData && note.pagesData.length > 0) {
-        note.pagesData.forEach(pageImg => createPageElement(pageImg));
-      } else {
-        createPageElement();
-      }
-    }
-
-    function bindCanvasEvents(canvas, ctx) {
-      function getCoords(e) {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
-      }
-
-      function startStroke(e) {
-        appState.isDrawing = true;
-        appState.activeCanvasCtx = ctx;
-        appState.pointsBuffer = [getCoords(e)];
-      }
-
-      function drawStroke(e) {
-        if (!appState.isDrawing || appState.activeCanvasCtx !== ctx) return;
-        const pt = getCoords(e);
-        appState.pointsBuffer.push(pt);
-
-        if (appState.tool === 'eraser') {
-          ctx.globalCompositeOperation = 'destination-out';
-          ctx.lineWidth = appState.brushSize * 8;
-          ctx.lineCap = 'round';
-          const p1 = appState.pointsBuffer[appState.pointsBuffer.length - 2];
-          const p2 = appState.pointsBuffer[appState.pointsBuffer.length - 1];
-          ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
-        } else {
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.strokeStyle = appState.color;
-          ctx.lineWidth = appState.brushSize;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-
-          if (appState.pointsBuffer.length > 2) {
-            const pts = appState.pointsBuffer;
-            const lastIdx = pts.length - 1;
-            const xc = (pts[lastIdx].x + pts[lastIdx - 1].x) / 2;
-            const yc = (pts[lastIdx].y + pts[lastIdx - 1].y) / 2;
-            ctx.beginPath();
-            ctx.moveTo(pts[lastIdx - 2].x, pts[lastIdx - 2].y);
-            ctx.quadraticCurveTo(pts[lastIdx - 1].x, pts[lastIdx - 1].y, xc, yc);
-            ctx.stroke();
+      const startHold = () => {
+        holdTimer = setTimeout(() => {
+          if (!userData.isPremium) {
+            alert("Apenas usuários PREMIUM podem criar grupos!");
+          } else {
+            openCreateGroupModal();
           }
-        }
-      }
+        }, 800); // Segurar por 800ms
+      };
 
-      function stopStroke() {
-        if (appState.isDrawing) {
-          appState.isDrawing = false;
-          appState.pointsBuffer = [];
-          saveState();
-        }
-      }
+      const cancelHold = () => {
+        clearTimeout(holdTimer);
+      };
 
-      canvas.addEventListener('pointerdown', startStroke);
-      canvas.addEventListener('pointermove', drawStroke);
-      canvas.addEventListener('pointerup', stopStroke);
-      canvas.addEventListener('pointerleave', stopStroke);
-
-      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startStroke(e); });
-      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); drawStroke(e); });
-      canvas.addEventListener('touchend', stopStroke);
+      searchBar.addEventListener("mousedown", startHold);
+      searchBar.addEventListener("mouseup", cancelHold);
+      searchBar.addEventListener("mouseleave", cancelHold);
+      searchBar.addEventListener("touchstart", startHold);
+      searchBar.addEventListener("touchend", cancelHold);
     }
 
-    /* Gravador de Áudio & Pasta Retrátil */
-    function initAudioRecorder() {
-      const btnRec = document.getElementById('btn-rec-audio');
-      const btnStop = document.getElementById('btn-stop-audio');
-      const timer = document.getElementById('rec-timer');
-
-      btnRec.onclick = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
-          audioChunks = [];
-
-          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-          mediaRecorder.onstop = () => {
-            const blob = new Blob(audioChunks, { type: 'audio/webm' });
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              const durationFormatted = timer.textContent;
-              appState.audios.unshift({
-                id: 'aud_' + Date.now(),
-                name: `Áudio ${appState.audios.length + 1}`,
-                duration: durationFormatted,
-                date: new Date().toLocaleString(),
-                src: reader.result
-              });
-              renderAudioList(); saveState();
-            };
-            reader.readAsDataURL(blob);
-            stream.getTracks().forEach(t => t.stop());
-          };
-
-          mediaRecorder.start();
-          recSeconds = 0;
-          timer.style.display = 'inline';
-          recInterval = setInterval(() => {
-            recSeconds++;
-            const m = Math.floor(recSeconds / 60).toString().padStart(2, '0');
-            const s = (recSeconds % 60).toString().padStart(2, '0');
-            timer.textContent = `${m}:${s}`;
-          }, 1000);
-
-          btnRec.disabled = true;
-          btnStop.disabled = false;
-        } catch(err) { alert('Acesso ao microfone negado.'); }
-      };
-
-      btnStop.onclick = () => {
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-        clearInterval(recInterval);
-        timer.style.display = 'none';
-        btnRec.disabled = false;
-        btnStop.disabled = true;
-      };
-
-      const header = document.getElementById('btn-toggle-audio-folder');
-      const content = document.getElementById('audio-folder-content');
-      const arrow = document.getElementById('audio-folder-arrow');
-
-      header.onclick = () => {
-        const isOpen = content.classList.toggle('open');
-        arrow.textContent = isOpen ? '▴' : '▾';
-      };
+    function openCreateGroupModal() {
+      const randomId = Math.floor(1000 + Math.random() * 9000).toString();
+      document.getElementById("groupIdInput").value = randomId;
+      document.getElementById("groupNameInput").value = "";
+      document.getElementById("groupBioInput").value = "";
+      document.getElementById("groupMemberInput").value = "";
+      document.getElementById("groupMemberPicInput").value = "";
+      document.getElementById("createGroupModal").style.display = "flex";
     }
 
-    function renderAudioList() {
-      const container = document.getElementById('audio-folder-content');
-      const countEl = document.getElementById('audio-count');
-      container.innerHTML = '';
-      countEl.textContent = appState.audios.length;
+    function confirmCreateGroup() {
+      const name = document.getElementById("groupNameInput").value;
+      const bio = document.getElementById("groupBioInput").value;
+      const id = document.getElementById("groupIdInput").value;
+      const memberNameOrId = document.getElementById("groupMemberInput").value;
+      const memberPic = document.getElementById("groupMemberPicInput").value || "https://via.placeholder.com/40";
 
-      appState.audios.forEach((aud) => {
-        const card = document.createElement('div');
-        card.className = 'audio-card';
+      if (!name) {
+        alert("Preencha o nome do grupo!");
+        return;
+      }
+
+      groups.push({ id, name, bio });
+
+      if (memberNameOrId) {
+        requests.push({
+          id: Date.now(),
+          senderName: memberNameOrId,
+          senderId: Math.floor(1000 + Math.random() * 9000).toString(),
+          senderPic: memberPic,
+          groupName: name
+        });
+        renderRequests();
+      }
+
+      alert(`Grupo "${name}" (Id-g: ${id}) criado com sucesso!`);
+      closeModal("createGroupModal");
+    }
+
+    // --- SOLICITAÇÕES / ADICIONAR MEMBROS ---
+    function renderRequests() {
+      const container = document.getElementById("requestsList");
+      const badge = document.getElementById("notifBadge");
+      container.innerHTML = "";
+
+      if (requests.length === 0) {
+        container.innerHTML = "<p>Nenhuma mensagem no momento.</p>";
+        badge.style.display = "none";
+        return;
+      }
+
+      badge.style.display = "inline-block";
+      badge.innerText = requests.length;
+
+      requests.forEach(req => {
+        const card = document.createElement("div");
+        card.className = "request-card";
         card.innerHTML = `
-          <div class="audio-card-top">
-            <span>🎙️ ${aud.name} (${aud.duration})</span>
-            <button class="menu-dots-btn" onclick="openAudioMenu(event, '${aud.id}')">⋮</button>
+          <div class="request-user-profile">
+            <img src="${req.senderPic}" class="request-user-pic" alt="Perfil" />
+            <div>
+              <strong>${req.senderName}</strong> <br>
+              <small style="color: #8b949e;">ID: ${req.senderId}</small>
+            </div>
           </div>
-          <audio src="${aud.src}" controls style="width:100%; height:26px; margin-top:2px;"></audio>
+          <p>${req.senderName} do id ${req.senderId} quer adicionar você em um grupo (${req.groupName}), deseja aceitar?</p>
+          <div class="request-actions">
+            <button class="btn btn-success" onclick="acceptRequest(${req.id})">Aceitar</button>
+            <button class="btn btn-danger" onclick="rejectRequest(${req.id})">Recusar</button>
+          </div>
         `;
+
+        // Segurar para abrir menu de contexto e excluir mensagem
+        card.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          showContextMenu(e.pageX, e.pageY, card, req.id);
+        });
+
+        // Suporte para touch (mobile segurar)
+        let touchTimer;
+        card.addEventListener("touchstart", (e) => {
+          touchTimer = setTimeout(() => {
+            const touch = e.touches[0];
+            showContextMenu(touch.pageX, touch.pageY, card, req.id);
+          }, 800);
+        });
+
+        card.addEventListener("touchend", () => clearTimeout(touchTimer));
+
         container.appendChild(card);
       });
     }
 
-    function openAudioMenu(e, audioId) {
-      e.stopPropagation();
-      const aud = appState.audios.find(a => a.id === audioId);
-      if (!aud) return;
-
-      const menu = document.getElementById('app-dropdown');
-      menu.innerHTML = `
-        <div class="dropdown-item" onclick="showAudioDetails('${aud.id}')">ℹ️ Detalhes</div>
-        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteAudio('${aud.id}')">🗑️ Excluir</div>
-      `;
-      menu.style.top = e.clientY + 'px';
-      menu.style.left = e.clientX + 'px';
-      menu.classList.add('show');
+    function openRequestsModal() {
+      document.getElementById("requestsModal").style.display = "flex";
     }
 
-    function showAudioDetails(id) {
-      const aud = appState.audios.find(a => a.id === id);
-      if (aud) alert(`📊 Detalhes do Áudio:\n\nNome: ${aud.name}\nDuração: ${aud.duration}\nData de Gravação: ${aud.date}`);
-      closeDropdown();
+    function acceptRequest(reqId) {
+      alert("Convite aceito com sucesso!");
+      requests = requests.filter(r => r.id !== reqId);
+      renderRequests();
     }
 
-    function deleteAudio(id) {
-      if (confirm('Deseja excluir este áudio?')) {
-        appState.audios = appState.audios.filter(a => a.id !== id);
-        renderAudioList(); saveState();
+    function rejectRequest(reqId) {
+      requests = requests.filter(r => r.id !== reqId);
+      renderRequests();
+    }
+
+    function showContextMenu(x, y, element, id) {
+      const menu = document.getElementById("contextMenu");
+      menu.style.left = `${x}px`;
+      menu.style.top = `${y}px`;
+      menu.style.display = "block";
+      targetToDelete = { element, id };
+    }
+
+    function deleteTargetItem() {
+      if (targetToDelete) {
+        requests = requests.filter(r => r.id !== targetToDelete.id);
+        renderRequests();
+        document.getElementById("contextMenu").style.display = "none";
       }
-      closeDropdown();
     }
 
-    /* Chat Estilo Telegram com Borda Premium, Links e Visualização de Perfil */
-    function formatLinks(text) {
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+    window.onclick = function() {
+      document.getElementById("contextMenu").style.display = "none";
+    };
+
+    // --- SISTEMA DE PAGAMENTO PIX & PREMIUM ---
+    function openPixModal() {
+      document.getElementById("pixModal").style.display = "flex";
     }
 
-    function renderChatMessages() {
-      const box = document.getElementById('chat-messages');
-      box.innerHTML = '';
-
-      appState.chatMessages.forEach((msg, idx) => {
-        const isMe = msg.sender === appState.profile.name;
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `telegram-msg ${isMe ? 'me' : 'other'} ${msg.isPremium ? 'premium-glow-border' : ''}`;
-
-        const nameClass = msg.isPremium ? (msg.nameClass || 'chat-name-purple') : '';
-        const stickersExtra = (nameClass === 'chat-name-pink-stickers') ? ' 🌸✨' : '';
-
-        msgDiv.innerHTML = `
-          <span class="telegram-msg-author ${nameClass}" onclick="viewUserProfile(${idx})">${msg.sender}${stickersExtra}</span>
-          <span>${formatLinks(msg.text)}</span>
-          <span class="telegram-msg-time">${msg.time || '12:00'}</span>
-        `;
-        box.appendChild(msgDiv);
-      });
-      box.scrollTop = box.scrollHeight;
+    function copyPix() {
+      const copyText = document.getElementById("pixKey");
+      copyText.select();
+      document.execCommand("copy");
+      alert("Chave PIX copiada para a área de transferência!");
     }
 
-    function viewUserProfile(msgIndex) {
-      const msg = appState.chatMessages[msgIndex];
-      const isMe = msg.sender === appState.profile.name;
-
-      const modal = document.getElementById('view-user-modal');
-      const avatar = document.getElementById('view-user-avatar');
-      const name = document.getElementById('view-user-name');
-      const idBadge = document.getElementById('view-user-id');
-      const bio = document.getElementById('view-user-bio');
-      const socials = document.getElementById('view-user-socials');
-
-      if (isMe) {
-        const p = appState.profile;
-        name.textContent = p.name;
-        idBadge.textContent = `ID: ${p.id}`;
-        idBadge.style.color = getIdColor(p.id);
-        bio.textContent = p.bio || 'Sem biografia';
-        if (p.avatarImg) avatar.style.backgroundImage = `url(${p.avatarImg})`;
-        else avatar.textContent = p.name.charAt(0).toUpperCase();
-
-        socials.innerHTML = (p.socials || []).map(s => 
-          `<a class="social-link-icon" href="${s.url}" target="_blank" title="${s.name}">${SOCIAL_SVGS[s.name] || ''}</a>`
-        ).join('');
-      } else {
-        name.textContent = msg.sender;
-        idBadge.textContent = `ID: ${msg.userId || 99}`;
-        idBadge.style.color = getIdColor(msg.userId || 99);
-        bio.textContent = msg.userBio || 'Membro do Estudus_bem';
-        avatar.style.backgroundImage = 'none';
-        avatar.textContent = msg.sender.charAt(0).toUpperCase();
-
-        socials.innerHTML = (msg.userSocials || []).map(s => 
-          `<a class="social-link-icon" href="${s.url}" target="_blank" title="${s.name}">${SOCIAL_SVGS[s.name] || ''}</a>`
-        ).join('');
-      }
-
-      modal.classList.add('open');
+    function simulatePixPayment() {
+      userData.isPremium = true;
+      localStorage.setItem("estudy_user", JSON.stringify(userData));
+      loadProfile();
+      alert("Pagamento verificado! Seu status PREMIUM foi ativado.");
+      closeModal("pixModal");
     }
 
-    function appendEmoji(emoji) {
-      document.getElementById('chat-input-text').value += emoji;
+    // --- CHAT GERAL ---
+    function sendMessage() {
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById("chatBox");
+      const msg = document.createElement("div");
+      msg.className = "chat-message";
+      msg.innerHTML = `<strong>${userData.name}:</strong> ${text}`;
+      chatBox.appendChild(msg);
+
+      input.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function switchChatMode(mode) {
-      const heading = document.getElementById('chat-title-heading');
-      if (mode === 'geral') heading.textContent = '💬 Chat Geral';
-      else if (mode === 'privado') heading.textContent = '🔒 Chat Privado (DM)';
-      else if (mode === 'grupo') heading.textContent = '👥 Grupos de Estudo';
-      document.getElementById('chat-mode-popup').classList.remove('show');
+    // --- DINOSSAUROS E DINHEIRO CAINDO ---
+    function initFallingEffects() {
+      const container = document.getElementById("fallingContainer");
+      const items = ["🦖", "🦕", "💵", "💰", "💸"];
+
+      setInterval(() => {
+        const el = document.createElement("div");
+        el.className = "falling-item";
+        el.innerText = items[Math.floor(Math.random() * items.length)];
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.animationDuration = Math.random() * 3 + 2 + "s";
+        container.appendChild(el);
+
+        setTimeout(() => {
+          el.remove();
+        }, 5000);
+      }, 600);
     }
 
-    function initChatEvents() {
-      const drawer = document.getElementById('chat-drawer');
-      document.getElementById('btn-open-chat').onclick = () => drawer.classList.add('open');
-      document.getElementById('btn-close-chat').onclick = () => drawer.classList.remove('open');
-
-      document.getElementById('btn-chat-float-menu').onclick = (e) => {
-        e.stopPropagation();
-        document.getElementById('chat-mode-popup').classList.toggle('show');
-      };
-
-      document.getElementById('btn-send-chat').onclick = () => {
-        const input = document.getElementById('chat-input-text');
-        if (input.value.trim()) {
-          const now = new Date();
-          const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-
-          appState.chatMessages.push({
-            sender: appState.profile.name,
-            text: input.value.trim(),
-            time: timeStr,
-            isPremium: appState.profile.isPremium,
-            nameClass: appState.profile.chatColorClass || 'chat-name-purple',
-            userId: appState.profile.id,
-            userBio: appState.profile.bio,
-            userSocials: appState.profile.socials
-          });
-
-          input.value = '';
-          renderChatMessages();
-          saveState();
-        }
-      };
+    // --- UTILITÁRIOS ---
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
     }
-
-    /* Seletor Único de Cor */
-    function initColorPalette() {
-      const trigger = document.getElementById('color-picker-trigger');
-      const menu = document.getElementById('color-palette-menu');
-      const display = document.getElementById('current-color-display');
-
-      trigger.onclick = (e) => {
-        e.stopPropagation();
-        menu.classList.toggle('show');
-      };
-
-      document.querySelectorAll('.palette-dot').forEach(dot => {
-        dot.onclick = (e) => {
-          e.stopPropagation();
-          const color = dot.dataset.color;
-          appState.color = color;
-          display.style.backgroundColor = color;
-          menu.classList.remove('show');
-        };
-      });
-    }
-
-    function closeDropdown() {
-      document.getElementById('app-dropdown').classList.remove('show');
-      document.getElementById('color-palette-menu').classList.remove('show');
-      document.getElementById('chat-mode-popup').classList.remove('show');
-    }
-
-    function initControls() {
-      window.onclick = () => closeDropdown();
-
-      document.getElementById('btn-toggle-sidebar').onclick = () => {
-        document.getElementById('sidebar').classList.toggle('closed');
-      };
-
-      document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(btn => {
-        btn.onclick = () => {
-          document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          appState.tool = btn.dataset.type;
-        };
-      });
-
-      document.querySelectorAll('.preset-btn').forEach(btn => {
-        btn.onclick = () => {
-          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          appState.brushSize = parseInt(btn.dataset.size);
-          document.getElementById('brush-size').value = appState.brushSize;
-        };
-      });
-
-      document.getElementById('brush-size').oninput = (e) => appState.brushSize = parseInt(e.target.value);
-
-      document.getElementById('btn-add-folder').onclick = () => {
-        const name = prompt('Nome da Pasta:');
-        if (name) {
-          appState.folders.push({
-            id: 'f_' + Date.now(),
-            name: name.trim(),
-            icon: '📁',
-            color: '#38bdf8',
-            parentId: null,
-            date: new Date().toLocaleDateString()
-          });
-          renderFolders(); saveState();
-        }
-      };
-
-      document.getElementById('btn-add-note').onclick = () => {
-        const n = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title: 'Nova Página', pagesData: [] };
-        appState.notes.push(n); appState.activeNoteId = n.id;
-        renderNotes(); loadActiveNoteContent(); saveState();
-      };
-
-      document.getElementById('btn-profile-options').onclick = (e) => {
-        e.stopPropagation();
-        const menu = document.getElementById('app-dropdown');
-        menu.innerHTML = `
-          <div class="dropdown-item" onclick="openProfileEdit()">✏️ Editar Perfil</div>
-          <div class="dropdown-item" onclick="togglePremiumMode()">👑 Modo Premium: ${appState.profile.isPremium ? 'Ativado' : 'Ativar'}</div>
-        `;
-        menu.style.top = e.clientY + 'px';
-        menu.style.left = e.clientX + 'px';
-        menu.classList.add('show');
-      };
-
-      document.querySelectorAll('.social-check').forEach(cb => {
-        cb.onchange = () => {
-          const key = cb.dataset.key;
-          const urlInput = document.getElementById(`url-${key}`);
-          if (cb.checked) {
-            const checkedCount = document.querySelectorAll('.social-check:checked').length;
-            if (checkedCount > 3) {
-              alert('Você só pode escolher no máximo 3 redes sociais!');
-              cb.checked = false;
-              return;
-            }
-            urlInput.style.display = 'block';
-          } else {
-            urlInput.style.display = 'none';
-          }
-        };
-      });
-
-      document.getElementById('btn-cancel-prof').onclick = () => document.getElementById('profile-modal').classList.remove('open');
-      
-      document.getElementById('btn-save-prof').onclick = () => {
-        const newName = document.getElementById('input-prof-name').value.trim();
-        const now = Date.now();
-
-        if (newName !== appState.profile.name) {
-          if (appState.profile.lastNameChange) {
-            const diffDays = (now - appState.profile.lastNameChange) / (1000 * 60 * 60 * 24);
-            if (diffDays < 7) {
-              alert('Você só pode alterar seu nome a cada 7 dias!');
-              return;
-            }
-          }
-          appState.profile.name = newName;
-          appState.profile.lastNameChange = now;
-        }
-
-        appState.profile.bio = document.getElementById('input-prof-bio').value;
-
-        if (appState.profile.isPremium) {
-          appState.profile.chatColorClass = document.getElementById('premium-chat-color-select').value;
-          
-          const selectedSocials = [];
-          document.querySelectorAll('.social-check:checked').forEach(cb => {
-            const key = cb.dataset.key;
-            const url = document.getElementById(`url-${key}`).value || '#';
-            selectedSocials.push({ name: cb.value, url: url });
-          });
-          appState.profile.socials = selectedSocials;
-        }
-
-        const avatarInput = document.getElementById('input-prof-avatar');
-        if (avatarInput.files && avatarInput.files[0]) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            appState.profile.avatarImg = e.target.result;
-            updateProfileUI(); renderChatMessages(); saveState();
-            document.getElementById('profile-modal').classList.remove('open');
-          };
-          reader.readAsDataURL(avatarInput.files[0]);
-        } else {
-          updateProfileUI(); renderChatMessages(); saveState();
-          document.getElementById('profile-modal').classList.remove('open');
-        }
-      };
-
-      document.getElementById('btn-export-pdf').onclick = () => {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const canvases = document.querySelectorAll('.paint-canvas');
-
-        canvases.forEach((c, index) => {
-          if (index > 0) pdf.addPage();
-          pdf.addImage(c.toDataURL('image/png'), 'PNG', 10, 10, 190, 250);
-        });
-
-        pdf.save('estudus_bem_anotacoes.pdf');
-      };
-    }
-
-    function openProfileEdit() {
-      document.getElementById('input-prof-id').value = appState.profile.id || 22;
-      document.getElementById('input-prof-name').value = appState.profile.name || '';
-      document.getElementById('input-prof-bio').value = appState.profile.bio || '';
-      
-      const premiumSocial = document.getElementById('premium-social-section');
-      const modalSocialLeft = document.getElementById('modal-social-left-display');
-
-      if (appState.profile.isPremium) {
-        premiumSocial.style.display = 'block';
-        document.getElementById('premium-chat-color-select').value = appState.profile.chatColorClass || 'chat-name-purple';
-
-        document.querySelectorAll('.social-check').forEach(cb => {
-          const key = cb.dataset.key;
-          const found = (appState.profile.socials || []).find(s => s.name === cb.value);
-          const urlInput = document.getElementById(`url-${key}`);
-          if (found) {
-            cb.checked = true;
-            urlInput.style.display = 'block';
-            urlInput.value = found.url || '';
-          } else {
-            cb.checked = false;
-            urlInput.style.display = 'none';
-            urlInput.value = '';
-          }
-        });
-
-        modalSocialLeft.innerHTML = (appState.profile.socials || []).map(s => SOCIAL_SVGS[s.name] ? `<span style="width:20px; height:20px; display:inline-block;">${SOCIAL_SVGS[s.name]}</span>` : '').join('');
-      } else {
-        premiumSocial.style.display = 'none';
-        modalSocialLeft.innerHTML = '';
-      }
-
-      document.getElementById('profile-modal').classList.add('open');
-      closeDropdown();
-    }
-
-    function togglePremiumMode() {
-      appState.profile.isPremium = !appState.profile.isPremium;
-      alert(appState.profile.isPremium ? '👑 Modo Premium Ativado!' : 'Modo Premium Desativado.');
-      updateProfileUI(); renderChatMessages(); saveState(); closeDropdown();
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      loadState();
-      initAudioRecorder();
-      initChatEvents();
-      initColorPalette();
-      initControls();
-      renderFolders();
-      renderNotes();
-      renderAudioList();
-      loadActiveNoteContent();
-    });
   </script>
 </body>
 </html>
