@@ -416,7 +416,9 @@
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          appState.profile = parsed.profile || appState.profile;
+          if (parsed.profile) {
+            appState.profile = { ...appState.profile, ...parsed.profile };
+          }
           appState.folders = parsed.folders || appState.folders;
           appState.notes = parsed.notes || appState.notes;
           appState.audios = parsed.audios || [];
@@ -431,7 +433,15 @@
 
     function saveState() {
       saveCurrentNoteData();
-      localStorage.setItem('estudus_bem_v6_data', JSON.stringify(appState));
+      localStorage.setItem('estudus_bem_v6_data', JSON.stringify({
+        profile: appState.profile,
+        folders: appState.folders,
+        notes: appState.notes,
+        audios: appState.audios,
+        chatMessages: appState.chatMessages,
+        activeFolderId: appState.activeFolderId,
+        activeNoteId: appState.activeNoteId
+      }));
     }
 
     function saveCurrentNoteData() {
@@ -676,7 +686,6 @@
         }
       }
 
-      // Eventos de Mouse e Toque/Dedo
       canvas.addEventListener('pointerdown', startStroke);
       canvas.addEventListener('pointermove', drawStroke);
       canvas.addEventListener('pointerup', stopStroke);
