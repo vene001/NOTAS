@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Caderno Digital & Anotações</title>
+  <title>Estudus_bem</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -10,29 +10,36 @@
     .app-layout { display: flex; height: 100vh; width: 100vw; }
 
     /* Sidebar */
-    .sidebar { width: 320px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; }
+    .sidebar { width: 330px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; }
     .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
     .brand { display: flex; align-items: center; gap: 8px; }
-    .brand h2 { font-size: 16px; font-weight: 700; color: #f8fafc; }
-    
-    .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; margin-bottom: 16px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
-    .user-profile:hover { border-color: #3b82f6; background: #182232; }
-    .user-avatar { width: 42px; height: 42px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; }
-    .user-info { display: flex; flex-direction: column; overflow: hidden; }
+    .brand h2 { font-size: 18px; font-weight: 700; color: #38bdf8; letter-spacing: -0.5px; }
+
+    /* Profile Card */
+    .user-card-container { position: relative; margin-bottom: 16px; }
+    .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; }
+    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 15px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
+    .user-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+    .user-name-box { display: flex; align-items: center; gap: 6px; }
     .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; }
     .user-bio { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 16px; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+    .menu-dots-btn:hover { background: #334155; color: #fff; }
 
     .section-title { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 8px; }
     .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
     .icon-btn:hover { background: #2563eb; }
 
     .folder-tree, .note-list, .audio-list { list-style: none; margin-bottom: 12px; }
-    .tree-item, .note-item, .audio-item { padding: 6px 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-    .tree-item:hover, .note-item:hover, .audio-item:hover { background: #334155; }
+    .tree-item, .note-item, .audio-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; border: 1px solid transparent; }
+    .tree-item:hover, .note-item:hover, .audio-item:hover { border-color: #3b82f6; }
     .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
 
-    .audio-item { background: #0f172a; border: 1px solid #334155; flex-direction: column; align-items: flex-start; gap: 4px; }
-    .audio-item-header { display: flex; justify-content: space-between; width: 100%; font-size: 11px; color: #38bdf8; }
+    .audio-item { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .audio-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .audio-title { font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; align-items: center; gap: 4px; }
 
     /* Area Principal */
     .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; }
@@ -41,7 +48,7 @@
     #note-title-input:focus { border-color: #3b82f6; background: #0f172a; }
 
     .actions-bar { display: flex; gap: 8px; align-items: center; }
-    .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; }
+    .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     .btn-secondary { background: #334155; color: #f8fafc; }
     .btn-secondary:hover { background: #475569; }
     .btn-danger-soft { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
@@ -50,7 +57,7 @@
     .audio-panel { background: #182232; padding: 8px 16px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; font-size: 12px; }
     #rec-timer { font-family: monospace; font-size: 14px; color: #ef4444; font-weight: bold; }
 
-    /* Barra de Ferramentas / Caderno */
+    /* Ferramentas */
     .drawing-toolbar { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 12px; flex-wrap: wrap; }
     .tool-group { display: flex; align-items: center; gap: 6px; }
     .tool-btn { background: #334155; color: #cbd5e1; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
@@ -61,34 +68,48 @@
     .color-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
     .color-dot.active { border-color: #ffffff; transform: scale(1.15); }
 
-    /* Viewport */
-    .canvas-viewport { flex: 1; overflow-y: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 30px; }
-    .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; transform-origin: top center; }
-    .paint-canvas { display: block; touch-action: none; }
+    /* Viewport / Caderno */
+    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; transform-origin: top center; transition: transform 0.05s ease-out; }
+    .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
+    .paint-canvas { display: block; touch-action: none; cursor: crosshair; }
 
-    /* Modal de Perfil */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
+    /* Dropdown Context Menu */
+    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100; min-width: 160px; overflow: hidden; }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item { padding: 10px 14px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .dropdown-item:hover { background: #2563eb; color: #fff; }
+
+    /* Modais */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal-card { background: #1e293b; width: 340px; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 14px; }
+    .modal-card { background: #1e293b; width: 360px; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 14px; }
     .modal-card h3 { font-size: 16px; color: #f8fafc; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group label { font-size: 12px; color: #94a3b8; }
     .form-group input, .form-group textarea { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 13px; }
+    .details-row { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid #334155; padding-bottom: 6px; color: #cbd5e1; }
   </style>
 </head>
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand"><span>📘</span><h2>FreeNotes Caderno</h2></div>
+        <div class="brand"><span>📚</span><h2>Estudus_bem</h2></div>
       </div>
 
-      <!-- Card Usuário Clivável -->
-      <div class="user-profile" id="btn-edit-profile" title="Clique para editar o perfil">
-        <div class="user-avatar" id="user-avatar">U</div>
-        <div class="user-info">
-          <span class="user-name" id="user-name">Usuário</span>
-          <span class="user-bio" id="user-bio">Toque para adicionar bio...</span>
+      <!-- Card do Usuário com ID e Três Pontinhos -->
+      <div class="user-card-container">
+        <div class="user-profile" id="user-profile-card">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <div class="user-info">
+            <div class="user-name-box">
+              <span class="user-name" id="user-name">Carregando...</span>
+              <span class="user-id-badge" id="user-id-badge">ID: 22</span>
+            </div>
+            <span class="user-bio" id="user-bio">...</span>
+          </div>
+          <button class="menu-dots-btn" id="btn-profile-options">⋮</button>
         </div>
       </div>
 
@@ -104,8 +125,9 @@
 
     <main class="main-editor">
       <header class="editor-header">
-        <div class="note-info">
-          <input type="text" id="note-title-input" value="Página de Caderno">
+        <div class="note-info" style="display:flex; align-items:center; gap:8px;">
+          <input type="text" id="note-title-input" value="Minha Nota">
+          <button id="btn-rename-note-top" class="btn btn-secondary" title="Renomear Nota">✏️</button>
         </div>
 
         <div class="actions-bar">
@@ -130,7 +152,6 @@
           <button class="tool-btn" data-type="eraser">🧹 Borracha</button>
         </div>
 
-        <!-- Atributos -->
         <div class="tool-group">
           <span style="font-size: 11px; color: #94a3b8;">Espessura:</span>
           <button class="preset-btn active" data-size="2">Fina</button>
@@ -139,7 +160,6 @@
           <input type="range" id="brush-size" min="1" max="30" value="2" style="width:60px;">
         </div>
 
-        <!-- Cores -->
         <div class="tool-group colors">
           <button class="color-dot active" data-color="#ffffff" style="background:#ffffff;"></button>
           <button class="color-dot" data-color="#38bdf8" style="background:#38bdf8;"></button>
@@ -149,33 +169,40 @@
           <input type="color" id="custom-color-picker" value="#ffffff" style="width:20px; height:20px; border:none; background:none;">
         </div>
 
-        <!-- Zoom -->
+        <!-- Zoom Corrigido -->
         <div class="tool-group" style="margin-left: auto;">
           <button id="btn-zoom-out" class="tool-btn">🔍 -</button>
-          <span id="zoom-val" style="font-size: 11px; color: #38bdf8;">100%</span>
+          <span id="zoom-val" style="font-size: 11px; color: #38bdf8; font-weight:bold;">100%</span>
           <button id="btn-zoom-in" class="tool-btn">🔍 +</button>
           <button id="btn-zoom-reset" class="tool-btn">Reset</button>
         </div>
       </div>
 
-      <!-- Container de Páginas Infinita (Scroll) -->
+      <!-- Viewport Infinita com Escala Corrigida -->
       <div class="canvas-viewport" id="viewport">
-        <div id="pages-container" style="display:flex; flex-direction:column; gap:30px; align-items:center;"></div>
+        <div class="pages-wrapper" id="pages-container"></div>
       </div>
     </main>
   </div>
+
+  <!-- Menu Dropdown Genérico -->
+  <div class="dropdown-menu" id="app-dropdown"></div>
 
   <!-- Modal do Perfil -->
   <div class="modal-overlay" id="profile-modal">
     <div class="modal-card">
       <h3>Editar Perfil</h3>
       <div class="form-group">
+        <label>ID do Perfil</label>
+        <input type="number" id="input-prof-id" value="22" min="1">
+      </div>
+      <div class="form-group">
         <label>Nome do Usuário</label>
-        <input type="text" id="input-prof-name" placeholder="Seu nome...">
+        <input type="text" id="input-prof-name">
       </div>
       <div class="form-group">
         <label>Biografia (Bio)</label>
-        <textarea id="input-prof-bio" rows="2" placeholder="Sua bio..."></textarea>
+        <textarea id="input-prof-bio" rows="2"></textarea>
       </div>
       <div class="form-group">
         <label>Foto de Perfil</label>
@@ -188,32 +215,53 @@
     </div>
   </div>
 
+  <!-- Modal de Detalhes do Áudio -->
+  <div class="modal-overlay" id="audio-details-modal">
+    <div class="modal-card">
+      <h3>Detalhes da Gravação</h3>
+      <div class="details-row"><span>Duração:</span><b id="det-duration">-</b></div>
+      <div class="details-row"><span>Horário:</span><b id="det-time">-</b></div>
+      <div class="details-row"><span>Dia:</span><b id="det-day">-</b></div>
+      <div class="details-row"><span>Mês:</span><b id="det-month">-</b></div>
+      <div class="details-row"><span>Ano:</span><b id="det-year">-</b></div>
+      <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+        <button class="btn btn-secondary" id="btn-close-details">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Sistema de Cálculo de Cor do ID
+    function getIdColor(id) {
+      const numId = parseInt(id) || 1;
+      if (numId >= 1 && numId <= 50) return '#8b5cf6';   // Roxa
+      if (numId >= 51 && numId <= 100) return '#22c55e';  // Verde
+      if (numId >= 101 && numId <= 200) return '#f97316'; // Laranja / Destaque
+      return '#ffffff';                                   // Branca
+    }
+
     const appState = {
-      profile: { name: 'Usuário', bio: 'Toque para editar bio', avatarImg: null },
-      folders: [
-        { id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null }
-      ],
-      notes: [
-        { id: 'n_1', folderId: 'f_root', title: 'Minhas Anotações', pagesData: [] }
-      ],
+      profile: { id: 22, name: 'Veneza_ kw', bio: 'Estudando com Estudus_bem', avatarImg: null, chatEnabled: true },
+      folders: [{ id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8' }],
+      notes: [{ id: 'n_1', folderId: 'f_root', title: 'Minha primeira nota', pagesData: [] }],
       audios: [],
       activeFolderId: 'f_root',
       activeNoteId: 'n_1',
       tool: 'pen',
       color: '#ffffff',
       brushSize: 2,
-      zoom: 1,
+      zoom: 1.0,
       isDrawing: false,
       activeCanvasCtx: null,
       lastPoint: null,
-      isAddingPage: false
+      isAddingPage: false,
+      selectedAudioId: null
     };
 
     let mediaRecorder, audioChunks = [], recInterval, recSeconds = 0;
 
     function loadState() {
-      const saved = localStorage.getItem('app_freenotes_data');
+      const saved = localStorage.getItem('estudus_bem_data');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -230,7 +278,7 @@
 
     function saveState() {
       saveCurrentNoteData();
-      localStorage.setItem('app_freenotes_data', JSON.stringify(appState));
+      localStorage.setItem('estudus_bem_data', JSON.stringify(appState));
     }
 
     function saveCurrentNoteData() {
@@ -243,15 +291,25 @@
     }
 
     function updateProfileUI() {
-      document.getElementById('user-name').textContent = appState.profile.name || 'Usuário';
-      document.getElementById('user-bio').textContent = appState.profile.bio || 'Sem bio...';
+      const p = appState.profile;
+      const color = getIdColor(p.id);
+
+      document.getElementById('user-name').textContent = p.name || 'Usuário';
+      document.getElementById('user-bio').textContent = p.bio || 'Sem biografia';
+      
+      const badge = document.getElementById('user-id-badge');
+      badge.textContent = `ID: ${p.id}`;
+      badge.style.color = color;
+      badge.style.borderColor = color;
+
       const avatarEl = document.getElementById('user-avatar');
-      if (appState.profile.avatarImg) {
-        avatarEl.style.backgroundImage = `url(${appState.profile.avatarImg})`;
+      avatarEl.style.backgroundColor = color;
+      if (p.avatarImg) {
+        avatarEl.style.backgroundImage = `url(${p.avatarImg})`;
         avatarEl.textContent = '';
       } else {
         avatarEl.style.backgroundImage = 'none';
-        avatarEl.textContent = (appState.profile.name || 'U').charAt(0).toUpperCase();
+        avatarEl.textContent = (p.name || 'U').charAt(0).toUpperCase();
       }
     }
 
@@ -275,7 +333,10 @@
       filtered.forEach(note => {
         const li = document.createElement('li');
         li.className = `note-item ${note.id === appState.activeNoteId ? 'active' : ''}`;
-        li.innerHTML = `<span>📝 ${note.title}</span>`;
+        li.innerHTML = `
+          <span>📝 ${note.title}</span>
+          <button class="menu-dots-btn" onclick="event.stopPropagation(); renameNotePrompt('${note.id}')">✏️</button>
+        `;
         li.onclick = () => {
           saveCurrentNoteData();
           appState.activeNoteId = note.id;
@@ -285,12 +346,25 @@
       });
     }
 
-    /* Adição Automática de Página ao Rolar (Scroll) */
+    function renameNotePrompt(noteId) {
+      const note = appState.notes.find(n => n.id === noteId);
+      if (!note) return;
+      const newTitle = prompt('Novo nome para a nota:', note.title);
+      if (newTitle && newTitle.trim()) {
+        note.title = newTitle.trim();
+        if (note.id === appState.activeNoteId) {
+          document.getElementById('note-title-input').value = note.title;
+        }
+        renderNotes();
+        saveState();
+      }
+    }
+
+    /* Renderização do Caderno & Início das Páginas */
     function createPageElement(initialData = null) {
       const container = document.getElementById('pages-container');
       const sheet = document.createElement('div');
       sheet.className = 'page-sheet';
-      sheet.style.transform = `scale(${appState.zoom})`;
 
       const canvas = document.createElement('canvas');
       canvas.className = 'paint-canvas';
@@ -328,7 +402,6 @@
       const viewport = document.getElementById('viewport');
       viewport.onscroll = () => {
         if (appState.isAddingPage) return;
-        // Adiciona página quando estiver a 150px do fim do scroll
         if (viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 150) {
           appState.isAddingPage = true;
           createPageElement();
@@ -338,23 +411,21 @@
       };
     }
 
-    /* Desenho com Escala de Zoom e Traço Suave */
+    /* Desenho com Cálculo de Coordenadas Ajustado ao Zoom */
     function bindCanvasEvents(canvas, ctx) {
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
 
       function getCoords(e) {
         const rect = canvas.getBoundingClientRect();
-        // Corrige o cálculo da coordenada X e Y de acordo com a escala aplicada
+        // Divisão pelo fator de zoom garante alinhamento do traço em qualquer zoom
         return {
-          x: (e.clientX - rect.left) * (canvas.width / rect.width),
-          y: (e.clientY - rect.top) * (canvas.height / rect.height)
+          x: (e.clientX - rect.left) / appState.zoom,
+          y: (e.clientY - rect.top) / appState.zoom
         };
       }
 
       function startStroke(e) {
-        if (e.pointerType !== 'pen' && e.pointerType !== 'stylus') return;
-
         appState.isDrawing = true;
         appState.activeCanvasCtx = ctx;
         appState.lastPoint = getCoords(e);
@@ -380,7 +451,7 @@
           ctx.moveTo(appState.lastPoint.x, appState.lastPoint.y);
           ctx.lineTo(currentPoint.x, currentPoint.y);
           ctx.stroke();
-        } else { // Caneta com Traço Suave (Suavização com Curva de Bézier)
+        } else {
           ctx.globalCompositeOperation = 'source-over';
           ctx.globalAlpha = 1.0;
           ctx.strokeStyle = appState.color;
@@ -415,7 +486,7 @@
       canvas.addEventListener('pointerleave', stopStroke);
     }
 
-    /* Gravador de Áudio com Suporte Local Melhorado */
+    /* Gravador com Captura Avançada de Microfone */
     function initAudioRecorder() {
       const btnRec = document.getElementById('btn-rec-audio');
       const btnStop = document.getElementById('btn-stop-audio');
@@ -424,26 +495,54 @@
       btnRec.onclick = async () => {
         try {
           if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            alert('Atenção: A gravação de áudio no navegador exige que o arquivo seja servido via HTTPS ou através de um servidor local (como Live Server do VSCode).');
+            alert('Atenção: A permissão de áudio está ativa, mas a captura nativa exige acesso HTTPS ou servidor local.');
             return;
           }
 
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
+          // Restrições explícitas de áudio ativas
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            }
+          });
+
+          // Garantia de habilitação da faixa de áudio
+          const audioTrack = stream.getAudioTracks()[0];
+          if (audioTrack) audioTrack.enabled = true;
+
+          let mimeType = 'audio/webm';
+          if (!MediaRecorder.isTypeSupported('audio/webm')) {
+            if (MediaRecorder.isTypeSupported('audio/mp4')) mimeType = 'audio/mp4';
+            else mimeType = '';
+          }
+
+          mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
           audioChunks = [];
 
-          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.ondataavailable = e => {
+            if (e.data.size > 0) audioChunks.push(e.data);
+          };
+
           mediaRecorder.onstop = () => {
-            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
             const reader = new FileReader();
             reader.onloadend = () => {
+              const now = new Date();
               const mins = Math.floor(recSeconds / 60).toString().padStart(2, '0');
               const secs = (recSeconds % 60).toString().padStart(2, '0');
-              
+
+              const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
               appState.audios.unshift({
                 id: 'aud_' + Date.now(),
-                name: `Áudio ${appState.audios.length + 1}`,
+                name: `Gravação ${appState.audios.length + 1}`,
                 duration: `${mins}:${secs}`,
+                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                day: now.getDate().toString().padStart(2, '0'),
+                month: months[now.getMonth()],
+                year: now.getFullYear(),
                 src: reader.result
               });
 
@@ -454,7 +553,7 @@
             stream.getTracks().forEach(t => t.stop());
           };
 
-          mediaRecorder.start();
+          mediaRecorder.start(200); // Coleta dados a cada 200ms
           recSeconds = 0;
           timer.style.display = 'inline';
           timer.textContent = '00:00';
@@ -468,7 +567,7 @@
           btnRec.disabled = true;
           btnStop.disabled = false;
         } catch(err) {
-          alert('Erro de Permissão: Verifique se o microfone foi liberado nas configurações do site no seu navegador.');
+          alert('Erro ao capturar áudio do microfone: Verifique se outro aplicativo não está utilizando o microfone.');
         }
       };
 
@@ -492,9 +591,9 @@
         const li = document.createElement('li');
         li.className = 'audio-item';
         li.innerHTML = `
-          <div class="audio-item-header">
-            <span>🎙️ ${aud.name}</span>
-            <span>⏱️ ${aud.duration}</span>
+          <div class="audio-header-row">
+            <span class="audio-title">🎙️ ${aud.name}</span>
+            <button class="menu-dots-btn" onclick="openAudioMenu(event, '${aud.id}')">⋮</button>
           </div>
           <audio src="${aud.src}" controls style="width:100%; height:26px; margin-top:4px;"></audio>
         `;
@@ -502,22 +601,82 @@
       });
     }
 
-    /* Modal do Perfil */
-    function initProfileModal() {
-      const modal = document.getElementById('profile-modal');
-      const btnOpen = document.getElementById('btn-edit-profile');
-      const btnCancel = document.getElementById('btn-cancel-prof');
-      const btnSave = document.getElementById('btn-save-prof');
+    /* Menu Dropdown e Opções de Áudio */
+    function openAudioMenu(e, audioId) {
+      e.stopPropagation();
+      appState.selectedAudioId = audioId;
+      const menu = document.getElementById('app-dropdown');
+      menu.innerHTML = `
+        <div class="dropdown-item" onclick="renameAudio('${audioId}')">✏️ Renomear</div>
+        <div class="dropdown-item" onclick="showAudioDetails('${audioId}')">ℹ️ Detalhes</div>
+        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteAudio('${audioId}')">🗑️ Excluir</div>
+      `;
+      menu.style.top = e.clientY + 'px';
+      menu.style.left = e.clientX + 'px';
+      menu.classList.add('show');
+    }
 
-      btnOpen.onclick = () => {
-        document.getElementById('input-prof-name').value = appState.profile.name || '';
-        document.getElementById('input-prof-bio').value = appState.profile.bio || '';
-        modal.classList.add('open');
+    function renameAudio(id) {
+      const aud = appState.audios.find(a => a.id === id);
+      if (!aud) return;
+      const name = prompt('Novo nome para o áudio:', aud.name);
+      if (name && name.trim()) {
+        aud.name = name.trim();
+        renderAudioList();
+        saveState();
+      }
+      closeDropdown();
+    }
+
+    function showAudioDetails(id) {
+      const aud = appState.audios.find(a => a.id === id);
+      if (!aud) return;
+      document.getElementById('det-duration').textContent = aud.duration || '00:00';
+      document.getElementById('det-time').textContent = aud.time || 'N/A';
+      document.getElementById('det-day').textContent = aud.day || 'N/A';
+      document.getElementById('det-month').textContent = aud.month || 'N/A';
+      document.getElementById('det-year').textContent = aud.year || 'N/A';
+      
+      document.getElementById('audio-details-modal').classList.add('open');
+      closeDropdown();
+    }
+
+    function deleteAudio(id) {
+      if (confirm('Deseja excluir esta gravação de áudio?')) {
+        appState.audios = appState.audios.filter(a => a.id !== id);
+        renderAudioList();
+        saveState();
+      }
+      closeDropdown();
+    }
+
+    function closeDropdown() {
+      document.getElementById('app-dropdown').classList.remove('show');
+    }
+
+    /* Modal do Perfil e Menu dos Três Pontinhos no Perfil */
+    function initProfileEvents() {
+      const btnProfileDots = document.getElementById('btn-profile-options');
+      const profileModal = document.getElementById('profile-modal');
+
+      btnProfileDots.onclick = (e) => {
+        e.stopPropagation();
+        const menu = document.getElementById('app-dropdown');
+        const isChatOn = appState.profile.chatEnabled !== false;
+        menu.innerHTML = `
+          <div class="dropdown-item" onclick="openProfileEdit()">✏️ Editar Perfil</div>
+          <div class="dropdown-item" onclick="toggleGeneralChat()">💬 Chat Geral: ${isChatOn ? '🟢 Ativo' : '🔴 Desativado'}</div>
+        `;
+        menu.style.top = e.clientY + 'px';
+        menu.style.left = e.clientX + 'px';
+        menu.classList.add('show');
       };
 
-      btnCancel.onclick = () => modal.classList.remove('open');
+      document.getElementById('btn-cancel-prof').onclick = () => profileModal.classList.remove('open');
+      document.getElementById('btn-close-details').onclick = () => document.getElementById('audio-details-modal').classList.remove('open');
 
-      btnSave.onclick = () => {
+      document.getElementById('btn-save-prof').onclick = () => {
+        appState.profile.id = parseInt(document.getElementById('input-prof-id').value) || 22;
         appState.profile.name = document.getElementById('input-prof-name').value;
         appState.profile.bio = document.getElementById('input-prof-bio').value;
 
@@ -528,33 +687,50 @@
             appState.profile.avatarImg = e.target.result;
             updateProfileUI();
             saveState();
-            modal.classList.remove('open');
+            profileModal.classList.remove('open');
           };
           reader.readAsDataURL(avatarInput.files[0]);
         } else {
           updateProfileUI();
           saveState();
-          modal.classList.remove('open');
+          profileModal.classList.remove('open');
         }
       };
     }
 
-    /* Controles de Zoom e Botoes */
+    function openProfileEdit() {
+      document.getElementById('input-prof-id').value = appState.profile.id || 22;
+      document.getElementById('input-prof-name').value = appState.profile.name || '';
+      document.getElementById('input-prof-bio').value = appState.profile.bio || '';
+      document.getElementById('profile-modal').classList.add('open');
+      closeDropdown();
+    }
+
+    function toggleGeneralChat() {
+      appState.profile.chatEnabled = !(appState.profile.chatEnabled !== false);
+      alert(`Opção de Chat Geral ${appState.profile.chatEnabled ? 'ATIVADA' : 'DESATIVADA'} com sucesso!`);
+      saveState();
+      closeDropdown();
+    }
+
+    /* Zoom sem Desproporção */
     function initZoom() {
       const val = document.getElementById('zoom-val');
+      const pagesContainer = document.getElementById('pages-container');
+
       function updateZoom() {
-        document.querySelectorAll('.page-sheet').forEach(sheet => {
-          sheet.style.transform = `scale(${appState.zoom})`;
-        });
+        pagesContainer.style.transform = `scale(${appState.zoom})`;
         val.textContent = Math.round(appState.zoom * 100) + '%';
       }
 
-      document.getElementById('btn-zoom-in').onclick = () => { appState.zoom = Math.min(2.0, appState.zoom + 0.1); updateZoom(); };
-      document.getElementById('btn-zoom-out').onclick = () => { appState.zoom = Math.max(0.5, appState.zoom - 0.1); updateZoom(); };
-      document.getElementById('btn-zoom-reset').onclick = () => { appState.zoom = 1; updateZoom(); };
+      document.getElementById('btn-zoom-in').onclick = () => { appState.zoom = Math.min(2.5, appState.zoom + 0.1); updateZoom(); };
+      document.getElementById('btn-zoom-out').onclick = () => { appState.zoom = Math.max(0.4, appState.zoom - 0.1); updateZoom(); };
+      document.getElementById('btn-zoom-reset').onclick = () => { appState.zoom = 1.0; updateZoom(); };
     }
 
     function initControls() {
+      window.onclick = () => closeDropdown();
+
       document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(btn => {
         btn.onclick = () => {
           document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(b => b.classList.remove('active'));
@@ -587,8 +763,7 @@
       document.getElementById('btn-add-folder').onclick = () => {
         const name = prompt('Nome do Caderno:');
         if (name) {
-          const color = prompt('Cor Hexadecimal para o caderno:', '#38bdf8') || '#38bdf8';
-          appState.folders.push({ id: 'f_' + Date.now(), name, icon: '📁', color: color, parentId: null });
+          appState.folders.push({ id: 'f_' + Date.now(), name, icon: '📁', color: '#38bdf8' });
           renderFolders(); saveState();
         }
       };
@@ -599,6 +774,7 @@
         renderNotes(); loadActiveNoteContent(); saveState();
       };
 
+      document.getElementById('btn-rename-note-top').onclick = () => renameNotePrompt(appState.activeNoteId);
       document.getElementById('note-title-input').onchange = () => { saveState(); renderNotes(); };
 
       document.getElementById('btn-export-pdf').onclick = () => {
@@ -611,7 +787,7 @@
           pdf.addImage(c.toDataURL('image/png'), 'PNG', 10, 10, 190, 250);
         });
 
-        pdf.save('caderno_anotacoes.pdf');
+        pdf.save('estudus_bem_caderno.pdf');
       };
     }
 
@@ -619,7 +795,7 @@
       loadState();
       initAudioRecorder();
       initInfiniteScroll();
-      initProfileModal();
+      initProfileEvents();
       initZoom();
       initControls();
       renderFolders();
