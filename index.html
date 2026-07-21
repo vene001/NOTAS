@@ -9,104 +9,124 @@
     body { background-color: #0f172a; color: #f1f5f9; height: 100vh; overflow: hidden; user-select: none; }
     .app-layout { display: flex; height: 100vh; width: 100vw; position: relative; }
 
-    /* Sidebar Deslizante / Drawer */
+    /* Sidebar Deslizante */
     .sidebar { width: 320px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; position: absolute; left: 0; top: 0; bottom: 0; z-index: 200; transition: transform 0.3s ease; }
     .sidebar.closed { transform: translateX(-100%); }
-    .sidebar-toggle-btn { position: absolute; right: -36px; top: 12px; background: #1e293b; border: 1px solid #334155; border-left: none; color: #38bdf8; width: 36px; height: 36px; border-radius: 0 8px 8px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; z-index: 201; }
+    
+    /* Puxador da Sidebar quando fechada */
+    .sidebar-toggle-btn { position: fixed; left: 0; top: 12px; background: #1e293b; border: 1px solid #334155; border-left: none; color: #38bdf8; width: 38px; height: 38px; border-radius: 0 8px 8px 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; z-index: 250; box-shadow: 2px 0 10px rgba(0,0,0,0.3); }
 
     .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
     .brand { display: flex; align-items: center; gap: 8px; }
     .brand h2 { font-size: 18px; font-weight: 700; color: #38bdf8; }
 
     /* Card do Perfil */
-    .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; margin-bottom: 16px; }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
+    .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; margin-bottom: 16px; position: relative; }
+    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
     .user-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
     .user-name-box { display: flex; align-items: center; gap: 6px; }
     .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-name.gold-name { background: linear-gradient(90deg, #ffd700, #ffa500, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; animation: shimmer 2s infinite linear; }
+    
+    @keyframes shimmer { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+
     .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; }
     .user-bio { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
+    .social-icons-preview { display: flex; gap: 4px; margin-top: 4px; }
+    .social-icon-badge { font-size: 12px; }
+
     .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 15px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
     .menu-dots-btn:hover { background: #334155; color: #fff; }
 
     .section-title { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 8px; }
     .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
-    .icon-btn:hover { background: #2563eb; }
 
-    /* Listas Arrastáveis (Folders / Notes / Audios) */
+    /* Listas Arrastáveis */
     .folder-tree, .note-list, .audio-list { list-style: none; margin-bottom: 12px; }
     .tree-item, .note-item, .audio-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: grab; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; border: 1px solid transparent; }
-    .tree-item.dragging { opacity: 0.5; border: 1px dashed #38bdf8; }
     .tree-item.subfolder { margin-left: 16px; border-left: 2px solid #334155; }
-    .tree-item:hover, .note-item:hover, .audio-item:hover { border-color: #3b82f6; }
     .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
 
-    .audio-item { flex-direction: column; align-items: flex-start; gap: 6px; cursor: default; }
-    .audio-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .audio-item { flex-direction: column; align-items: flex-start; gap: 6px; }
 
     /* Área Principal */
-    .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; margin-left: 0; transition: margin-left 0.3s ease; }
-    .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 48px; }
+    .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; }
+    .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 52px; position: relative; }
     #note-title-input { background: transparent; border: 1px solid transparent; color: #f8fafc; font-size: 16px; font-weight: 600; padding: 4px 8px; border-radius: 4px; outline: none; }
-    #note-title-input:focus { border-color: #3b82f6; background: #0f172a; }
+
+    /* Chat Geral Centralizado */
+    .header-center-chat { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; }
+    .btn-chat-center { background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px; padding: 6px 16px; font-size: 14px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
 
     .actions-bar { display: flex; gap: 8px; align-items: center; }
     .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     .btn-secondary { background: #334155; color: #f8fafc; }
-    .btn-secondary:hover { background: #475569; }
-    .btn-chat { background: #059669; color: white; border-radius: 50%; width: 34px; height: 34px; justify-content: center; font-size: 16px; border: none; cursor: pointer; }
 
     /* Gravador */
     .audio-panel { background: #182232; padding: 8px 16px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; font-size: 12px; }
-    #rec-timer { font-family: monospace; font-size: 14px; color: #ef4444; font-weight: bold; }
 
     /* Ferramentas */
-    .drawing-toolbar { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 12px; flex-wrap: wrap; }
+    .drawing-toolbar { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 16px; }
     .tool-group { display: flex; align-items: center; gap: 6px; }
     .tool-btn { background: #334155; color: #cbd5e1; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
     .tool-btn.active { background: #2563eb; color: #ffffff; font-weight: 600; }
     .preset-btn { background: #0f172a; border: 1px solid #334155; color: #cbd5e1; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
-    .preset-btn.active { border-color: #38bdf8; color: #38bdf8; }
 
-    .color-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
-    .color-dot.active { border-color: #ffffff; transform: scale(1.15); }
+    /* Seletor de Única Cor */
+    .single-color-wrapper { position: relative; display: flex; align-items: center; gap: 6px; cursor: pointer; background: #0f172a; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; }
+    .current-color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
+    .color-dropdown-palette { display: none; position: absolute; top: 36px; left: 0; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; gap: 8px; grid-template-columns: repeat(4, 1fr); z-index: 400; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    .color-dropdown-palette.show { display: grid; }
+    .palette-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
 
-    /* Viewport Caderno */
+    /* Caderno */
     .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; transform-origin: top center; }
+    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; }
     .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
     .paint-canvas { display: block; touch-action: none; cursor: crosshair; }
 
-    /* Chat Geral Modal/Painel Lateral */
+    /* Chat Geral Lateral */
     .chat-drawer { position: fixed; right: -360px; top: 0; bottom: 0; width: 340px; background: #1e293b; border-left: 1px solid #334155; z-index: 300; display: flex; flex-direction: column; transition: right 0.3s ease; }
     .chat-drawer.open { right: 0; }
     .chat-header { padding: 14px; background: #0f172a; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
     .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .chat-msg { background: #0f172a; padding: 8px 12px; border-radius: 8px; font-size: 12px; max-width: 85%; }
+    
+    .chat-msg { background: #0f172a; padding: 8px 12px; border-radius: 8px; font-size: 12px; max-width: 85%; position: relative; }
     .chat-msg.me { align-self: flex-end; background: #2563eb; }
-    .chat-footer { padding: 10px; background: #0f172a; border-top: 1px solid #334155; display: flex; gap: 6px; align-items: center; }
+    
+    /* Efeito Premium Flutuante */
+    .chat-msg.premium-msg { animation: floatMsg 3s ease-in-out infinite alternate; border: 1px solid #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+    @keyframes floatMsg { 0% { transform: translateY(0px); } 100% { transform: translateY(-5px); } }
+
+    .chat-footer { padding: 10px; background: #0f172a; border-top: 1px solid #334155; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .chat-input { flex: 1; background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
 
-    /* Context Menu / Modais */
-    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 160px; overflow: hidden; }
+    /* Dropdown / Modais */
+    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 170px; }
     .dropdown-menu.show { display: block; }
     .dropdown-item { padding: 10px 14px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     .dropdown-item:hover { background: #2563eb; color: #fff; }
 
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal-card { background: #1e293b; width: 360px; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 12px; color: #94a3b8; }
-    .form-group input, .form-group textarea { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 13px; }
+    .modal-card { background: #1e293b; width: 400px; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 12px; position: relative; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 11px; color: #94a3b8; }
+    .form-group input, .form-group textarea { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
+
+    /* Modais Footer com Social Links à Esquerda */
+    .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    .modal-social-left { display: flex; gap: 6px; align-items: center; }
+    .social-select-btn { background: #0f172a; border: 1px solid #334155; color: #fff; padding: 4px 6px; border-radius: 4px; font-size: 12px; cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="app-layout">
-    <!-- Sidebar Deslizante com Puxador -->
+    <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Abrir/Fechar Pastas">📁</button>
+
+    <!-- Sidebar Deslizante -->
     <aside class="sidebar" id="sidebar">
-      <button class="sidebar-toggle-btn" id="btn-toggle-sidebar">📁</button>
       <div class="sidebar-header">
         <div class="brand"><span>📚</span><h2>Estudus_bem</h2></div>
       </div>
@@ -120,6 +140,7 @@
             <span class="user-id-badge" id="user-id-badge">ID: 22</span>
           </div>
           <span class="user-bio" id="user-bio">...</span>
+          <div class="social-icons-preview" id="social-icons-preview"></div>
         </div>
         <button class="menu-dots-btn" id="btn-profile-options">⋮</button>
       </div>
@@ -136,11 +157,13 @@
 
     <main class="main-editor">
       <header class="editor-header">
-        <div class="note-info" style="display:flex; align-items:center; gap:8px;">
+        <div style="display:flex; align-items:center; gap:8px;">
           <input type="text" id="note-title-input" value="Minha Nota">
-          <button id="btn-rename-note-top" class="btn btn-secondary" title="Renomear Nota">✏️</button>
-          <!-- Ícone do Chat Geral -->
-          <button id="btn-open-chat" class="btn-chat" style="display:none;" title="Chat Geral">💬</button>
+        </div>
+
+        <!-- Chat Geral no Centro da Tela -->
+        <div class="header-center-chat">
+          <button id="btn-open-chat" class="btn-chat-center">💬 Chat Geral</button>
         </div>
 
         <div class="actions-bar">
@@ -153,7 +176,7 @@
         <span>🎙️ Gravador de Áudio:</span>
         <button id="btn-rec-audio" class="btn btn-secondary">🔴 Iniciar Gravação</button>
         <button id="btn-stop-audio" class="btn btn-secondary" style="background:rgba(239,68,68,0.2); color:#fca5a5;" disabled>⏹️ Parar e Salvar</button>
-        <span id="rec-timer" style="display:none;">00:00</span>
+        <span id="rec-timer" style="display:none; font-family:monospace; font-weight:bold; color:#ef4444;">00:00</span>
       </div>
 
       <!-- Barra de Ferramentas de Escrita -->
@@ -172,25 +195,25 @@
           <input type="range" id="brush-size" min="1" max="30" value="2" style="width:60px;">
         </div>
 
-        <div class="tool-group colors">
-          <button class="color-dot active" data-color="#ffffff" style="background:#ffffff;"></button>
-          <button class="color-dot" data-color="#38bdf8" style="background:#38bdf8;"></button>
-          <button class="color-dot" data-color="#ef4444" style="background:#ef4444;"></button>
-          <button class="color-dot" data-color="#22c55e" style="background:#22c55e;"></button>
-          <button class="color-dot" data-color="#eab308" style="background:#eab308;"></button>
-          <input type="color" id="custom-color-picker" value="#ffffff" style="width:20px; height:20px; border:none; background:none;">
-        </div>
+        <!-- Botão Único de Seleção de Cores -->
+        <div class="single-color-wrapper" id="color-picker-trigger">
+          <div class="current-color-dot" id="current-color-display" style="background:#ffffff;"></div>
+          <span style="font-size:11px; color:#cbd5e1;">Cor ▾</span>
 
-        <!-- Zoom -->
-        <div class="tool-group" style="margin-left: auto;">
-          <button id="btn-zoom-out" class="tool-btn">🔍 -</button>
-          <span id="zoom-val" style="font-size: 11px; color: #38bdf8; font-weight:bold;">100%</span>
-          <button id="btn-zoom-in" class="tool-btn">🔍 +</button>
-          <button id="btn-zoom-reset" class="tool-btn">Reset</button>
+          <div class="color-dropdown-palette" id="color-palette-menu">
+            <div class="palette-dot" data-color="#ffffff" style="background:#ffffff;"></div>
+            <div class="palette-dot" data-color="#38bdf8" style="background:#38bdf8;"></div>
+            <div class="palette-dot" data-color="#ef4444" style="background:#ef4444;"></div>
+            <div class="palette-dot" data-color="#22c55e" style="background:#22c55e;"></div>
+            <div class="palette-dot" data-color="#eab308" style="background:#eab308;"></div>
+            <div class="palette-dot" data-color="#a855f7" style="background:#a855f7;"></div>
+            <div class="palette-dot" data-color="#ec4899" style="background:#ec4899;"></div>
+            <div class="palette-dot" data-color="#000000" style="background:#000000;"></div>
+          </div>
         </div>
       </div>
 
-      <!-- Viewport Infinita com Escala Corrigida -->
+      <!-- Viewport Caderno -->
       <div class="canvas-viewport" id="viewport">
         <div class="pages-wrapper" id="pages-container"></div>
       </div>
@@ -203,11 +226,14 @@
       <h3 style="font-size:14px; color:#38bdf8;">💬 Chat Geral (Estudus_bem)</h3>
       <button class="menu-dots-btn" id="btn-close-chat">✖</button>
     </div>
-    <div class="chat-messages" id="chat-messages">
-      <div class="chat-msg"><b>Comunidade:</b> Bem-vindo ao Chat Geral do Estudus_bem!</div>
-    </div>
+    <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-footer">
-      <button class="btn btn-secondary" onclick="alert('Figurinhas são exclusivas do Plano Premium!')">😃 Premium</button>
+      <div style="width:100%; display:flex; gap:4px; margin-bottom:4px;">
+        <button class="btn btn-secondary" onclick="appendEmoji('🦖')">🦖</button>
+        <button class="btn btn-secondary" onclick="appendEmoji('🔥')">🔥</button>
+        <button class="btn btn-secondary" onclick="appendEmoji('📚')">📚</button>
+        <button class="btn btn-secondary" onclick="appendEmoji('💡')">💡</button>
+      </div>
       <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem...">
       <button class="btn" style="background:#2563eb; color:white;" id="btn-send-chat">Enviar</button>
     </div>
@@ -221,12 +247,13 @@
     <div class="modal-card">
       <h3 style="color:#fff;">Editar Perfil</h3>
       <div class="form-group">
-        <label>ID do Perfil</label>
-        <input type="number" id="input-prof-id" value="22" min="1">
+        <label>ID do Perfil (Fixo)</label>
+        <input type="number" id="input-prof-id" disabled style="opacity:0.6;">
       </div>
       <div class="form-group">
-        <label>Nome do Usuário</label>
+        <label>Nome do Usuário (Troca permitida a cada 7 dias)</label>
         <input type="text" id="input-prof-name">
+        <span id="name-lock-warning" style="font-size:10px; color:#f87171; display:none;">Você alterou seu nome recentemente. Aguarde 7 dias para trocar novamente.</span>
       </div>
       <div class="form-group">
         <label>Biografia (Bio)</label>
@@ -236,20 +263,28 @@
         <label>Foto de Perfil</label>
         <input type="file" id="input-prof-avatar" accept="image/*">
       </div>
-      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:10px;">
-        <button class="btn btn-secondary" id="btn-cancel-prof">Cancelar</button>
-        <button class="btn" style="background:#2563eb; color:white;" id="btn-save-prof">Salvar</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Modal Detalhes -->
-  <div class="modal-overlay" id="details-modal">
-    <div class="modal-card">
-      <h3 style="color:#fff;" id="det-title">Detalhes</h3>
-      <div style="display:flex; flex-direction:column; gap:8px; font-size:13px; color:#cbd5e1;" id="det-body"></div>
-      <div style="display:flex; justify-content:flex-end; margin-top:10px;">
-        <button class="btn btn-secondary" id="btn-close-details">Fechar</button>
+      <!-- Configuração de Redes Sociais no Modal -->
+      <div id="premium-social-section" class="form-group" style="display:none; border-top:1px solid #334155; padding-top:8px;">
+        <label style="color:#ffd700; font-weight:bold;">👑 Redes Sociais Premium (Máx 3):</label>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:11px;" id="social-checkboxes">
+          <label><input type="checkbox" value="WhatsApp" data-icon="💬"> WhatsApp</label>
+          <label><input type="checkbox" value="Instagram" data-icon="📸"> Instagram</label>
+          <label><input type="checkbox" value="TikTok" data-icon="🎵"> TikTok</label>
+          <label><input type="checkbox" value="X (Twitter)" data-icon="🐦"> X (Twitter)</label>
+          <label><input type="checkbox" value="Facebook" data-icon="📘"> Facebook</label>
+          <label><input type="checkbox" value="Discord" data-icon="👾"> Discord</label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <!-- Social Icons posicionados à esquerda no footer -->
+        <div class="modal-social-left" id="modal-social-left-display"></div>
+
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary" id="btn-cancel-prof">Cancelar</button>
+          <button class="btn" style="background:#2563eb; color:white;" id="btn-save-prof">Salvar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -263,37 +298,36 @@
       return '#ffffff';
     }
 
-    function hexToRgba(hex, alpha) {
-      let c = hex.replace('#', '');
-      if (c.length === 3) c = c.split('').map(x => x + x).join('');
-      const num = parseInt(c, 16);
-      return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
-    }
-
     const appState = {
-      profile: { id: 22, name: 'Veneza_ kw', bio: 'Estudando com Estudus_bem', avatarImg: null, chatEnabled: true },
-      folders: [
-        { id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null, date: new Date().toLocaleDateString() }
-      ],
+      profile: {
+        id: 22,
+        name: 'Veneza_ kw',
+        bio: 'Estudando com Estudus_bem',
+        avatarImg: null,
+        isPremium: false,
+        lastNameChange: null,
+        socials: []
+      },
+      folders: [{ id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null, date: new Date().toLocaleDateString() }],
       notes: [{ id: 'n_1', folderId: 'f_root', title: 'Minha primeira nota', pagesData: [] }],
       audios: [],
+      chatMessages: [
+        { sender: 'Comunidade', text: 'Bem-vindo ao Chat Geral do Estudus_bem! 🦖', isPremium: false }
+      ],
       activeFolderId: 'f_root',
       activeNoteId: 'n_1',
       tool: 'pen',
       color: '#ffffff',
       brushSize: 2,
-      zoom: 1.0,
       isDrawing: false,
       activeCanvasCtx: null,
-      pointsBuffer: [],
-      isAddingPage: false,
-      draggedFolderId: null
+      pointsBuffer: []
     };
 
     let mediaRecorder, audioChunks = [], recInterval, recSeconds = 0;
 
     function loadState() {
-      const saved = localStorage.getItem('estudus_bem_v3_data');
+      const saved = localStorage.getItem('estudus_bem_v4_data');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -301,16 +335,18 @@
           appState.folders = parsed.folders || appState.folders;
           appState.notes = parsed.notes || appState.notes;
           appState.audios = parsed.audios || [];
+          appState.chatMessages = parsed.chatMessages || appState.chatMessages;
           appState.activeFolderId = parsed.activeFolderId || appState.folders[0].id;
           appState.activeNoteId = parsed.activeNoteId || appState.notes[0]?.id;
         } catch(e) {}
       }
       updateProfileUI();
+      renderChatMessages();
     }
 
     function saveState() {
       saveCurrentNoteData();
-      localStorage.setItem('estudus_bem_v3_data', JSON.stringify(appState));
+      localStorage.setItem('estudus_bem_v4_data', JSON.stringify(appState));
     }
 
     function saveCurrentNoteData() {
@@ -326,7 +362,11 @@
       const p = appState.profile;
       const color = getIdColor(p.id);
 
-      document.getElementById('user-name').textContent = p.name || 'Usuário';
+      const nameEl = document.getElementById('user-name');
+      nameEl.textContent = p.name || 'Usuário';
+      if (p.isPremium) nameEl.classList.add('gold-name');
+      else nameEl.classList.remove('gold-name');
+
       document.getElementById('user-bio').textContent = p.bio || 'Sem biografia';
       
       const badge = document.getElementById('user-id-badge');
@@ -344,10 +384,19 @@
         avatarEl.textContent = (p.name || 'U').charAt(0).toUpperCase();
       }
 
-      document.getElementById('btn-open-chat').style.display = p.chatEnabled !== false ? 'flex' : 'none';
+      // Renderizar Ícones das Redes Sociais no Perfil
+      const socialContainer = document.getElementById('social-icons-preview');
+      socialContainer.innerHTML = '';
+      (p.socials || []).forEach(soc => {
+        const span = document.createElement('span');
+        span.className = 'social-icon-badge';
+        span.title = soc.name;
+        span.textContent = soc.icon;
+        socialContainer.appendChild(span);
+      });
     }
 
-    /* Gestão e Renderização de Pastas / Subpastas Arrastáveis */
+    /* Pastas */
     function renderFolders() {
       const container = document.getElementById('folder-tree');
       container.innerHTML = '';
@@ -358,60 +407,30 @@
         const subs = appState.folders.filter(f => f.parentId === parent.id);
         subs.forEach(sub => container.appendChild(createFolderDOM(sub, true)));
       });
-
-      initFolderDragEvents();
     }
 
     function createFolderDOM(folder, isSub) {
       const li = document.createElement('li');
       li.className = `tree-item ${isSub ? 'subfolder' : ''} ${folder.id === appState.activeFolderId ? 'active' : ''}`;
-      li.draggable = true;
-      li.dataset.id = folder.id;
-
       li.innerHTML = `
         <span style="color:${folder.color || '#38bdf8'}; font-weight:bold;">${folder.icon || '📁'} ${folder.name}</span>
         <button class="menu-dots-btn" onclick="openFolderMenu(event, '${folder.id}', ${isSub})">⋮</button>
       `;
-
       li.onclick = () => {
         appState.activeFolderId = folder.id;
-        renderFolders();
-        renderNotes();
+        renderFolders(); renderNotes();
       };
-
-      // Long Press (Segurar pasta)
-      let timer;
-      li.addEventListener('touchstart', (e) => {
-        timer = setTimeout(() => openFolderMenu(e.touches[0], folder.id, isSub), 600);
-      });
-      li.addEventListener('touchend', () => clearTimeout(timer));
-      li.addEventListener('mousedown', (e) => {
-        if(e.button === 0) timer = setTimeout(() => openFolderMenu(e, folder.id, isSub), 600);
-      });
-      li.addEventListener('mouseup', () => clearTimeout(timer));
-
       return li;
     }
 
     function openFolderMenu(e, folderId, isSub) {
-      if(e.stopPropagation) e.stopPropagation();
+      e.stopPropagation();
       const menu = document.getElementById('app-dropdown');
-      
-      if (!isSub) {
-        menu.innerHTML = `
-          <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
-          <div class="dropdown-item" onclick="createSubfolder('${folderId}')">➕ Criar Subpasta</div>
-          <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
-        `;
-      } else {
-        menu.innerHTML = `
-          <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
-          <div class="dropdown-item" onclick="changeFolderColor('${folderId}')">🎨 Trocar Cor</div>
-          <div class="dropdown-item" onclick="showFolderDetails('${folderId}')">ℹ️ Detalhes</div>
-          <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
-        `;
-      }
-
+      menu.innerHTML = `
+        <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
+        ${!isSub ? `<div class="dropdown-item" onclick="createSubfolder('${folderId}')">➕ Criar Subpasta</div>` : ''}
+        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
+      `;
       menu.style.top = e.clientY + 'px';
       menu.style.left = e.clientX + 'px';
       menu.classList.add('show');
@@ -441,60 +460,15 @@
       closeDropdown();
     }
 
-    function changeFolderColor(id) {
-      const f = appState.folders.find(item => item.id === id);
-      if(!f) return;
-      const color = prompt('Informe a cor hexadecimal (ex: #ef4444):', f.color || '#22c55e');
-      if(color) { f.color = color; renderFolders(); saveState(); }
-      closeDropdown();
-    }
-
-    function showFolderDetails(id) {
-      const f = appState.folders.find(item => item.id === id);
-      if(!f) return;
-      document.getElementById('det-title').textContent = 'Detalhes da Subpasta';
-      document.getElementById('det-body').innerHTML = `
-        <div><b>Nome:</b> ${f.name}</div>
-        <div><b>Criada em:</b> ${f.date || 'Hoje'}</div>
-        <div><b>Cor Hex:</b> <span style="color:${f.color}">${f.color}</span></div>
-      `;
-      document.getElementById('details-modal').classList.add('open');
-      closeDropdown();
-    }
-
     function deleteFolder(id) {
-      if(confirm('Tem certeza que deseja excluir esta pasta e suas subpastas?')) {
+      if(confirm('Excluir esta pasta?')) {
         appState.folders = appState.folders.filter(f => f.id !== id && f.parentId !== id);
         renderFolders(); saveState();
       }
       closeDropdown();
     }
 
-    /* Arrastar e Reorganizar Pastas */
-    function initFolderDragEvents() {
-      const items = document.querySelectorAll('.tree-item');
-      items.forEach(item => {
-        item.addEventListener('dragstart', (e) => {
-          appState.draggedFolderId = item.dataset.id;
-          item.classList.add('dragging');
-        });
-        item.addEventListener('dragend', () => item.classList.remove('dragging'));
-        item.addEventListener('dragover', (e) => e.preventDefault());
-        item.addEventListener('drop', (e) => {
-          e.preventDefault();
-          const targetId = item.dataset.id;
-          if(appState.draggedFolderId && appState.draggedFolderId !== targetId) {
-            const dragIdx = appState.folders.findIndex(f => f.id === appState.draggedFolderId);
-            const targetIdx = appState.folders.findIndex(f => f.id === targetId);
-            const [moved] = appState.folders.splice(dragIdx, 1);
-            appState.folders.splice(targetIdx, 0, moved);
-            renderFolders(); saveState();
-          }
-        });
-      });
-    }
-
-    /* Renderizar Notas */
+    /* Notas */
     function renderNotes() {
       const list = document.getElementById('note-list');
       list.innerHTML = '';
@@ -502,10 +476,7 @@
       filtered.forEach(note => {
         const li = document.createElement('li');
         li.className = `note-item ${note.id === appState.activeNoteId ? 'active' : ''}`;
-        li.innerHTML = `
-          <span>📝 ${note.title}</span>
-          <button class="menu-dots-btn" onclick="event.stopPropagation(); renameNotePrompt('${note.id}')">✏️</button>
-        `;
+        li.innerHTML = `<span>📝 ${note.title}</span>`;
         li.onclick = () => {
           saveCurrentNoteData();
           appState.activeNoteId = note.id;
@@ -515,20 +486,7 @@
       });
     }
 
-    function renameNotePrompt(noteId) {
-      const note = appState.notes.find(n => n.id === noteId);
-      if (!note) return;
-      const newTitle = prompt('Novo nome para a nota:', note.title);
-      if (newTitle && newTitle.trim()) {
-        note.title = newTitle.trim();
-        if (note.id === appState.activeNoteId) {
-          document.getElementById('note-title-input').value = note.title;
-        }
-        renderNotes(); saveState();
-      }
-    }
-
-    /* Caderno & Páginas Infinitas */
+    /* Caderno Infinita e Motor de Desenho */
     function createPageElement(initialData = null) {
       const container = document.getElementById('pages-container');
       const sheet = document.createElement('div');
@@ -558,7 +516,6 @@
       if (!note) return;
 
       document.getElementById('note-title-input').value = note.title;
-
       if (note.pagesData && note.pagesData.length > 0) {
         note.pagesData.forEach(pageImg => createPageElement(pageImg));
       } else {
@@ -566,14 +523,10 @@
       }
     }
 
-    /* Motor de Desenho Ultra-Suave e Marca-texto Reformulado */
     function bindCanvasEvents(canvas, ctx) {
       function getCoords(e) {
         const rect = canvas.getBoundingClientRect();
-        return {
-          x: (e.clientX - rect.left) / appState.zoom,
-          y: (e.clientY - rect.top) / appState.zoom
-        };
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
       }
 
       function startStroke(e) {
@@ -592,30 +545,22 @@
           ctx.globalCompositeOperation = 'destination-out';
           ctx.lineWidth = appState.brushSize * 8;
           ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
           
           const p1 = appState.pointsBuffer[appState.pointsBuffer.length - 2];
           const p2 = appState.pointsBuffer[appState.pointsBuffer.length - 1];
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
 
         } else if (appState.tool === 'highlighter') {
-          ctx.globalCompositeOperation = 'source-over';
-          ctx.strokeStyle = hexToRgba(appState.color, 0.35);
-          ctx.lineWidth = appState.brushSize * 8;
-          ctx.lineCap = 'butt';
-          ctx.lineJoin = 'bevel';
+          ctx.globalCompositeOperation = 'multiply';
+          ctx.strokeStyle = appState.color;
+          ctx.lineWidth = appState.brushSize * 10;
+          ctx.lineCap = 'square';
 
           const p1 = appState.pointsBuffer[appState.pointsBuffer.length - 2];
           const p2 = appState.pointsBuffer[appState.pointsBuffer.length - 1];
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
 
-        } else { // Caneta Suave sem Pulos
+        } else { // Caneta Suave
           ctx.globalCompositeOperation = 'source-over';
           ctx.strokeStyle = appState.color;
           ctx.lineWidth = appState.brushSize;
@@ -667,21 +612,11 @@
             const blob = new Blob(audioChunks, { type: 'audio/webm' });
             const reader = new FileReader();
             reader.onloadend = () => {
-              const now = new Date();
-              const m = Math.floor(recSeconds / 60).toString().padStart(2, '0');
-              const s = (recSeconds % 60).toString().padStart(2, '0');
-
               appState.audios.unshift({
                 id: 'aud_' + Date.now(),
                 name: `Áudio ${appState.audios.length + 1}`,
-                duration: `${m}:${s}`,
-                time: now.toLocaleTimeString(),
-                day: now.getDate().toString().padStart(2, '0'),
-                month: (now.getMonth() + 1).toString().padStart(2, '0'),
-                year: now.getFullYear(),
                 src: reader.result
               });
-
               renderAudioList(); saveState();
             };
             reader.readAsDataURL(blob);
@@ -701,7 +636,7 @@
           btnRec.disabled = true;
           btnStop.disabled = false;
         } catch(err) {
-          alert('Permissão para gravação de microfone indisponível.');
+          alert('Permissão para gravação de áudio negada.');
         }
       };
 
@@ -721,76 +656,31 @@
         const li = document.createElement('li');
         li.className = 'audio-item';
         li.innerHTML = `
-          <div class="audio-header-row">
-            <span style="font-weight:600; font-size:12px; color:#38bdf8;">🎙️ ${aud.name}</span>
-            <button class="menu-dots-btn" onclick="openAudioMenu(event, '${aud.id}')">⋮</button>
-          </div>
+          <span style="font-weight:600; font-size:12px; color:#38bdf8;">🎙️ ${aud.name}</span>
           <audio src="${aud.src}" controls style="width:100%; height:26px; margin-top:4px;"></audio>
         `;
         list.appendChild(li);
       });
     }
 
-    function openAudioMenu(e, id) {
-      e.stopPropagation();
-      const menu = document.getElementById('app-dropdown');
-      menu.innerHTML = `
-        <div class="dropdown-item" onclick="renameAudio('${id}')">✏️ Renomear</div>
-        <div class="dropdown-item" onclick="showAudioDetails('${id}')">ℹ️ Detalhes</div>
-        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteAudio('${id}')">🗑️ Excluir</div>
-      `;
-      menu.style.top = e.clientY + 'px';
-      menu.style.left = e.clientX + 'px';
-      menu.classList.add('show');
-    }
-
-    function renameAudio(id) {
-      const aud = appState.audios.find(a => a.id === id);
-      if(!aud) return;
-      const name = prompt('Novo nome para o áudio:', aud.name);
-      if(name && name.trim()) { aud.name = name.trim(); renderAudioList(); saveState(); }
-      closeDropdown();
-    }
-
-    function showAudioDetails(id) {
-      const aud = appState.audios.find(a => a.id === id);
-      if(!aud) return;
-      document.getElementById('det-title').textContent = 'Detalhes do Áudio';
-      document.getElementById('det-body').innerHTML = `
-        <div><b>Duração:</b> ${aud.duration}</div>
-        <div><b>Horário:</b> ${aud.time}</div>
-        <div><b>Data:</b> ${aud.day}/${aud.month}/${aud.year}</div>
-      `;
-      document.getElementById('details-modal').classList.add('open');
-      closeDropdown();
-    }
-
-    function deleteAudio(id) {
-      if(confirm('Excluir este áudio?')) {
-        appState.audios = appState.audios.filter(a => a.id !== id);
-        renderAudioList(); saveState();
-      }
-      closeDropdown();
-    }
-
-    /* Sidebar Arrastável & Controles de Interface */
-    function initSidebarDrawer() {
-      const sidebar = document.getElementById('sidebar');
-      const btnToggle = document.getElementById('btn-toggle-sidebar');
-
-      btnToggle.onclick = () => sidebar.classList.toggle('closed');
-
-      // Suporte para abrir ao arrastar a partir do canto esquerdo
-      let startX = 0;
-      window.addEventListener('touchstart', (e) => startX = e.touches[0].clientX);
-      window.addEventListener('touchend', (e) => {
-        const diffX = e.changedTouches[0].clientX - startX;
-        if (startX < 40 && diffX > 60) sidebar.classList.remove('closed');
-        if (startX > 200 && diffX < -60) sidebar.classList.add('closed');
+    /* Chat Geral Persistente */
+    function renderChatMessages() {
+      const box = document.getElementById('chat-messages');
+      box.innerHTML = '';
+      appState.chatMessages.forEach(msg => {
+        const el = document.createElement('div');
+        el.className = `chat-msg ${msg.sender === appState.profile.name ? 'me' : ''} ${msg.isPremium ? 'premium-msg' : ''}`;
+        el.innerHTML = `<b>${msg.sender}:</b> ${msg.text}`;
+        box.appendChild(el);
       });
+      box.scrollTop = box.scrollHeight;
     }
 
-    /* Chat Geral */
+    function appendEmoji(emoji) {
+      const input = document.getElementById('chat-input-text');
+      input.value += emoji;
+    }
+
     function initChatEvents() {
       const drawer = document.getElementById('chat-drawer');
       document.getElementById('btn-open-chat').onclick = () => drawer.classList.add('open');
@@ -798,41 +688,52 @@
 
       document.getElementById('btn-send-chat').onclick = () => {
         const input = document.getElementById('chat-input-text');
-        if(input.value.trim()) {
-          const msgBox = document.getElementById('chat-messages');
-          const msg = document.createElement('div');
-          msg.className = 'chat-msg me';
-          msg.innerHTML = `<b>${appState.profile.name}:</b> ${input.value.trim()}`;
-          msgBox.appendChild(msg);
+        if (input.value.trim()) {
+          appState.chatMessages.push({
+            sender: appState.profile.name,
+            text: input.value.trim(),
+            isPremium: appState.profile.isPremium
+          });
           input.value = '';
-          msgBox.scrollTop = msgBox.scrollHeight;
+          renderChatMessages();
+          saveState();
         }
       };
     }
 
-    function closeDropdown() {
-      document.getElementById('app-dropdown').classList.remove('show');
+    /* Seletor de Única Cor */
+    function initColorPalette() {
+      const trigger = document.getElementById('color-picker-trigger');
+      const menu = document.getElementById('color-palette-menu');
+      const display = document.getElementById('current-color-display');
+
+      trigger.onclick = (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('show');
+      };
+
+      document.querySelectorAll('.palette-dot').forEach(dot => {
+        dot.onclick = (e) => {
+          e.stopPropagation();
+          const color = dot.dataset.color;
+          appState.color = color;
+          display.style.backgroundColor = color;
+          menu.classList.remove('show');
+        };
+      });
     }
 
-    /* Zoom sem deslocamento */
-    function initZoom() {
-      const val = document.getElementById('zoom-val');
-      const pagesContainer = document.getElementById('pages-container');
-
-      function updateZoom() {
-        pagesContainer.style.transform = `scale(${appState.zoom})`;
-        val.textContent = Math.round(appState.zoom * 100) + '%';
-      }
-
-      document.getElementById('btn-zoom-in').onclick = () => { appState.zoom = Math.min(2.5, appState.zoom + 0.1); updateZoom(); };
-      document.getElementById('btn-zoom-out').onclick = () => { appState.zoom = Math.max(0.4, appState.zoom - 0.1); updateZoom(); };
-      document.getElementById('btn-zoom-reset').onclick = () => { appState.zoom = 1.0; updateZoom(); };
+    function closeDropdown() {
+      document.getElementById('app-dropdown').classList.remove('show');
+      document.getElementById('color-palette-menu').classList.remove('show');
     }
 
     function initControls() {
       window.onclick = () => closeDropdown();
 
-      document.getElementById('btn-close-details').onclick = () => document.getElementById('details-modal').classList.remove('open');
+      document.getElementById('btn-toggle-sidebar').onclick = () => {
+        document.getElementById('sidebar').classList.toggle('closed');
+      };
 
       document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(btn => {
         btn.onclick = () => {
@@ -852,16 +753,6 @@
       });
 
       document.getElementById('brush-size').oninput = (e) => appState.brushSize = parseInt(e.target.value);
-
-      document.querySelectorAll('.color-dot').forEach(dot => {
-        dot.onclick = () => {
-          document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-          dot.classList.add('active');
-          appState.color = dot.dataset.color;
-        };
-      });
-
-      document.getElementById('custom-color-picker').oninput = (e) => appState.color = e.target.value;
 
       document.getElementById('btn-add-folder').onclick = () => {
         const name = prompt('Nome da Pasta:');
@@ -884,13 +775,13 @@
         renderNotes(); loadActiveNoteContent(); saveState();
       };
 
+      /* Menu do Perfil & Ativação de Modo Premium */
       document.getElementById('btn-profile-options').onclick = (e) => {
         e.stopPropagation();
         const menu = document.getElementById('app-dropdown');
-        const isChatOn = appState.profile.chatEnabled !== false;
         menu.innerHTML = `
           <div class="dropdown-item" onclick="openProfileEdit()">✏️ Editar Perfil</div>
-          <div class="dropdown-item" onclick="toggleGeneralChat()">💬 Chat Geral: ${isChatOn ? '🟢 Ativo' : '🔴 Desativado'}</div>
+          <div class="dropdown-item" onclick="togglePremiumMode()">👑 Modo Premium: ${appState.profile.isPremium ? 'Ativado' : 'Ativar'}</div>
         `;
         menu.style.top = e.clientY + 'px';
         menu.style.left = e.clientX + 'px';
@@ -898,10 +789,38 @@
       };
 
       document.getElementById('btn-cancel-prof').onclick = () => document.getElementById('profile-modal').classList.remove('open');
+      
       document.getElementById('btn-save-prof').onclick = () => {
-        appState.profile.id = parseInt(document.getElementById('input-prof-id').value) || 22;
-        appState.profile.name = document.getElementById('input-prof-name').value;
+        const newName = document.getElementById('input-prof-name').value.trim();
+        const now = Date.now();
+
+        // Verificação de alteração de nome (mínimo 7 dias)
+        if (newName !== appState.profile.name) {
+          if (appState.profile.lastNameChange) {
+            const diffDays = (now - appState.profile.lastNameChange) / (1000 * 60 * 60 * 24);
+            if (diffDays < 7) {
+              alert('Você só pode alterar seu nome a cada 7 dias!');
+              return;
+            }
+          }
+          appState.profile.name = newName;
+          appState.profile.lastNameChange = now;
+        }
+
         appState.profile.bio = document.getElementById('input-prof-bio').value;
+
+        // Se for Premium, salvar Redes Sociais selecionadas (até 3)
+        if (appState.profile.isPremium) {
+          const checkboxes = document.querySelectorAll('#social-checkboxes input[type="checkbox"]:checked');
+          if (checkboxes.length > 3) {
+            alert('Você só pode escolher no máximo 3 redes sociais!');
+            return;
+          }
+          appState.profile.socials = Array.from(checkboxes).map(cb => ({
+            name: cb.value,
+            icon: cb.dataset.icon
+          }));
+        }
 
         const avatarInput = document.getElementById('input-prof-avatar');
         if (avatarInput.files && avatarInput.files[0]) {
@@ -936,21 +855,40 @@
       document.getElementById('input-prof-id').value = appState.profile.id || 22;
       document.getElementById('input-prof-name').value = appState.profile.name || '';
       document.getElementById('input-prof-bio').value = appState.profile.bio || '';
+      
+      const premiumSocial = document.getElementById('premium-social-section');
+      const modalSocialLeft = document.getElementById('modal-social-left-display');
+
+      if (appState.profile.isPremium) {
+        premiumSocial.style.display = 'block';
+        
+        // Marcar checkboxes previamente salvos
+        document.querySelectorAll('#social-checkboxes input[type="checkbox"]').forEach(cb => {
+          cb.checked = (appState.profile.socials || []).some(s => s.name === cb.value);
+        });
+
+        // Mostrar as logos das redes no canto esquerdo do footer do modal
+        modalSocialLeft.innerHTML = (appState.profile.socials || []).map(s => `<span title="${s.name}">${s.icon}</span>`).join(' ');
+      } else {
+        premiumSocial.style.display = 'none';
+        modalSocialLeft.innerHTML = '';
+      }
+
       document.getElementById('profile-modal').classList.add('open');
       closeDropdown();
     }
 
-    function toggleGeneralChat() {
-      appState.profile.chatEnabled = !(appState.profile.chatEnabled !== false);
+    function togglePremiumMode() {
+      appState.profile.isPremium = !appState.profile.isPremium;
+      alert(appState.profile.isPremium ? '👑 Modo Premium Ativado!' : 'Modo Premium Desativado.');
       updateProfileUI(); saveState(); closeDropdown();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       loadState();
-      initSidebarDrawer();
       initAudioRecorder();
       initChatEvents();
-      initZoom();
+      initColorPalette();
       initControls();
       renderFolders();
       renderNotes();
