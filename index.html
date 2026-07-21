@@ -124,7 +124,7 @@
       display: none;
     }
 
-    /* Ícone de Solicitações/Notificações ao Lado/Cima do Chat */
+    /* Ícone de Solicitações/Notificações */
     .notification-wrapper {
       position: relative;
       cursor: pointer;
@@ -296,28 +296,13 @@
       color: #fff;
     }
 
-    /* Cards de Solicitação com Foto, Nome e ID */
+    /* Lista de Solicitações */
     .request-card {
       background: #21262d;
       padding: 12px;
       border-radius: 8px;
       margin-bottom: 10px;
       user-select: none;
-    }
-
-    .request-user-profile {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .request-user-pic {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1px solid var(--accent);
     }
 
     .request-actions {
@@ -481,16 +466,12 @@
         <textarea id="groupBioInput" rows="2"></textarea>
       </div>
       <div class="form-group">
-        <label>Id-g (ID do Grupo Aleatório):</label>
+        <label>ID do Grupo (Aleatório):</label>
         <input type="text" id="groupIdInput" readonly />
       </div>
       <div class="form-group">
         <label>Adicionar Membro (Nome ou ID):</label>
         <input type="text" id="groupMemberInput" placeholder="Digite o nome ou ID..." />
-      </div>
-      <div class="form-group">
-        <label>Foto de Perfil do Membro (URL):</label>
-        <input type="text" id="groupMemberPicInput" placeholder="https://exemplo.com/foto.jpg" />
       </div>
       <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
         <button class="btn btn-danger" onclick="closeModal('createGroupModal')">Cancelar</button>
@@ -529,9 +510,9 @@
     </div>
   </div>
 
-  <!-- Menu de Contexto para Excluir Mensagem/Solicitação ao Segurar -->
+  <!-- Menu de Contexto para Excluir Solicitação/Mensagem -->
   <div class="context-menu" id="contextMenu">
-    <button class="btn btn-danger" onclick="deleteTargetItem()">Excluir Mensagem</button>
+    <button class="btn btn-danger" onclick="deleteTargetItem()">Excluir</button>
   </div>
 
   <script>
@@ -549,13 +530,7 @@
     ];
 
     let requests = [
-      { 
-        id: 1, 
-        senderName: "Fulano", 
-        senderId: "9982", 
-        senderPic: "https://via.placeholder.com/40", 
-        groupName: "Grupo de Estudos TI" 
-      }
+      { id: 1, senderName: "Fulano", senderId: "9982", groupName: "Grupo de Estudos TI" }
     ];
 
     let targetToDelete = null;
@@ -618,7 +593,7 @@
       filtered.forEach(g => {
         const item = document.createElement("div");
         item.className = "group-item";
-        item.innerHTML = `<div><strong>${g.name}</strong> (Id-g: ${g.id})<br><small>${g.bio}</small></div>`;
+        item.innerHTML = `<div><strong>${g.name}</strong> (ID: ${g.id})<br><small>${g.bio}</small></div>`;
         listContainer.appendChild(item);
       });
     }
@@ -653,7 +628,6 @@
       document.getElementById("groupNameInput").value = "";
       document.getElementById("groupBioInput").value = "";
       document.getElementById("groupMemberInput").value = "";
-      document.getElementById("groupMemberPicInput").value = "";
       document.getElementById("createGroupModal").style.display = "flex";
     }
 
@@ -661,8 +635,6 @@
       const name = document.getElementById("groupNameInput").value;
       const bio = document.getElementById("groupBioInput").value;
       const id = document.getElementById("groupIdInput").value;
-      const memberNameOrId = document.getElementById("groupMemberInput").value;
-      const memberPic = document.getElementById("groupMemberPicInput").value || "https://via.placeholder.com/40";
 
       if (!name) {
         alert("Preencha o nome do grupo!");
@@ -670,19 +642,7 @@
       }
 
       groups.push({ id, name, bio });
-
-      if (memberNameOrId) {
-        requests.push({
-          id: Date.now(),
-          senderName: memberNameOrId,
-          senderId: Math.floor(1000 + Math.random() * 9000).toString(),
-          senderPic: memberPic,
-          groupName: name
-        });
-        renderRequests();
-      }
-
-      alert(`Grupo "${name}" (Id-g: ${id}) criado com sucesso!`);
+      alert(`Grupo "${name}" criado com sucesso!`);
       closeModal("createGroupModal");
     }
 
@@ -693,7 +653,7 @@
       container.innerHTML = "";
 
       if (requests.length === 0) {
-        container.innerHTML = "<p>Nenhuma mensagem no momento.</p>";
+        container.innerHTML = "<p>Nenhuma solicitação no momento.</p>";
         badge.style.display = "none";
         return;
       }
@@ -705,36 +665,18 @@
         const card = document.createElement("div");
         card.className = "request-card";
         card.innerHTML = `
-          <div class="request-user-profile">
-            <img src="${req.senderPic}" class="request-user-pic" alt="Perfil" />
-            <div>
-              <strong>${req.senderName}</strong> <br>
-              <small style="color: #8b949e;">ID: ${req.senderId}</small>
-            </div>
-          </div>
-          <p>${req.senderName} do id ${req.senderId} quer adicionar você em um grupo (${req.groupName}), deseja aceitar?</p>
+          <p><strong>${req.senderName}</strong> (ID: ${req.senderId}) quer adicionar você ao grupo <strong>${req.groupName}</strong>.</p>
           <div class="request-actions">
             <button class="btn btn-success" onclick="acceptRequest(${req.id})">Aceitar</button>
             <button class="btn btn-danger" onclick="rejectRequest(${req.id})">Recusar</button>
           </div>
         `;
 
-        // Segurar para abrir menu de contexto e excluir mensagem
+        // Segurar para abrir menu de contexto e excluir
         card.addEventListener("contextmenu", (e) => {
           e.preventDefault();
           showContextMenu(e.pageX, e.pageY, card, req.id);
         });
-
-        // Suporte para touch (mobile segurar)
-        let touchTimer;
-        card.addEventListener("touchstart", (e) => {
-          touchTimer = setTimeout(() => {
-            const touch = e.touches[0];
-            showContextMenu(touch.pageX, touch.pageY, card, req.id);
-          }, 800);
-        });
-
-        card.addEventListener("touchend", () => clearTimeout(touchTimer));
 
         container.appendChild(card);
       });
