@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Estudus_bem</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -21,47 +22,44 @@
 
     /* Card do Perfil */
     .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; margin-bottom: 16px; position: relative; }
-    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
+    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; background-color: #2563eb; }
     .user-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
     .user-name-box { display: flex; align-items: center; gap: 6px; }
-    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .user-name.gold-name { background: linear-gradient(90deg, #ffd700, #ffa500, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; animation: shimmer 2s infinite linear; }
     
     @keyframes shimmer { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
-    .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; }
+    .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; color: #ffd700; border-color: #ffd700; }
     .user-bio { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
-    .social-icons-preview { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
-    .social-link-icon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; cursor: pointer; transition: transform 0.2s; }
-    .social-link-icon:hover { transform: scale(1.2); }
-    .social-link-icon svg { width: 100%; height: 100%; }
 
     .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 15px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
     .menu-dots-btn:hover { background: #334155; color: #fff; }
 
     .section-title { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 8px; }
     .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
+    .icon-btn:hover { background: #2563eb; }
 
-    /* Lists */
+    /* Listas de Pastas e Notas */
     .folder-tree, .note-list { list-style: none; margin-bottom: 12px; }
-    .tree-item, .note-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; }
-    .tree-item.subfolder { margin-left: 16px; border-left: 2px solid #38bdf8; }
-    .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
+    .tree-item, .note-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; border: 1px solid #334155; }
+    .tree-item:hover, .note-item:hover { border-color: #38bdf8; }
+    .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; border-color: #2563eb; }
 
-    /* Pasta de Áudios */
-    .audio-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
-    .audio-folder-header.premium-border { border: 2px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+    /* Pasta de Áudios Gravados */
+    .audio-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; }
     .audio-folder-content { display: none; margin-top: 6px; flex-direction: column; gap: 6px; }
     .audio-folder-content.open { display: flex; }
-    .audio-card { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
-    .audio-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #f1f5f9; }
+    .audio-card { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .audio-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #f1f5f9; }
+    .audio-card audio { width: 100%; height: 28px; outline: none; }
 
-    /* Área de Pesquisa e Grupos */
+    /* Pesquisa de Grupos */
     .group-search-wrapper { margin-top: 14px; position: relative; }
     .group-search-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 12px; outline: none; }
-    .group-search-input:focus { border-color: #38bdf8; }
+    .group-search-input:focus { border-color: #a855f7; }
 
+    /* Pasta de Grupos */
     .group-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #a855f7; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; }
     .group-folder-content { display: none; margin-top: 6px; flex-direction: column; gap: 6px; }
     .group-folder-content.open { display: flex; }
@@ -75,73 +73,78 @@
     .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; }
     .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 52px; position: relative; }
     #note-title-input { background: transparent; border: 1px solid transparent; color: #f8fafc; font-size: 16px; font-weight: 600; padding: 4px 8px; border-radius: 4px; outline: none; }
+    #note-title-input:focus { border-color: #334155; background: #0f172a; }
 
     .header-center-chat { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; }
-    .btn-chat-center { background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px; padding: 6px 16px; font-size: 14px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+    .btn-chat-center { background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px; padding: 6px 16px; font-size: 13px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+    .btn-chat-center:hover { filter: brightness(1.1); }
 
     .actions-bar { display: flex; gap: 8px; align-items: center; }
     .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     .btn-secondary { background: #334155; color: #f8fafc; }
+    .btn-secondary:hover { background: #475569; }
 
-    /* Gravador */
+    /* Gravador de Áudio Panel */
     .audio-panel { background: #182232; padding: 8px 16px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; font-size: 12px; }
 
-    /* Toolbars & Drawing */
-    .drawing-toolbar { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 16px; }
+    /* Ferramentas de Desenho */
+    .drawing-toolbar { height: 50px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 16px; flex-wrap: wrap; }
     .tool-group { display: flex; align-items: center; gap: 6px; }
     .tool-btn { background: #334155; color: #cbd5e1; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
     .tool-btn.active { background: #2563eb; color: #ffffff; font-weight: 600; }
     .preset-btn { background: #0f172a; border: 1px solid #334155; color: #cbd5e1; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+    .preset-btn.active { border-color: #38bdf8; color: #38bdf8; }
 
+    /* Seletor Único de Cor Dropdown */
     .single-color-wrapper { position: relative; display: flex; align-items: center; gap: 6px; cursor: pointer; background: #0f172a; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; }
-    .current-color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
+    .current-color-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; }
     .color-dropdown-palette { display: none; position: absolute; top: 36px; left: 0; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; gap: 8px; grid-template-columns: repeat(4, 1fr); z-index: 400; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
     .color-dropdown-palette.show { display: grid; }
-    .palette-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+    .palette-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
 
-    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
-    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; }
+    /* Viewport e Canvas do Caderno */
+    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+    .pages-wrapper { display: flex; flex-direction: column; gap: 24px; }
     .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
     .paint-canvas { display: block; touch-action: none; cursor: crosshair; }
 
-    /* Chat Drawer */
+    /* Chat Drawer (Geral e Grupos) */
     .chat-drawer { position: fixed; right: -380px; top: 0; bottom: 0; width: 360px; background: #0f172a; border-left: 1px solid #334155; z-index: 300; display: flex; flex-direction: column; transition: right 0.3s ease; }
     .chat-drawer.open { right: 0; }
     .chat-header { padding: 14px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
     
     .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 16px 16px; }
     
-    .telegram-msg { max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; word-break: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.3); border: 1px solid transparent; }
-    .telegram-msg.other { align-self: flex-start; background: #1e293b; color: #f1f5f9; border-bottom-left-radius: 2px; }
+    .telegram-msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; word-break: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    .telegram-msg.other { align-self: flex-start; background: #1e293b; color: #f1f5f9; border-bottom-left-radius: 2px; border: 1px solid #334155; }
     .telegram-msg.me { align-self: flex-end; background: #2b5278; color: #ffffff; border-bottom-right-radius: 2px; }
-    .telegram-msg.premium-glow-border { border: 1.5px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-
-    .telegram-msg-author { font-weight: 700; font-size: 11px; margin-bottom: 2px; cursor: pointer; }
-    .telegram-msg-author:hover { text-decoration: underline; }
+    .telegram-msg-author { font-weight: 700; font-size: 11px; margin-bottom: 2px; color: #38bdf8; }
     .telegram-msg-time { font-size: 10px; color: rgba(255,255,255,0.6); align-self: flex-end; margin-top: 4px; }
     .telegram-msg a { color: #38bdf8; text-decoration: underline; }
 
     .chat-footer { padding: 10px; background: #1e293b; border-top: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; }
     .chat-input-row { display: flex; gap: 6px; align-items: center; }
-    .chat-input { flex: 1; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 20px; outline: none; font-size: 13px; }
+    .chat-input { flex: 1; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 10px 14px; border-radius: 20px; outline: none; font-size: 13px; }
+    .chat-input:focus { border-color: #38bdf8; }
 
     /* Dropdowns e Modais */
-    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 170px; }
+    .dropdown-menu { display: none; position: fixed; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 180px; }
     .dropdown-menu.show { display: block; }
     .dropdown-item { padding: 10px 14px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     .dropdown-item:hover { background: #2563eb; color: #fff; }
 
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal-card { background: #1e293b; width: 440px; max-height: 90vh; overflow-y: auto; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 12px; }
+    .modal-card { background: #1e293b; width: 420px; max-height: 90vh; overflow-y: auto; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 12px; }
     .form-group { display: flex; flex-direction: column; gap: 4px; }
-    .form-group label { font-size: 11px; color: #94a3b8; }
-    .form-group input, .form-group textarea, .form-group select { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
+    .form-group label { font-size: 11px; color: #94a3b8; font-weight: 600; }
+    .form-group input, .form-group textarea { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #38bdf8; }
   </style>
 </head>
 <body>
   <div class="app-layout">
-    <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Abrir/Fechar Pastas">📁</button>
+    <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Abrir/Fechar Menu">📁</button>
 
     <!-- Sidebar Deslizante -->
     <aside class="sidebar" id="sidebar">
@@ -154,11 +157,10 @@
         <div class="user-avatar" id="user-avatar">U</div>
         <div class="user-info">
           <div class="user-name-box">
-            <span class="user-name" id="user-name">Carregando...</span>
+            <span class="user-name gold-name" id="user-name">Veneza_ kw</span>
             <span class="user-id-badge" id="user-id-badge">ID: 22</span>
           </div>
-          <span class="user-bio" id="user-bio">...</span>
-          <div class="social-icons-preview" id="social-icons-preview"></div>
+          <span class="user-bio" id="user-bio">Estudando com Estudus_bem</span>
         </div>
         <button class="menu-dots-btn" id="btn-profile-options">⋮</button>
       </div>
@@ -171,16 +173,17 @@
 
       <!-- Pasta Retrátil de Áudios -->
       <div class="audio-folder-header" id="btn-toggle-audio-folder">
-        <span>🎙️ Pasta de Áudios Gravados (<span id="audio-count">0</span>)</span>
+        <span>🎙️ Áudios Gravados (<span id="audio-count">0</span>)</span>
         <span id="audio-folder-arrow">▾</span>
       </div>
       <div class="audio-folder-content" id="audio-folder-content"></div>
 
-      <!-- Área de Pesquisa e Grupos -->
+      <!-- Campo de Pesquisa e Criar Grupo -->
       <div class="group-search-wrapper">
         <input type="text" id="group-search-bar" class="group-search-input" placeholder="🔍 Pesquisar grupos... (Segure para criar)">
       </div>
 
+      <!-- Pasta Retrátil de Grupos -->
       <div class="group-folder-header" id="btn-toggle-group-folder">
         <span>👥 Grupos de Estudo (<span id="group-count">0</span>)</span>
         <span id="group-folder-arrow">▾</span>
@@ -188,10 +191,11 @@
       <div class="group-folder-content" id="group-folder-content"></div>
     </aside>
 
+    <!-- Main Editor -->
     <main class="main-editor">
       <header class="editor-header">
         <div style="display:flex; align-items:center; gap:8px;">
-          <input type="text" id="note-title-input" value="Minha Nota">
+          <input type="text" id="note-title-input" value="Minha Nota de Estudo">
         </div>
 
         <div class="header-center-chat">
@@ -205,17 +209,17 @@
 
       <!-- Gravador de Áudio -->
       <div class="audio-panel">
-        <span>🎙️ Gravador de Áudio:</span>
+        <span style="font-weight:600; color:#38bdf8;">🎙️ Gravador de Áudio:</span>
         <button id="btn-rec-audio" class="btn btn-secondary">🔴 Iniciar Gravação</button>
         <button id="btn-stop-audio" class="btn btn-secondary" style="background:rgba(239,68,68,0.2); color:#fca5a5;" disabled>⏹️ Parar e Salvar</button>
         <span id="rec-timer" style="display:none; font-family:monospace; font-weight:bold; color:#ef4444;">00:00</span>
       </div>
 
-      <!-- Barra de Ferramentas de Escrita -->
+      <!-- Barra de Ferramentas de Desenho -->
       <div class="drawing-toolbar">
         <div class="tool-group">
-          <button class="tool-btn active" data-type="pen">✏️ Caneta Suave</button>
-          <button class="tool-btn" data-type="eraser">🧹 Borracha</button>
+          <button class="tool-btn active" id="btn-tool-pen" data-type="pen">✏️ Caneta Suave</button>
+          <button class="tool-btn" id="btn-tool-eraser" data-type="eraser">🧹 Borracha</button>
         </div>
 
         <div class="tool-group">
@@ -226,7 +230,7 @@
           <input type="range" id="brush-size" min="1" max="30" value="2" style="width:60px;">
         </div>
 
-        <!-- Seletor Único de Cores -->
+        <!-- Seletor Único de Cor Dropdown -->
         <div class="single-color-wrapper" id="color-picker-trigger">
           <div class="current-color-dot" id="current-color-display" style="background:#ffffff;"></div>
           <span style="font-size:11px; color:#cbd5e1;">Cor ▾</span>
@@ -244,14 +248,18 @@
         </div>
       </div>
 
-      <!-- Viewport Caderno -->
+      <!-- Caderno de Desenho / Canvas Viewport -->
       <div class="canvas-viewport" id="viewport">
-        <div class="pages-wrapper" id="pages-container"></div>
+        <div class="pages-wrapper" id="pages-container">
+          <div class="page-sheet" style="width: 750px; height: 1000px;">
+            <canvas id="main-canvas" width="750" height="1000" class="paint-canvas"></canvas>
+          </div>
+        </div>
       </div>
     </main>
   </div>
 
-  <!-- Chat Geral / Chat de Grupo Estilo Telegram -->
+  <!-- Chat Drawer (Geral e Grupos) -->
   <div class="chat-drawer" id="chat-drawer">
     <div class="chat-header">
       <h3 style="font-size:14px; color:#38bdf8;" id="chat-title-heading">💬 Chat Geral</h3>
@@ -268,22 +276,22 @@
         <button class="btn btn-secondary" onclick="appendEmoji('📚')">📚</button>
       </div>
       <div class="chat-input-row">
-        <button class="btn btn-secondary" id="btn-chat-voice" title="Mandar áudio" onclick="alert('Áudio gravado e enviado no chat!')">🎙️</button>
+        <button class="btn btn-secondary" id="btn-chat-voice" title="Mandar áudio no chat">🎙️</button>
         <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem...">
         <button class="btn" style="background:#2b5278; color:white; border-radius:50%; width:36px; height:36px; justify-content:center;" id="btn-send-chat">➔</button>
       </div>
     </div>
   </div>
 
-  <!-- Menu Dropdown Genérico -->
+  <!-- Dropdown Genérico -->
   <div class="dropdown-menu" id="app-dropdown"></div>
 
-  <!-- Modal do Perfil do Usuário -->
+  <!-- Modal Editar Perfil -->
   <div class="modal-overlay" id="profile-modal">
     <div class="modal-card">
-      <h3 style="color:#fff;">Editar Perfil</h3>
+      <h3 style="color:#38bdf8;">Editar Perfil</h3>
       <div class="form-group">
-        <label>ID do Perfil (Fixo)</label>
+        <label>ID do Perfil</label>
         <input type="number" id="input-prof-id" disabled style="opacity:0.6;">
       </div>
       <div class="form-group">
@@ -294,11 +302,6 @@
         <label>Biografia (Bio)</label>
         <textarea id="input-prof-bio" rows="2"></textarea>
       </div>
-      <div class="form-group">
-        <label>Foto de Perfil</label>
-        <input type="file" id="input-prof-avatar" accept="image/*">
-      </div>
-
       <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
         <button class="btn btn-secondary" onclick="document.getElementById('profile-modal').classList.remove('open')">Cancelar</button>
         <button class="btn" style="background:#2563eb; color:white;" id="btn-save-prof">Salvar</button>
@@ -312,7 +315,7 @@
       <h3 style="color:#a855f7;">Criar Novo Grupo de Estudos</h3>
       <div class="form-group">
         <label>Nome do Grupo</label>
-        <input type="text" id="input-group-name" placeholder="Ex: Grupo de Matemática">
+        <input type="text" id="input-group-name" placeholder="Ex: Matemática Avançada">
       </div>
       <div class="form-group">
         <label>Bio / Descrição do Grupo</label>
@@ -331,6 +334,7 @@
   </div>
 
   <script>
+    // --- Estado do App ---
     const appState = {
       profile: {
         id: 22,
@@ -339,33 +343,52 @@
         avatarImg: null,
         isPremium: true
       },
-      folders: [{ id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null }],
-      notes: [{ id: 'n_1', folderId: 'f_root', title: 'Minha primeira nota', pagesData: [] }],
+      folders: [
+        { id: 'f_root', name: 'Cadernos Geral' },
+        { id: 'f_mat', name: 'Matemática' }
+      ],
+      notes: [
+        { id: 'n_1', folderId: 'f_root', title: 'Anotações Iniciais' }
+      ],
       audios: [],
       groups: [
         {
           id: 'grp_1',
-          groupId: 'Id-g: 48291',
+          groupId: 'Id-g: 84920',
           name: 'Comunidade de Estudos 📚',
-          bio: 'Grupo oficial de tira-dúvidas e materiais',
-          membersCount: 142,
+          bio: 'Grupo de suporte e materiais de estudo',
+          membersCount: 88,
           avatar: null,
-          messages: []
+          messages: [
+            { sender: 'Monitor', text: 'Sejam bem-vindos ao grupo de estudos!', time: '09:00' }
+          ]
         }
       ],
-      activeChatContext: 'general', // 'general' ou o ID de um grupo
+      activeChatContext: 'general', // 'general' ou o ID do grupo
       activeFolderId: 'f_root',
       activeNoteId: 'n_1',
       tool: 'pen',
       color: '#ffffff',
       brushSize: 2,
       chatMessagesGeneral: [
-        { sender: 'Comunidade', text: 'Junte-se ao nosso Discord oficial: https://discord.gg/EZJ7e6ZHcs 🦖', time: '10:00' }
+        { sender: 'Comunidade', text: 'Entre na nossa comunidade oficial do Discord: https://discord.gg/EZJ7e6ZHcs 🦖', time: '10:00' }
       ]
     };
 
+    // MediaRecorder Vars
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recTimerInterval = null;
+    let recSeconds = 0;
+
+    // Canvas Vars
+    let canvas, ctx;
+    let isDrawing = false;
+    let lastX = 0, lastY = 0;
+
+    // --- LocalStorage ---
     function loadState() {
-      const saved = localStorage.getItem('estudus_bem_v7_data');
+      const saved = localStorage.getItem('estudus_bem_v8_full');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -378,14 +401,18 @@
         } catch(e) {}
       }
       updateProfileUI();
+      renderFolders();
+      renderNotes();
+      renderAudios();
       renderGroups();
       renderChatMessages();
     }
 
     function saveState() {
-      localStorage.setItem('estudus_bem_v7_data', JSON.stringify(appState));
+      localStorage.setItem('estudus_bem_v8_full', JSON.stringify(appState));
     }
 
+    // --- Perfil ---
     function updateProfileUI() {
       const p = appState.profile;
       document.getElementById('user-name').textContent = p.name;
@@ -396,7 +423,7 @@
       else avatarEl.textContent = p.name.charAt(0).toUpperCase();
     }
 
-    /* Pastas e Subpastas com Opções */
+    // --- Pastas e Notas ---
     function renderFolders() {
       const container = document.getElementById('folder-tree');
       container.innerHTML = '';
@@ -404,7 +431,11 @@
         const li = document.createElement('li');
         li.className = `tree-item ${f.id === appState.activeFolderId ? 'active' : ''}`;
         li.innerHTML = `<span>📁 ${f.name}</span>`;
-        li.onclick = () => { appState.activeFolderId = f.id; renderFolders(); renderNotes(); };
+        li.onclick = () => {
+          appState.activeFolderId = f.id;
+          renderFolders();
+          renderNotes();
+        };
         container.appendChild(li);
       });
     }
@@ -417,12 +448,43 @@
         const li = document.createElement('li');
         li.className = `note-item ${note.id === appState.activeNoteId ? 'active' : ''}`;
         li.innerHTML = `<span>📝 ${note.title}</span>`;
-        li.onclick = () => { appState.activeNoteId = note.id; renderNotes(); };
+        li.onclick = () => {
+          appState.activeNoteId = note.id;
+          document.getElementById('note-title-input').value = note.title;
+          renderNotes();
+        };
         list.appendChild(li);
       });
     }
 
-    /* Gestão de Grupos de Estudo */
+    // --- Áudios Gravados ---
+    function renderAudios() {
+      const container = document.getElementById('audio-folder-content');
+      const countEl = document.getElementById('audio-count');
+      container.innerHTML = '';
+      countEl.textContent = appState.audios.length;
+
+      appState.audios.forEach((aud, idx) => {
+        const card = document.createElement('div');
+        card.className = 'audio-card';
+        card.innerHTML = `
+          <div class="audio-card-top">
+            <span>🎙️ ${aud.title}</span>
+            <button class="menu-dots-btn" style="color:#ef4444;" onclick="deleteAudio(${idx})">🗑️</button>
+          </div>
+          <audio controls src="${aud.url}"></audio>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function deleteAudio(idx) {
+      appState.audios.splice(idx, 1);
+      renderAudios();
+      saveState();
+    }
+
+    // --- Grupos de Estudo ---
     function renderGroups(filterQuery = '') {
       const container = document.getElementById('group-folder-content');
       const countEl = document.getElementById('group-count');
@@ -474,22 +536,25 @@
     }
 
     function silenceGroupUser(groupId) {
-      const user = prompt('Digite o nome do integrante a silenciar:');
-      if (user) alert(`Membro ${user} foi silenciado no grupo!`);
+      const user = prompt('Digite o nome do participante para silenciar:');
+      if (user) alert(`Membro ${user} foi silenciado com sucesso!`);
       closeDropdown();
     }
 
     function banGroupUser(groupId) {
-      const user = prompt('Digite o nome do integrante a banir:');
+      const user = prompt('Digite o nome do participante para banir:');
       if (user) alert(`Membro ${user} foi banido do grupo!`);
       closeDropdown();
     }
 
     function deleteGroup(groupId) {
-      if (confirm('Deseja excluir este grupo de estudos?')) {
+      if (confirm('Deseja realmente excluir este grupo?')) {
         appState.groups = appState.groups.filter(g => g.id !== groupId);
-        if (appState.activeChatContext === groupId) appState.activeChatContext = 'general';
-        renderGroups(); saveState();
+        if (appState.activeChatContext === groupId) {
+          appState.activeChatContext = 'general';
+        }
+        renderGroups();
+        saveState();
       }
       closeDropdown();
     }
@@ -504,7 +569,7 @@
       renderChatMessages();
     }
 
-    /* Chat Geral e Mensagens */
+    // --- Chat System ---
     function formatLinks(text) {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
@@ -540,7 +605,127 @@
       document.getElementById('chat-input-text').value += emoji;
     }
 
-    /* Eventos do Campo de Pesquisa (Pressionar e Segurar) */
+    // --- Gravador de Voz (MediaRecorder API) ---
+    async function startAudioRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const now = new Date();
+          const title = `Áudio ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+          appState.audios.push({ title, url: audioUrl });
+          renderAudios();
+          saveState();
+        };
+
+        mediaRecorder.start();
+        document.getElementById('btn-rec-audio').disabled = true;
+        document.getElementById('btn-stop-audio').disabled = false;
+        
+        // Timer
+        recSeconds = 0;
+        const timerEl = document.getElementById('rec-timer');
+        timerEl.style.display = 'inline';
+        recTimerInterval = setInterval(() => {
+          recSeconds++;
+          const mins = Math.floor(recSeconds / 60).toString().padStart(2, '0');
+          const secs = (recSeconds % 60).toString().padStart(2, '0');
+          timerEl.textContent = `${mins}:${secs}`;
+        }, 1000);
+
+      } catch (err) {
+        alert('Permissão de microfone negada ou indisponível.');
+      }
+    }
+
+    function stopAudioRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      }
+      clearInterval(recTimerInterval);
+      document.getElementById('rec-timer').style.display = 'none';
+      document.getElementById('btn-rec-audio').disabled = false;
+      document.getElementById('btn-stop-audio').disabled = true;
+    }
+
+    // --- Canvas de Desenho ---
+    function initCanvas() {
+      canvas = document.getElementById('main-canvas');
+      ctx = canvas.getContext('2d');
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top
+        };
+      }
+
+      function startDraw(e) {
+        isDrawing = true;
+        const pos = getPos(e);
+        lastX = pos.x;
+        lastY = pos.y;
+      }
+
+      function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(pos.x, pos.y);
+
+        if (appState.tool === 'eraser') {
+          ctx.strokeStyle = '#18181b'; // Cor de fundo da folha
+          ctx.lineWidth = appState.brushSize * 4;
+        } else {
+          ctx.strokeStyle = appState.color;
+          ctx.lineWidth = appState.brushSize;
+        }
+
+        ctx.stroke();
+        lastX = pos.x;
+        lastY = pos.y;
+      }
+
+      function stopDraw() { isDrawing = false; }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mouseleave', stopDraw);
+
+      canvas.addEventListener('touchstart', startDraw);
+      canvas.addEventListener('touchmove', draw);
+      canvas.addEventListener('touchend', stopDraw);
+    }
+
+    // --- Exportar PDF ---
+    function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'px', format: [750, 1000] });
+      const imgData = canvas.toDataURL('image/png');
+      doc.addImage(imgData, 'PNG', 0, 0, 750, 1000);
+      doc.save(`${document.getElementById('note-title-input').value || 'nota'}.pdf`);
+    }
+
+    // --- Eventos de Clique / Gestos da Barra de Pesquisa ---
     function initSearchHoldEvents() {
       const searchInput = document.getElementById('group-search-bar');
       let holdTimer;
@@ -549,11 +734,11 @@
         renderGroups(e.target.value);
       });
 
-      // Clique longo para criar grupo
+      // Pressionar e Segurar para criar grupo
       searchInput.addEventListener('mousedown', () => {
         holdTimer = setTimeout(() => {
           document.getElementById('create-group-modal').classList.add('open');
-        }, 800);
+        }, 750);
       });
 
       searchInput.addEventListener('mouseup', () => clearTimeout(holdTimer));
@@ -562,19 +747,71 @@
       searchInput.addEventListener('touchstart', () => {
         holdTimer = setTimeout(() => {
           document.getElementById('create-group-modal').classList.add('open');
-        }, 800);
+        }, 750);
       });
       searchInput.addEventListener('touchend', () => clearTimeout(holdTimer));
 
-      // Botão direito como alternativa rápida
+      // Clique com botão direito como atalho
       searchInput.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         document.getElementById('create-group-modal').classList.add('open');
       });
     }
 
-    /* Inicializadores gerais */
+    // --- Inicialização de Eventos Globais ---
     function initEvents() {
+      // Sidebar Toggle
+      document.getElementById('btn-toggle-sidebar').onclick = () => {
+        document.getElementById('sidebar').classList.toggle('closed');
+      };
+
+      // Pastas e Notas Adicionar
+      document.getElementById('btn-add-folder').onclick = () => {
+        const name = prompt('Nome da nova pasta:');
+        if (name) {
+          appState.folders.push({ id: 'f_' + Date.now(), name });
+          renderFolders();
+          saveState();
+        }
+      };
+
+      document.getElementById('btn-add-note').onclick = () => {
+        const title = prompt('Título da nova nota:');
+        if (title) {
+          const newNote = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title };
+          appState.notes.push(newNote);
+          appState.activeNoteId = newNote.id;
+          document.getElementById('note-title-input').value = title;
+          renderNotes();
+          saveState();
+        }
+      };
+
+      document.getElementById('note-title-input').onchange = (e) => {
+        const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
+        if (currentNote) {
+          currentNote.title = e.target.value;
+          renderNotes();
+          saveState();
+        }
+      };
+
+      // Sanfonas
+      document.getElementById('btn-toggle-audio-folder').onclick = () => {
+        const content = document.getElementById('audio-folder-content');
+        const arrow = document.getElementById('audio-folder-arrow');
+        const open = content.classList.toggle('open');
+        arrow.textContent = open ? '▴' : '▾';
+      };
+
+      document.getElementById('btn-toggle-group-folder').onclick = () => {
+        const content = document.getElementById('group-folder-content');
+        const arrow = document.getElementById('group-folder-arrow');
+        const open = content.classList.toggle('open');
+        arrow.textContent = open ? '▴' : '▾';
+      };
+
+      // Chat Drawer
       document.getElementById('btn-open-chat').onclick = () => {
         appState.activeChatContext = 'general';
         document.getElementById('chat-title-heading').textContent = '💬 Chat Geral';
@@ -606,7 +843,24 @@
         }
       };
 
-      // Criar Grupo Modal
+      document.getElementById('btn-chat-voice').onclick = () => {
+        const text = prompt('Digite a mensagem de voz simulada ou áudio:');
+        if (text) {
+          const now = new Date();
+          const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+          const newMsg = { sender: appState.profile.name, text: `🎵 Áudio: "${text}"`, time: timeStr };
+
+          if (appState.activeChatContext === 'general') appState.chatMessagesGeneral.push(newMsg);
+          else {
+            const grp = appState.groups.find(g => g.id === appState.activeChatContext);
+            if (grp) grp.messages.push(newMsg);
+          }
+          renderChatMessages();
+          saveState();
+        }
+      };
+
+      // Modal Criar Grupo
       document.getElementById('btn-save-group').onclick = () => {
         const name = document.getElementById('input-group-name').value.trim();
         const bio = document.getElementById('input-group-bio').value.trim();
@@ -622,42 +876,94 @@
             avatar: null,
             messages: []
           });
+          document.getElementById('input-group-name').value = '';
+          document.getElementById('input-group-bio').value = '';
           document.getElementById('create-group-modal').classList.remove('open');
-          renderGroups(); saveState();
+          renderGroups();
+          saveState();
         }
       };
 
-      // Sanfona de Grupos
-      document.getElementById('btn-toggle-group-folder').onclick = () => {
-        const content = document.getElementById('group-folder-content');
-        const arrow = document.getElementById('group-folder-arrow');
-        const isOpen = content.classList.toggle('open');
-        arrow.textContent = isOpen ? '▴' : '▾';
+      // Perfil Options & Modal
+      document.getElementById('btn-profile-options').onclick = (e) => {
+        e.stopPropagation();
+        document.getElementById('input-prof-id').value = appState.profile.id;
+        document.getElementById('input-prof-name').value = appState.profile.name;
+        document.getElementById('input-prof-bio').value = appState.profile.bio;
+        document.getElementById('profile-modal').classList.add('open');
       };
 
-      // Sanfona de Áudios
-      document.getElementById('btn-toggle-audio-folder').onclick = () => {
-        const content = document.getElementById('audio-folder-content');
-        const arrow = document.getElementById('audio-folder-arrow');
-        const isOpen = content.classList.toggle('open');
-        arrow.textContent = isOpen ? '▴' : '▾';
+      document.getElementById('btn-save-prof').onclick = () => {
+        appState.profile.name = document.getElementById('input-prof-name').value;
+        appState.profile.bio = document.getElementById('input-prof-bio').value;
+        document.getElementById('profile-modal').classList.remove('open');
+        updateProfileUI();
+        saveState();
       };
 
-      document.getElementById('btn-toggle-sidebar').onclick = () => {
-        document.getElementById('sidebar').classList.toggle('closed');
+      // Gravador
+      document.getElementById('btn-rec-audio').onclick = startAudioRecording;
+      document.getElementById('btn-stop-audio').onclick = stopAudioRecording;
+
+      // Ferramentas de Desenho
+      document.getElementById('btn-tool-pen').onclick = () => {
+        appState.tool = 'pen';
+        document.getElementById('btn-tool-pen').classList.add('active');
+        document.getElementById('btn-tool-eraser').classList.remove('active');
       };
+
+      document.getElementById('btn-tool-eraser').onclick = () => {
+        appState.tool = 'eraser';
+        document.getElementById('btn-tool-eraser').classList.add('active');
+        document.getElementById('btn-tool-pen').classList.remove('active');
+      };
+
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          appState.brushSize = parseInt(btn.dataset.size);
+          document.getElementById('brush-size').value = appState.brushSize;
+        };
+      });
+
+      document.getElementById('brush-size').oninput = (e) => {
+        appState.brushSize = parseInt(e.target.value);
+      };
+
+      // Dropdown de Cores
+      const colorPickerTrigger = document.getElementById('color-picker-trigger');
+      const colorPaletteMenu = document.getElementById('color-palette-menu');
+
+      colorPickerTrigger.onclick = (e) => {
+        e.stopPropagation();
+        colorPaletteMenu.classList.toggle('show');
+      };
+
+      document.querySelectorAll('.palette-dot').forEach(dot => {
+        dot.onclick = (e) => {
+          e.stopPropagation();
+          appState.color = dot.dataset.color;
+          document.getElementById('current-color-display').style.background = appState.color;
+          colorPaletteMenu.classList.remove('show');
+        };
+      });
+
+      // PDF
+      document.getElementById('btn-export-pdf').onclick = exportToPDF;
     }
 
     function closeDropdown() {
       document.getElementById('app-dropdown').classList.remove('show');
+      document.getElementById('color-palette-menu').classList.remove('show');
     }
 
     window.onclick = () => closeDropdown();
 
+    // Startup
     window.addEventListener('DOMContentLoaded', () => {
       loadState();
-      renderFolders();
-      renderNotes();
+      initCanvas();
       initEvents();
       initSearchHoldEvents();
     });
