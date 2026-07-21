@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Estudus_bem</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -22,129 +21,132 @@
 
     /* Card do Perfil */
     .user-profile { display: flex; align-items: center; gap: 10px; padding: 10px; background: #0f172a; border-radius: 8px; border: 1px solid #334155; cursor: pointer; margin-bottom: 16px; position: relative; }
-    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; background-color: #2563eb; }
+    .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
     .user-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
     .user-name-box { display: flex; align-items: center; gap: 6px; }
-    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
     .user-name.gold-name { background: linear-gradient(90deg, #ffd700, #ffa500, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; animation: shimmer 2s infinite linear; }
     
     @keyframes shimmer { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
-    .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; color: #ffd700; border-color: #ffd700; }
+    .user-id-badge { font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 4px; border: 1px solid currentColor; }
     .user-bio { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .social-icons-preview { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
+    .social-link-icon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; cursor: pointer; transition: transform 0.2s; }
+    .social-link-icon:hover { transform: scale(1.2); }
+    .social-link-icon svg { width: 100%; height: 100%; }
 
     .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 15px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
     .menu-dots-btn:hover { background: #334155; color: #fff; }
 
     .section-title { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 8px; }
     .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
-    .icon-btn:hover { background: #2563eb; }
 
-    /* Listas de Pastas e Notas */
+    /* Folder e Note Lists */
     .folder-tree, .note-list { list-style: none; margin-bottom: 12px; }
-    .tree-item, .note-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; border: 1px solid #334155; }
-    .tree-item:hover, .note-item:hover { border-color: #38bdf8; }
-    .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; border-color: #2563eb; }
+    .tree-item, .note-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; }
+    .tree-item.subfolder { margin-left: 16px; border-left: 2px solid #38bdf8; }
+    .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
 
-    /* Pasta de Áudios Gravados */
-    .audio-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; }
+    /* Pasta de Áudios Retrátil com Borda Premium */
+    .audio-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
+    .audio-folder-header.premium-border { border: 2px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
     .audio-folder-content { display: none; margin-top: 6px; flex-direction: column; gap: 6px; }
     .audio-folder-content.open { display: flex; }
-    .audio-card { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
-    .audio-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #f1f5f9; }
-    .audio-card audio { width: 100%; height: 28px; outline: none; }
-
-    /* Pesquisa de Grupos */
-    .group-search-wrapper { margin-top: 14px; position: relative; }
-    .group-search-input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 12px; outline: none; }
-    .group-search-input:focus { border-color: #a855f7; }
-
-    /* Pasta de Grupos */
-    .group-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #a855f7; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; }
-    .group-folder-content { display: none; margin-top: 6px; flex-direction: column; gap: 6px; }
-    .group-folder-content.open { display: flex; }
-    .group-item-card { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-    .group-item-card:hover { border-color: #a855f7; }
-    .group-item-info { display: flex; flex-direction: column; gap: 2px; }
-    .group-item-name { font-size: 12px; font-weight: 600; color: #f8fafc; }
-    .group-item-meta { font-size: 10px; color: #94a3b8; }
+    .audio-card { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .audio-card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #f1f5f9; }
 
     /* Main Editor */
     .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; }
     .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px 0 52px; position: relative; }
     #note-title-input { background: transparent; border: 1px solid transparent; color: #f8fafc; font-size: 16px; font-weight: 600; padding: 4px 8px; border-radius: 4px; outline: none; }
-    #note-title-input:focus { border-color: #334155; background: #0f172a; }
 
     .header-center-chat { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; }
-    .btn-chat-center { background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px; padding: 6px 16px; font-size: 13px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
-    .btn-chat-center:hover { filter: brightness(1.1); }
+    .btn-chat-center { background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px; padding: 6px 16px; font-size: 14px; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
 
     .actions-bar { display: flex; gap: 8px; align-items: center; }
     .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; }
     .btn-secondary { background: #334155; color: #f8fafc; }
-    .btn-secondary:hover { background: #475569; }
 
-    /* Gravador de Áudio Panel */
+    /* Gravador */
     .audio-panel { background: #182232; padding: 8px 16px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; font-size: 12px; }
 
-    /* Ferramentas de Desenho */
-    .drawing-toolbar { height: 50px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 16px; flex-wrap: wrap; }
+    /* Toolbars & Drawing */
+    .drawing-toolbar { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 16px; }
     .tool-group { display: flex; align-items: center; gap: 6px; }
     .tool-btn { background: #334155; color: #cbd5e1; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
     .tool-btn.active { background: #2563eb; color: #ffffff; font-weight: 600; }
     .preset-btn { background: #0f172a; border: 1px solid #334155; color: #cbd5e1; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; }
-    .preset-btn.active { border-color: #38bdf8; color: #38bdf8; }
 
-    /* Seletor Único de Cor Dropdown */
     .single-color-wrapper { position: relative; display: flex; align-items: center; gap: 6px; cursor: pointer; background: #0f172a; padding: 4px 8px; border-radius: 6px; border: 1px solid #334155; }
-    .current-color-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; }
+    .current-color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
     .color-dropdown-palette { display: none; position: absolute; top: 36px; left: 0; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; gap: 8px; grid-template-columns: repeat(4, 1fr); z-index: 400; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
     .color-dropdown-palette.show { display: grid; }
-    .palette-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
+    .palette-dot { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); }
 
-    /* Viewport e Canvas do Caderno */
-    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
-    .pages-wrapper { display: flex; flex-direction: column; gap: 24px; }
+    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+    .pages-wrapper { display: flex; flex-direction: column; gap: 30px; }
     .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
     .paint-canvas { display: block; touch-action: none; cursor: crosshair; }
 
-    /* Chat Drawer (Geral e Grupos) */
+    /* Chat Estilo Telegram com Borda Premium */
     .chat-drawer { position: fixed; right: -380px; top: 0; bottom: 0; width: 360px; background: #0f172a; border-left: 1px solid #334155; z-index: 300; display: flex; flex-direction: column; transition: right 0.3s ease; }
     .chat-drawer.open { right: 0; }
     .chat-header { padding: 14px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
     
     .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 16px 16px; }
     
-    .telegram-msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; word-break: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
-    .telegram-msg.other { align-self: flex-start; background: #1e293b; color: #f1f5f9; border-bottom-left-radius: 2px; border: 1px solid #334155; }
+    .telegram-msg { max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; word-break: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.3); border: 1px solid transparent; }
+    .telegram-msg.other { align-self: flex-start; background: #1e293b; color: #f1f5f9; border-bottom-left-radius: 2px; }
     .telegram-msg.me { align-self: flex-end; background: #2b5278; color: #ffffff; border-bottom-right-radius: 2px; }
-    .telegram-msg-author { font-weight: 700; font-size: 11px; margin-bottom: 2px; color: #38bdf8; }
+    
+    /* Efeito de Borda Neon no Chat para Usuários Premium */
+    .telegram-msg.premium-glow-border { border: 1.5px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+
+    .telegram-msg-author { font-weight: 700; font-size: 11px; margin-bottom: 2px; cursor: pointer; }
+    .telegram-msg-author:hover { text-decoration: underline; }
     .telegram-msg-time { font-size: 10px; color: rgba(255,255,255,0.6); align-self: flex-end; margin-top: 4px; }
     .telegram-msg a { color: #38bdf8; text-decoration: underline; }
 
-    .chat-footer { padding: 10px; background: #1e293b; border-top: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; }
-    .chat-input-row { display: flex; gap: 6px; align-items: center; }
-    .chat-input { flex: 1; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 10px 14px; border-radius: 20px; outline: none; font-size: 13px; }
-    .chat-input:focus { border-color: #38bdf8; }
+    /* Cores Brilhantes Neon para Nomes Premium */
+    .chat-name-purple { color: #c084fc; text-shadow: 0 0 8px #a855f7; }
+    .chat-name-white { color: #ffffff; text-shadow: 0 0 8px #ffffff; }
+    .chat-name-green { color: #4ade80; text-shadow: 0 0 8px #22c55e; }
+    .chat-name-pink { color: #f472b6; text-shadow: 0 0 8px #ec4899; }
+    .chat-name-pink-stickers { color: #ff69b4; text-shadow: 0 0 10px #ff1493; }
 
-    /* Dropdowns e Modais */
-    .dropdown-menu { display: none; position: fixed; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 180px; }
+    .chat-footer { padding: 10px; background: #1e293b; border-top: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; position: relative; }
+    .chat-input-row { display: flex; gap: 6px; align-items: center; }
+    .chat-input { flex: 1; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 20px; outline: none; font-size: 13px; }
+
+    /* Botão Flutuante de Modo de Chat Privado / Grupo */
+    .chat-float-btn { position: absolute; bottom: 70px; right: 16px; width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 10; }
+    .chat-mode-popup { display: none; position: absolute; bottom: 120px; right: 16px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 6px; flex-direction: column; gap: 4px; z-index: 20; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+    .chat-mode-popup.show { display: flex; }
+    .chat-mode-item { padding: 8px 12px; font-size: 12px; color: #cbd5e1; cursor: pointer; border-radius: 4px; white-space: nowrap; }
+    .chat-mode-item:hover { background: #2563eb; color: white; }
+
+    /* Modais e Dropdowns */
+    .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 170px; }
     .dropdown-menu.show { display: block; }
     .dropdown-item { padding: 10px 14px; font-size: 12px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     .dropdown-item:hover { background: #2563eb; color: #fff; }
 
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal-card { background: #1e293b; width: 420px; max-height: 90vh; overflow-y: auto; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 12px; }
+    .modal-card { background: #1e293b; width: 440px; max-height: 90vh; overflow-y: auto; padding: 20px; border-radius: 12px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 12px; }
     .form-group { display: flex; flex-direction: column; gap: 4px; }
-    .form-group label { font-size: 11px; color: #94a3b8; font-weight: 600; }
-    .form-group input, .form-group textarea { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
-    .form-group input:focus, .form-group textarea:focus { border-color: #38bdf8; }
+    .form-group label { font-size: 11px; color: #94a3b8; }
+    .form-group input, .form-group textarea, .form-group select { background: #0f172a; border: 1px solid #334155; color: #f8fafc; padding: 8px; border-radius: 6px; outline: none; font-size: 12px; }
+
+    .modal-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    .modal-social-left { display: flex; gap: 8px; align-items: center; }
   </style>
 </head>
 <body>
   <div class="app-layout">
-    <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Abrir/Fechar Menu">📁</button>
+    <button class="sidebar-toggle-btn" id="btn-toggle-sidebar" title="Abrir/Fechar Pastas">📁</button>
 
     <!-- Sidebar Deslizante -->
     <aside class="sidebar" id="sidebar">
@@ -152,15 +154,16 @@
         <div class="brand"><span>📚</span><h2>Estudus_bem</h2></div>
       </div>
 
-      <!-- Card do Perfil -->
+      <!-- Profile Card -->
       <div class="user-profile" id="user-profile-card">
         <div class="user-avatar" id="user-avatar">U</div>
         <div class="user-info">
           <div class="user-name-box">
-            <span class="user-name gold-name" id="user-name">Veneza_ kw</span>
+            <span class="user-name" id="user-name">Carregando...</span>
             <span class="user-id-badge" id="user-id-badge">ID: 22</span>
           </div>
-          <span class="user-bio" id="user-bio">Estudando com Estudus_bem</span>
+          <span class="user-bio" id="user-bio">...</span>
+          <div class="social-icons-preview" id="social-icons-preview"></div>
         </div>
         <button class="menu-dots-btn" id="btn-profile-options">⋮</button>
       </div>
@@ -173,29 +176,16 @@
 
       <!-- Pasta Retrátil de Áudios -->
       <div class="audio-folder-header" id="btn-toggle-audio-folder">
-        <span>🎙️ Áudios Gravados (<span id="audio-count">0</span>)</span>
+        <span>🎙️ Pasta de Áudios Gravados (<span id="audio-count">0</span>)</span>
         <span id="audio-folder-arrow">▾</span>
       </div>
       <div class="audio-folder-content" id="audio-folder-content"></div>
-
-      <!-- Campo de Pesquisa e Criar Grupo -->
-      <div class="group-search-wrapper">
-        <input type="text" id="group-search-bar" class="group-search-input" placeholder="🔍 Pesquisar grupos... (Segure para criar)">
-      </div>
-
-      <!-- Pasta Retrátil de Grupos -->
-      <div class="group-folder-header" id="btn-toggle-group-folder">
-        <span>👥 Grupos de Estudo (<span id="group-count">0</span>)</span>
-        <span id="group-folder-arrow">▾</span>
-      </div>
-      <div class="group-folder-content" id="group-folder-content"></div>
     </aside>
 
-    <!-- Main Editor -->
     <main class="main-editor">
       <header class="editor-header">
         <div style="display:flex; align-items:center; gap:8px;">
-          <input type="text" id="note-title-input" value="Minha Nota de Estudo">
+          <input type="text" id="note-title-input" value="Minha Nota">
         </div>
 
         <div class="header-center-chat">
@@ -209,17 +199,17 @@
 
       <!-- Gravador de Áudio -->
       <div class="audio-panel">
-        <span style="font-weight:600; color:#38bdf8;">🎙️ Gravador de Áudio:</span>
+        <span>🎙️ Gravador de Áudio:</span>
         <button id="btn-rec-audio" class="btn btn-secondary">🔴 Iniciar Gravação</button>
         <button id="btn-stop-audio" class="btn btn-secondary" style="background:rgba(239,68,68,0.2); color:#fca5a5;" disabled>⏹️ Parar e Salvar</button>
         <span id="rec-timer" style="display:none; font-family:monospace; font-weight:bold; color:#ef4444;">00:00</span>
       </div>
 
-      <!-- Barra de Ferramentas de Desenho -->
+      <!-- Barra de Ferramentas de Escrita -->
       <div class="drawing-toolbar">
         <div class="tool-group">
-          <button class="tool-btn active" id="btn-tool-pen" data-type="pen">✏️ Caneta Suave</button>
-          <button class="tool-btn" id="btn-tool-eraser" data-type="eraser">🧹 Borracha</button>
+          <button class="tool-btn active" data-type="pen">✏️ Caneta Suave</button>
+          <button class="tool-btn" data-type="eraser">🧹 Borracha</button>
         </div>
 
         <div class="tool-group">
@@ -230,7 +220,7 @@
           <input type="range" id="brush-size" min="1" max="30" value="2" style="width:60px;">
         </div>
 
-        <!-- Seletor Único de Cor Dropdown -->
+        <!-- Seletor Único de Cores -->
         <div class="single-color-wrapper" id="color-picker-trigger">
           <div class="current-color-dot" id="current-color-display" style="background:#ffffff;"></div>
           <span style="font-size:11px; color:#cbd5e1;">Cor ▾</span>
@@ -248,24 +238,28 @@
         </div>
       </div>
 
-      <!-- Caderno de Desenho / Canvas Viewport -->
+      <!-- Viewport Caderno -->
       <div class="canvas-viewport" id="viewport">
-        <div class="pages-wrapper" id="pages-container">
-          <div class="page-sheet" style="width: 750px; height: 1000px;">
-            <canvas id="main-canvas" width="750" height="1000" class="paint-canvas"></canvas>
-          </div>
-        </div>
+        <div class="pages-wrapper" id="pages-container"></div>
       </div>
     </main>
   </div>
 
-  <!-- Chat Drawer (Geral e Grupos) -->
+  <!-- Chat Geral Estilo Telegram -->
   <div class="chat-drawer" id="chat-drawer">
     <div class="chat-header">
       <h3 style="font-size:14px; color:#38bdf8;" id="chat-title-heading">💬 Chat Geral</h3>
       <button class="menu-dots-btn" id="btn-close-chat">✖</button>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
+    
+    <!-- Menu Flutuante de Modos de Chat (Privado e Grupo) -->
+    <button class="chat-float-btn" id="btn-chat-float-menu" title="Modos de Chat">💬</button>
+    <div class="chat-mode-popup" id="chat-mode-popup">
+      <div class="chat-mode-item" onclick="switchChatMode('geral')">🌐 Chat Geral</div>
+      <div class="chat-mode-item" onclick="switchChatMode('privado')">🔒 Chat Privado (DM)</div>
+      <div class="chat-mode-item" onclick="switchChatMode('grupo')">👥 Grupos de Estudo</div>
+    </div>
 
     <div class="chat-footer">
       <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:4px;">
@@ -276,119 +270,149 @@
         <button class="btn btn-secondary" onclick="appendEmoji('📚')">📚</button>
       </div>
       <div class="chat-input-row">
-        <button class="btn btn-secondary" id="btn-chat-voice" title="Mandar áudio no chat">🎙️</button>
-        <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem...">
+        <button class="btn btn-secondary" id="btn-chat-voice" title="Mandar áudio no Chat" onclick="alert('Gravação rápida de áudio ativada!')">🎙️</button>
+        <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem ou link...">
         <button class="btn" style="background:#2b5278; color:white; border-radius:50%; width:36px; height:36px; justify-content:center;" id="btn-send-chat">➔</button>
       </div>
     </div>
   </div>
 
-  <!-- Dropdown Genérico -->
+  <!-- Menu Dropdown Genérico -->
   <div class="dropdown-menu" id="app-dropdown"></div>
 
-  <!-- Modal Editar Perfil -->
+  <!-- Modal do Perfil do Usuário -->
   <div class="modal-overlay" id="profile-modal">
     <div class="modal-card">
-      <h3 style="color:#38bdf8;">Editar Perfil</h3>
+      <h3 style="color:#fff;">Editar Perfil</h3>
       <div class="form-group">
-        <label>ID do Perfil</label>
+        <label>ID do Perfil (Fixo)</label>
         <input type="number" id="input-prof-id" disabled style="opacity:0.6;">
       </div>
       <div class="form-group">
-        <label>Nome do Usuário</label>
+        <label>Nome do Usuário (Limite 7 dias)</label>
         <input type="text" id="input-prof-name">
       </div>
       <div class="form-group">
         <label>Biografia (Bio)</label>
         <textarea id="input-prof-bio" rows="2"></textarea>
       </div>
-      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-        <button class="btn btn-secondary" onclick="document.getElementById('profile-modal').classList.remove('open')">Cancelar</button>
-        <button class="btn" style="background:#2563eb; color:white;" id="btn-save-prof">Salvar</button>
+      <div class="form-group">
+        <label>Foto de Perfil</label>
+        <input type="file" id="input-prof-avatar" accept="image/*">
+      </div>
+
+      <!-- Configuração de Redes Sociais e Cor do Chat Premium -->
+      <div id="premium-social-section" class="form-group" style="display:none; border-top:1px solid #334155; padding-top:10px; margin-top:6px;">
+        <label style="color:#ffd700; font-weight:bold;">👑 Redes Sociais Premium (Selecione até 3):</label>
+        
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;" id="social-inputs-container">
+          <div class="social-input-row">
+            <label><input type="checkbox" class="social-check" value="TikTok" data-key="tiktok"> 🎵 TikTok</label>
+            <input type="text" id="url-tiktok" placeholder="https://tiktok.com/@seu_perfil" style="display:none;">
+          </div>
+          <div class="social-input-row">
+            <label><input type="checkbox" class="social-check" value="Instagram" data-key="instagram"> 📸 Instagram</label>
+            <input type="text" id="url-instagram" placeholder="https://instagram.com/seu_perfil" style="display:none;">
+          </div>
+          <div class="social-input-row">
+            <label><input type="checkbox" class="social-check" value="X (Twitter)" data-key="twitter"> 🐦 X (Twitter)</label>
+            <input type="text" id="url-twitter" placeholder="https://x.com/seu_perfil" style="display:none;">
+          </div>
+          <div class="social-input-row">
+            <label><input type="checkbox" class="social-check" value="Facebook" data-key="facebook"> 📘 Facebook</label>
+            <input type="text" id="url-facebook" placeholder="https://facebook.com/seu_perfil" style="display:none;">
+          </div>
+          <div class="social-input-row">
+            <label><input type="checkbox" class="social-check" value="Discord" data-key="discord"> 👾 Discord</label>
+            <input type="text" id="url-discord" placeholder="Link do perfil/servidor Discord" style="display:none;">
+          </div>
+        </div>
+
+        <label style="color:#ffd700; font-weight:bold; margin-top:12px;">👑 Cor Brilhante do Nome no Chat:</label>
+        <select id="premium-chat-color-select">
+          <option value="chat-name-purple">🟣 Roxo Neon Brilhante</option>
+          <option value="chat-name-white">⚪ Branco Brilhante Light</option>
+          <option value="chat-name-green">🟢 Verde Neon Glow</option>
+          <option value="chat-name-pink">💖 Rosa Chiclete Sparkle</option>
+          <option value="chat-name-pink-stickers">🌸 Rosa com Figurinhas ✨</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-social-left" id="modal-social-left-display"></div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary" id="btn-cancel-prof">Cancelar</button>
+          <button class="btn" style="background:#2563eb; color:white;" id="btn-save-prof">Salvar</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Criar Novo Grupo -->
-  <div class="modal-overlay" id="create-group-modal">
-    <div class="modal-card">
-      <h3 style="color:#a855f7;">Criar Novo Grupo de Estudos</h3>
-      <div class="form-group">
-        <label>Nome do Grupo</label>
-        <input type="text" id="input-group-name" placeholder="Ex: Matemática Avançada">
-      </div>
-      <div class="form-group">
-        <label>Bio / Descrição do Grupo</label>
-        <textarea id="input-group-bio" rows="2" placeholder="Qual o foco do grupo?"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Foto de Capa do Grupo</label>
-        <input type="file" id="input-group-avatar" accept="image/*">
+  <!-- Modal Visualizador de Perfil de Outros Usuários -->
+  <div class="modal-overlay" id="view-user-modal">
+    <div class="modal-card" style="text-align:center; align-items:center;">
+      <div class="user-avatar" id="view-user-avatar" style="width:70px; height:70px; font-size:24px;">U</div>
+      <h3 style="color:#fff;" id="view-user-name">Nome</h3>
+      <span class="user-id-badge" id="view-user-id" style="width:fit-content;">ID: 00</span>
+      <p style="font-size:13px; color:#cbd5e1; margin-top:8px;" id="view-user-bio">Biografia...</p>
+
+      <div style="margin-top:12px;" class="form-group">
+        <label style="color:#ffd700;">Redes Sociais:</label>
+        <div class="social-icons-preview" id="view-user-socials" style="justify-content:center; margin-top:6px;"></div>
       </div>
 
-      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-        <button class="btn btn-secondary" onclick="document.getElementById('create-group-modal').classList.remove('open')">Cancelar</button>
-        <button class="btn" style="background:#a855f7; color:white;" id="btn-save-group">Criar Grupo</button>
-      </div>
+      <button class="btn btn-secondary" onclick="document.getElementById('view-user-modal').classList.remove('open')" style="margin-top:14px;">Fechar</button>
     </div>
   </div>
 
   <script>
-    // --- Estado do App ---
+    const SOCIAL_SVGS = {
+      TikTok: `<svg viewBox="0 0 24 24" fill="#ffffff"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-2.81V7.6a6.34 6.34 0 0 0-5.36 6.25 6.34 6.34 0 1 0 10.66-4.63 8.28 8.28 0 0 0 4.81 1.51V7.27a4.85 4.85 0 0 1-1-.58z"/></svg>`,
+      Instagram: `<svg viewBox="0 0 24 24" fill="#e1306c"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
+      'X (Twitter)': `<svg viewBox="0 0 24 24" fill="#1da1f2"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+      Facebook: `<svg viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+      Discord: `<svg viewBox="0 0 24 24" fill="#5865f2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`
+    };
+
+    function getIdColor(id) {
+      const numId = parseInt(id) || 1;
+      if (numId >= 1 && numId <= 50) return '#8b5cf6';
+      if (numId >= 51 && numId <= 100) return '#22c55e';
+      if (numId >= 101 && numId <= 200) return '#f97316';
+      return '#ffffff';
+    }
+
     const appState = {
       profile: {
         id: 22,
         name: 'Veneza_ kw',
         bio: 'Estudando com Estudus_bem',
         avatarImg: null,
-        isPremium: true
+        isPremium: true,
+        lastNameChange: null,
+        socials: [],
+        chatColorClass: 'chat-name-purple'
       },
-      folders: [
-        { id: 'f_root', name: 'Cadernos Geral' },
-        { id: 'f_mat', name: 'Matemática' }
-      ],
-      notes: [
-        { id: 'n_1', folderId: 'f_root', title: 'Anotações Iniciais' }
-      ],
+      folders: [{ id: 'f_root', name: 'Cadernos', icon: '📘', color: '#38bdf8', parentId: null, date: new Date().toLocaleDateString() }],
+      notes: [{ id: 'n_1', folderId: 'f_root', title: 'Minha primeira nota', pagesData: [] }],
       audios: [],
-      groups: [
-        {
-          id: 'grp_1',
-          groupId: 'Id-g: 84920',
-          name: 'Comunidade de Estudos 📚',
-          bio: 'Grupo de suporte e materiais de estudo',
-          membersCount: 88,
-          avatar: null,
-          messages: [
-            { sender: 'Monitor', text: 'Sejam bem-vindos ao grupo de estudos!', time: '09:00' }
-          ]
-        }
+      chatMessages: [
+        { sender: 'Comunidade', text: 'Bem-vindo ao Chat Geral do Estudus_bem! Visite https://estudus.com 🦖', time: '10:00', isPremium: false, nameClass: '', userId: 5, userBio: 'Membro da comunidade', userSocials: [] }
       ],
-      activeChatContext: 'general', // 'general' ou o ID do grupo
       activeFolderId: 'f_root',
       activeNoteId: 'n_1',
       tool: 'pen',
       color: '#ffffff',
       brushSize: 2,
-      chatMessagesGeneral: [
-        { sender: 'Comunidade', text: 'Entre na nossa comunidade oficial do Discord: https://discord.gg/EZJ7e6ZHcs 🦖', time: '10:00' }
-      ]
+      isDrawing: false,
+      activeCanvasCtx: null,
+      pointsBuffer: []
     };
 
-    // MediaRecorder Vars
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let recTimerInterval = null;
-    let recSeconds = 0;
+    let mediaRecorder, audioChunks = [], recInterval, recSeconds = 0;
 
-    // Canvas Vars
-    let canvas, ctx;
-    let isDrawing = false;
-    let lastX = 0, lastY = 0;
-
-    // --- LocalStorage ---
     function loadState() {
-      const saved = localStorage.getItem('estudus_bem_v8_full');
+      const saved = localStorage.getItem('estudus_bem_v6_data');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -396,48 +420,152 @@
           appState.folders = parsed.folders || appState.folders;
           appState.notes = parsed.notes || appState.notes;
           appState.audios = parsed.audios || [];
-          appState.groups = parsed.groups || appState.groups;
-          appState.chatMessagesGeneral = parsed.chatMessagesGeneral || appState.chatMessagesGeneral;
+          appState.chatMessages = parsed.chatMessages || appState.chatMessages;
+          appState.activeFolderId = parsed.activeFolderId || appState.folders[0].id;
+          appState.activeNoteId = parsed.activeNoteId || appState.notes[0]?.id;
         } catch(e) {}
       }
       updateProfileUI();
-      renderFolders();
-      renderNotes();
-      renderAudios();
-      renderGroups();
       renderChatMessages();
     }
 
     function saveState() {
-      localStorage.setItem('estudus_bem_v8_full', JSON.stringify(appState));
+      saveCurrentNoteData();
+      localStorage.setItem('estudus_bem_v6_data', JSON.stringify(appState));
     }
 
-    // --- Perfil ---
+    function saveCurrentNoteData() {
+      const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
+      if (currentNote) {
+        const canvases = document.querySelectorAll('.paint-canvas');
+        currentNote.pagesData = Array.from(canvases).map(c => c.toDataURL());
+        currentNote.title = document.getElementById('note-title-input').value || 'Sem Título';
+      }
+    }
+
     function updateProfileUI() {
       const p = appState.profile;
-      document.getElementById('user-name').textContent = p.name;
-      document.getElementById('user-bio').textContent = p.bio;
-      document.getElementById('user-id-badge').textContent = `ID: ${p.id}`;
+      const color = getIdColor(p.id);
+
+      const nameEl = document.getElementById('user-name');
+      nameEl.textContent = p.name || 'Usuário';
+      if (p.isPremium) nameEl.classList.add('gold-name');
+      else nameEl.classList.remove('gold-name');
+
+      document.getElementById('user-bio').textContent = p.bio || 'Sem biografia';
+      
+      const badge = document.getElementById('user-id-badge');
+      badge.textContent = `ID: ${p.id}`;
+      badge.style.color = color;
+      badge.style.borderColor = color;
+
       const avatarEl = document.getElementById('user-avatar');
-      if (p.avatarImg) avatarEl.style.backgroundImage = `url(${p.avatarImg})`;
-      else avatarEl.textContent = p.name.charAt(0).toUpperCase();
+      avatarEl.style.backgroundColor = color;
+      if (p.avatarImg) {
+        avatarEl.style.backgroundImage = `url(${p.avatarImg})`;
+        avatarEl.textContent = '';
+      } else {
+        avatarEl.style.backgroundImage = 'none';
+        avatarEl.textContent = (p.name || 'U').charAt(0).toUpperCase();
+      }
+
+      // Efeito de Borda Premium na Pasta de Áudios Gravados
+      const audioHeader = document.getElementById('btn-toggle-audio-folder');
+      if (p.isPremium) audioHeader.classList.add('premium-border');
+      else audioHeader.classList.remove('premium-border');
+
+      // Logos Reais com Links Ativos Diretos
+      const socialContainer = document.getElementById('social-icons-preview');
+      socialContainer.innerHTML = '';
+      (p.socials || []).forEach(soc => {
+        if (SOCIAL_SVGS[soc.name]) {
+          const a = document.createElement('a');
+          a.className = 'social-link-icon';
+          a.href = soc.url || '#';
+          a.target = '_blank';
+          a.title = soc.name;
+          a.innerHTML = SOCIAL_SVGS[soc.name];
+          socialContainer.appendChild(a);
+        }
+      });
     }
 
-    // --- Pastas e Notas ---
+    /* Pastas e Subpastas com Três Pontinhos */
     function renderFolders() {
       const container = document.getElementById('folder-tree');
       container.innerHTML = '';
-      appState.folders.forEach(f => {
-        const li = document.createElement('li');
-        li.className = `tree-item ${f.id === appState.activeFolderId ? 'active' : ''}`;
-        li.innerHTML = `<span>📁 ${f.name}</span>`;
-        li.onclick = () => {
-          appState.activeFolderId = f.id;
-          renderFolders();
-          renderNotes();
-        };
-        container.appendChild(li);
+      const roots = appState.folders.filter(f => !f.parentId);
+      roots.forEach(parent => {
+        container.appendChild(createFolderDOM(parent, false));
+        const subs = appState.folders.filter(f => f.parentId === parent.id);
+        subs.forEach(sub => container.appendChild(createFolderDOM(sub, true)));
       });
+    }
+
+    function createFolderDOM(folder, isSub) {
+      const li = document.createElement('li');
+      li.className = `tree-item ${isSub ? 'subfolder' : ''} ${folder.id === appState.activeFolderId ? 'active' : ''}`;
+      li.innerHTML = `
+        <span style="color:${folder.color || '#38bdf8'}; font-weight:bold;">${folder.icon || '📁'} ${folder.name}</span>
+        <button class="menu-dots-btn" onclick="openFolderMenu(event, '${folder.id}', ${isSub})">⋮</button>
+      `;
+      li.onclick = (e) => {
+        if (e.target.classList.contains('menu-dots-btn')) return;
+        appState.activeFolderId = folder.id;
+        renderFolders(); renderNotes();
+      };
+      return li;
+    }
+
+    function openFolderMenu(e, folderId, isSub) {
+      e.stopPropagation();
+      const menu = document.getElementById('app-dropdown');
+      let options = `
+        <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
+        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
+      `;
+      if (!isSub) {
+        options = `<div class="dropdown-item" onclick="createSubFolder('${folderId}')">📂 Criar Subpasta</div>` + options;
+      }
+
+      menu.innerHTML = options;
+      menu.style.top = e.clientY + 'px';
+      menu.style.left = e.clientX + 'px';
+      menu.classList.add('show');
+    }
+
+    function createSubFolder(parentId) {
+      const name = prompt('Nome da Subpasta:');
+      if (name) {
+        appState.folders.push({
+          id: 'f_' + Date.now(),
+          name: name.trim(),
+          icon: '📂',
+          color: '#38bdf8',
+          parentId: parentId,
+          date: new Date().toLocaleDateString()
+        });
+        renderFolders(); saveState();
+      }
+      closeDropdown();
+    }
+
+    function renameFolder(id) {
+      const folder = appState.folders.find(f => f.id === id);
+      if (folder) {
+        const newName = prompt('Novo nome da pasta:', folder.name);
+        if (newName) { folder.name = newName.trim(); renderFolders(); saveState(); }
+      }
+      closeDropdown();
+    }
+
+    function deleteFolder(id) {
+      if (confirm('Deseja excluir esta pasta e suas subpastas/notas?')) {
+        appState.folders = appState.folders.filter(f => f.id !== id && f.parentId !== id);
+        appState.notes = appState.notes.filter(n => n.folderId !== id);
+        renderFolders(); renderNotes(); saveState();
+      }
+      closeDropdown();
     }
 
     function renderNotes() {
@@ -449,127 +577,230 @@
         li.className = `note-item ${note.id === appState.activeNoteId ? 'active' : ''}`;
         li.innerHTML = `<span>📝 ${note.title}</span>`;
         li.onclick = () => {
+          saveCurrentNoteData();
           appState.activeNoteId = note.id;
-          document.getElementById('note-title-input').value = note.title;
-          renderNotes();
+          renderNotes(); loadActiveNoteContent(); saveState();
         };
         list.appendChild(li);
       });
     }
 
-    // --- Áudios Gravados ---
-    function renderAudios() {
+    /* Desenho no Caderno com Suporte a Toque/Dedo */
+    function createPageElement(initialData = null) {
+      const container = document.getElementById('pages-container');
+      const sheet = document.createElement('div');
+      sheet.className = 'page-sheet';
+
+      const canvas = document.createElement('canvas');
+      canvas.className = 'paint-canvas';
+      canvas.width = 750;
+      canvas.height = 1000;
+      sheet.appendChild(canvas);
+      container.appendChild(sheet);
+
+      const ctx = canvas.getContext('2d');
+      if (initialData) {
+        const img = new Image();
+        img.onload = () => ctx.drawImage(img, 0, 0);
+        img.src = initialData;
+      }
+
+      bindCanvasEvents(canvas, ctx);
+    }
+
+    function loadActiveNoteContent() {
+      const container = document.getElementById('pages-container');
+      container.innerHTML = '';
+      const note = appState.notes.find(n => n.id === appState.activeNoteId);
+      if (!note) return;
+
+      document.getElementById('note-title-input').value = note.title;
+      if (note.pagesData && note.pagesData.length > 0) {
+        note.pagesData.forEach(pageImg => createPageElement(pageImg));
+      } else {
+        createPageElement();
+      }
+    }
+
+    function bindCanvasEvents(canvas, ctx) {
+      function getCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      }
+
+      function startStroke(e) {
+        appState.isDrawing = true;
+        appState.activeCanvasCtx = ctx;
+        appState.pointsBuffer = [getCoords(e)];
+      }
+
+      function drawStroke(e) {
+        if (!appState.isDrawing || appState.activeCanvasCtx !== ctx) return;
+        const pt = getCoords(e);
+        appState.pointsBuffer.push(pt);
+
+        if (appState.tool === 'eraser') {
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.lineWidth = appState.brushSize * 8;
+          ctx.lineCap = 'round';
+          const p1 = appState.pointsBuffer[appState.pointsBuffer.length - 2];
+          const p2 = appState.pointsBuffer[appState.pointsBuffer.length - 1];
+          ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+        } else {
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.strokeStyle = appState.color;
+          ctx.lineWidth = appState.brushSize;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+
+          if (appState.pointsBuffer.length > 2) {
+            const pts = appState.pointsBuffer;
+            const lastIdx = pts.length - 1;
+            const xc = (pts[lastIdx].x + pts[lastIdx - 1].x) / 2;
+            const yc = (pts[lastIdx].y + pts[lastIdx - 1].y) / 2;
+            ctx.beginPath();
+            ctx.moveTo(pts[lastIdx - 2].x, pts[lastIdx - 2].y);
+            ctx.quadraticCurveTo(pts[lastIdx - 1].x, pts[lastIdx - 1].y, xc, yc);
+            ctx.stroke();
+          }
+        }
+      }
+
+      function stopStroke() {
+        if (appState.isDrawing) {
+          appState.isDrawing = false;
+          appState.pointsBuffer = [];
+          saveState();
+        }
+      }
+
+      // Eventos de Mouse e Toque/Dedo
+      canvas.addEventListener('pointerdown', startStroke);
+      canvas.addEventListener('pointermove', drawStroke);
+      canvas.addEventListener('pointerup', stopStroke);
+      canvas.addEventListener('pointerleave', stopStroke);
+
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startStroke(e); });
+      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); drawStroke(e); });
+      canvas.addEventListener('touchend', stopStroke);
+    }
+
+    /* Gravador de Áudio & Pasta Retrátil */
+    function initAudioRecorder() {
+      const btnRec = document.getElementById('btn-rec-audio');
+      const btnStop = document.getElementById('btn-stop-audio');
+      const timer = document.getElementById('rec-timer');
+
+      btnRec.onclick = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const durationFormatted = timer.textContent;
+              appState.audios.unshift({
+                id: 'aud_' + Date.now(),
+                name: `Áudio ${appState.audios.length + 1}`,
+                duration: durationFormatted,
+                date: new Date().toLocaleString(),
+                src: reader.result
+              });
+              renderAudioList(); saveState();
+            };
+            reader.readAsDataURL(blob);
+            stream.getTracks().forEach(t => t.stop());
+          };
+
+          mediaRecorder.start();
+          recSeconds = 0;
+          timer.style.display = 'inline';
+          recInterval = setInterval(() => {
+            recSeconds++;
+            const m = Math.floor(recSeconds / 60).toString().padStart(2, '0');
+            const s = (recSeconds % 60).toString().padStart(2, '0');
+            timer.textContent = `${m}:${s}`;
+          }, 1000);
+
+          btnRec.disabled = true;
+          btnStop.disabled = false;
+        } catch(err) { alert('Acesso ao microfone negado.'); }
+      };
+
+      btnStop.onclick = () => {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+        clearInterval(recInterval);
+        timer.style.display = 'none';
+        btnRec.disabled = false;
+        btnStop.disabled = true;
+      };
+
+      const header = document.getElementById('btn-toggle-audio-folder');
+      const content = document.getElementById('audio-folder-content');
+      const arrow = document.getElementById('audio-folder-arrow');
+
+      header.onclick = () => {
+        const isOpen = content.classList.toggle('open');
+        arrow.textContent = isOpen ? '▴' : '▾';
+      };
+    }
+
+    function renderAudioList() {
       const container = document.getElementById('audio-folder-content');
       const countEl = document.getElementById('audio-count');
       container.innerHTML = '';
       countEl.textContent = appState.audios.length;
 
-      appState.audios.forEach((aud, idx) => {
+      appState.audios.forEach((aud) => {
         const card = document.createElement('div');
         card.className = 'audio-card';
         card.innerHTML = `
           <div class="audio-card-top">
-            <span>🎙️ ${aud.title}</span>
-            <button class="menu-dots-btn" style="color:#ef4444;" onclick="deleteAudio(${idx})">🗑️</button>
+            <span>🎙️ ${aud.name} (${aud.duration})</span>
+            <button class="menu-dots-btn" onclick="openAudioMenu(event, '${aud.id}')">⋮</button>
           </div>
-          <audio controls src="${aud.url}"></audio>
+          <audio src="${aud.src}" controls style="width:100%; height:26px; margin-top:2px;"></audio>
         `;
         container.appendChild(card);
       });
     }
 
-    function deleteAudio(idx) {
-      appState.audios.splice(idx, 1);
-      renderAudios();
-      saveState();
-    }
-
-    // --- Grupos de Estudo ---
-    function renderGroups(filterQuery = '') {
-      const container = document.getElementById('group-folder-content');
-      const countEl = document.getElementById('group-count');
-      container.innerHTML = '';
-
-      const filtered = appState.groups.filter(g => g.name.toLowerCase().includes(filterQuery.toLowerCase()));
-      countEl.textContent = filtered.length;
-
-      filtered.forEach(grp => {
-        const card = document.createElement('div');
-        card.className = 'group-item-card';
-        card.innerHTML = `
-          <div class="group-item-info">
-            <span class="group-item-name">👥 ${grp.name}</span>
-            <span class="group-item-meta">${grp.groupId} • ${grp.membersCount} pessoas</span>
-          </div>
-          <button class="menu-dots-btn" onclick="openGroupMenu(event, '${grp.id}')">⋮</button>
-        `;
-        card.onclick = (e) => {
-          if (e.target.classList.contains('menu-dots-btn')) return;
-          openGroupChat(grp.id);
-        };
-        container.appendChild(card);
-      });
-    }
-
-    function openGroupMenu(e, groupId) {
+    function openAudioMenu(e, audioId) {
       e.stopPropagation();
-      const grp = appState.groups.find(g => g.id === groupId);
-      if (!grp) return;
+      const aud = appState.audios.find(a => a.id === audioId);
+      if (!aud) return;
 
       const menu = document.getElementById('app-dropdown');
       menu.innerHTML = `
-        <div class="dropdown-item" onclick="generateGroupLink('${grp.id}')">🔗 Gerar Link do Grupo</div>
-        <div class="dropdown-item" onclick="silenceGroupUser('${grp.id}')">🔇 Silenciar Membro</div>
-        <div class="dropdown-item" onclick="banGroupUser('${grp.id}')">🚫 Banir Membro</div>
-        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteGroup('${grp.id}')">🗑️ Excluir Grupo</div>
+        <div class="dropdown-item" onclick="showAudioDetails('${aud.id}')">ℹ️ Detalhes</div>
+        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteAudio('${aud.id}')">🗑️ Excluir</div>
       `;
       menu.style.top = e.clientY + 'px';
       menu.style.left = e.clientX + 'px';
       menu.classList.add('show');
     }
 
-    function generateGroupLink(groupId) {
-      const link = `https://estudus.bem/join?group=${groupId}`;
-      navigator.clipboard.writeText(link);
-      alert(`🔗 Link do grupo gerado e copiado:\n${link}`);
+    function showAudioDetails(id) {
+      const aud = appState.audios.find(a => a.id === id);
+      if (aud) alert(`📊 Detalhes do Áudio:\n\nNome: ${aud.name}\nDuração: ${aud.duration}\nData de Gravação: ${aud.date}`);
       closeDropdown();
     }
 
-    function silenceGroupUser(groupId) {
-      const user = prompt('Digite o nome do participante para silenciar:');
-      if (user) alert(`Membro ${user} foi silenciado com sucesso!`);
-      closeDropdown();
-    }
-
-    function banGroupUser(groupId) {
-      const user = prompt('Digite o nome do participante para banir:');
-      if (user) alert(`Membro ${user} foi banido do grupo!`);
-      closeDropdown();
-    }
-
-    function deleteGroup(groupId) {
-      if (confirm('Deseja realmente excluir este grupo?')) {
-        appState.groups = appState.groups.filter(g => g.id !== groupId);
-        if (appState.activeChatContext === groupId) {
-          appState.activeChatContext = 'general';
-        }
-        renderGroups();
-        saveState();
+    function deleteAudio(id) {
+      if (confirm('Deseja excluir este áudio?')) {
+        appState.audios = appState.audios.filter(a => a.id !== id);
+        renderAudioList(); saveState();
       }
       closeDropdown();
     }
 
-    function openGroupChat(groupId) {
-      const grp = appState.groups.find(g => g.id === groupId);
-      if (!grp) return;
-
-      appState.activeChatContext = groupId;
-      document.getElementById('chat-title-heading').textContent = `👥 ${grp.name}`;
-      document.getElementById('chat-drawer').classList.add('open');
-      renderChatMessages();
-    }
-
-    // --- Chat System ---
+    /* Chat Estilo Telegram com Borda Premium, Links e Visualização de Perfil */
     function formatLinks(text) {
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
@@ -579,20 +810,16 @@
       const box = document.getElementById('chat-messages');
       box.innerHTML = '';
 
-      let messages = [];
-      if (appState.activeChatContext === 'general') {
-        messages = appState.chatMessagesGeneral;
-      } else {
-        const grp = appState.groups.find(g => g.id === appState.activeChatContext);
-        messages = grp ? grp.messages : [];
-      }
-
-      messages.forEach(msg => {
+      appState.chatMessages.forEach((msg, idx) => {
         const isMe = msg.sender === appState.profile.name;
         const msgDiv = document.createElement('div');
-        msgDiv.className = `telegram-msg ${isMe ? 'me' : 'other'}`;
+        msgDiv.className = `telegram-msg ${isMe ? 'me' : 'other'} ${msg.isPremium ? 'premium-glow-border' : ''}`;
+
+        const nameClass = msg.isPremium ? (msg.nameClass || 'chat-name-purple') : '';
+        const stickersExtra = (nameClass === 'chat-name-pink-stickers') ? ' 🌸✨' : '';
+
         msgDiv.innerHTML = `
-          <span class="telegram-msg-author">${msg.sender}</span>
+          <span class="telegram-msg-author ${nameClass}" onclick="viewUserProfile(${idx})">${msg.sender}${stickersExtra}</span>
           <span>${formatLinks(msg.text)}</span>
           <span class="telegram-msg-time">${msg.time || '12:00'}</span>
         `;
@@ -601,226 +828,65 @@
       box.scrollTop = box.scrollHeight;
     }
 
+    function viewUserProfile(msgIndex) {
+      const msg = appState.chatMessages[msgIndex];
+      const isMe = msg.sender === appState.profile.name;
+
+      const modal = document.getElementById('view-user-modal');
+      const avatar = document.getElementById('view-user-avatar');
+      const name = document.getElementById('view-user-name');
+      const idBadge = document.getElementById('view-user-id');
+      const bio = document.getElementById('view-user-bio');
+      const socials = document.getElementById('view-user-socials');
+
+      if (isMe) {
+        const p = appState.profile;
+        name.textContent = p.name;
+        idBadge.textContent = `ID: ${p.id}`;
+        idBadge.style.color = getIdColor(p.id);
+        bio.textContent = p.bio || 'Sem biografia';
+        if (p.avatarImg) avatar.style.backgroundImage = `url(${p.avatarImg})`;
+        else avatar.textContent = p.name.charAt(0).toUpperCase();
+
+        socials.innerHTML = (p.socials || []).map(s => 
+          `<a class="social-link-icon" href="${s.url}" target="_blank" title="${s.name}">${SOCIAL_SVGS[s.name] || ''}</a>`
+        ).join('');
+      } else {
+        name.textContent = msg.sender;
+        idBadge.textContent = `ID: ${msg.userId || 99}`;
+        idBadge.style.color = getIdColor(msg.userId || 99);
+        bio.textContent = msg.userBio || 'Membro do Estudus_bem';
+        avatar.style.backgroundImage = 'none';
+        avatar.textContent = msg.sender.charAt(0).toUpperCase();
+
+        socials.innerHTML = (msg.userSocials || []).map(s => 
+          `<a class="social-link-icon" href="${s.url}" target="_blank" title="${s.name}">${SOCIAL_SVGS[s.name] || ''}</a>`
+        ).join('');
+      }
+
+      modal.classList.add('open');
+    }
+
     function appendEmoji(emoji) {
       document.getElementById('chat-input-text').value += emoji;
     }
 
-    // --- Gravador de Voz (MediaRecorder API) ---
-    async function startAudioRecording() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const now = new Date();
-          const title = `Áudio ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
-
-          appState.audios.push({ title, url: audioUrl });
-          renderAudios();
-          saveState();
-        };
-
-        mediaRecorder.start();
-        document.getElementById('btn-rec-audio').disabled = true;
-        document.getElementById('btn-stop-audio').disabled = false;
-        
-        // Timer
-        recSeconds = 0;
-        const timerEl = document.getElementById('rec-timer');
-        timerEl.style.display = 'inline';
-        recTimerInterval = setInterval(() => {
-          recSeconds++;
-          const mins = Math.floor(recSeconds / 60).toString().padStart(2, '0');
-          const secs = (recSeconds % 60).toString().padStart(2, '0');
-          timerEl.textContent = `${mins}:${secs}`;
-        }, 1000);
-
-      } catch (err) {
-        alert('Permissão de microfone negada ou indisponível.');
-      }
+    function switchChatMode(mode) {
+      const heading = document.getElementById('chat-title-heading');
+      if (mode === 'geral') heading.textContent = '💬 Chat Geral';
+      else if (mode === 'privado') heading.textContent = '🔒 Chat Privado (DM)';
+      else if (mode === 'grupo') heading.textContent = '👥 Grupos de Estudo';
+      document.getElementById('chat-mode-popup').classList.remove('show');
     }
 
-    function stopAudioRecording() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(track => track.stop());
-      }
-      clearInterval(recTimerInterval);
-      document.getElementById('rec-timer').style.display = 'none';
-      document.getElementById('btn-rec-audio').disabled = false;
-      document.getElementById('btn-stop-audio').disabled = true;
-    }
+    function initChatEvents() {
+      const drawer = document.getElementById('chat-drawer');
+      document.getElementById('btn-open-chat').onclick = () => drawer.classList.add('open');
+      document.getElementById('btn-close-chat').onclick = () => drawer.classList.remove('open');
 
-    // --- Canvas de Desenho ---
-    function initCanvas() {
-      canvas = document.getElementById('main-canvas');
-      ctx = canvas.getContext('2d');
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-
-      function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-          x: clientX - rect.left,
-          y: clientY - rect.top
-        };
-      }
-
-      function startDraw(e) {
-        isDrawing = true;
-        const pos = getPos(e);
-        lastX = pos.x;
-        lastY = pos.y;
-      }
-
-      function draw(e) {
-        if (!isDrawing) return;
-        e.preventDefault();
-        const pos = getPos(e);
-
-        ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(pos.x, pos.y);
-
-        if (appState.tool === 'eraser') {
-          ctx.strokeStyle = '#18181b'; // Cor de fundo da folha
-          ctx.lineWidth = appState.brushSize * 4;
-        } else {
-          ctx.strokeStyle = appState.color;
-          ctx.lineWidth = appState.brushSize;
-        }
-
-        ctx.stroke();
-        lastX = pos.x;
-        lastY = pos.y;
-      }
-
-      function stopDraw() { isDrawing = false; }
-
-      canvas.addEventListener('mousedown', startDraw);
-      canvas.addEventListener('mousemove', draw);
-      canvas.addEventListener('mouseup', stopDraw);
-      canvas.addEventListener('mouseleave', stopDraw);
-
-      canvas.addEventListener('touchstart', startDraw);
-      canvas.addEventListener('touchmove', draw);
-      canvas.addEventListener('touchend', stopDraw);
-    }
-
-    // --- Exportar PDF ---
-    function exportToPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'px', format: [750, 1000] });
-      const imgData = canvas.toDataURL('image/png');
-      doc.addImage(imgData, 'PNG', 0, 0, 750, 1000);
-      doc.save(`${document.getElementById('note-title-input').value || 'nota'}.pdf`);
-    }
-
-    // --- Eventos de Clique / Gestos da Barra de Pesquisa ---
-    function initSearchHoldEvents() {
-      const searchInput = document.getElementById('group-search-bar');
-      let holdTimer;
-
-      searchInput.addEventListener('input', (e) => {
-        renderGroups(e.target.value);
-      });
-
-      // Pressionar e Segurar para criar grupo
-      searchInput.addEventListener('mousedown', () => {
-        holdTimer = setTimeout(() => {
-          document.getElementById('create-group-modal').classList.add('open');
-        }, 750);
-      });
-
-      searchInput.addEventListener('mouseup', () => clearTimeout(holdTimer));
-      searchInput.addEventListener('mouseleave', () => clearTimeout(holdTimer));
-
-      searchInput.addEventListener('touchstart', () => {
-        holdTimer = setTimeout(() => {
-          document.getElementById('create-group-modal').classList.add('open');
-        }, 750);
-      });
-      searchInput.addEventListener('touchend', () => clearTimeout(holdTimer));
-
-      // Clique com botão direito como atalho
-      searchInput.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        document.getElementById('create-group-modal').classList.add('open');
-      });
-    }
-
-    // --- Inicialização de Eventos Globais ---
-    function initEvents() {
-      // Sidebar Toggle
-      document.getElementById('btn-toggle-sidebar').onclick = () => {
-        document.getElementById('sidebar').classList.toggle('closed');
-      };
-
-      // Pastas e Notas Adicionar
-      document.getElementById('btn-add-folder').onclick = () => {
-        const name = prompt('Nome da nova pasta:');
-        if (name) {
-          appState.folders.push({ id: 'f_' + Date.now(), name });
-          renderFolders();
-          saveState();
-        }
-      };
-
-      document.getElementById('btn-add-note').onclick = () => {
-        const title = prompt('Título da nova nota:');
-        if (title) {
-          const newNote = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title };
-          appState.notes.push(newNote);
-          appState.activeNoteId = newNote.id;
-          document.getElementById('note-title-input').value = title;
-          renderNotes();
-          saveState();
-        }
-      };
-
-      document.getElementById('note-title-input').onchange = (e) => {
-        const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
-        if (currentNote) {
-          currentNote.title = e.target.value;
-          renderNotes();
-          saveState();
-        }
-      };
-
-      // Sanfonas
-      document.getElementById('btn-toggle-audio-folder').onclick = () => {
-        const content = document.getElementById('audio-folder-content');
-        const arrow = document.getElementById('audio-folder-arrow');
-        const open = content.classList.toggle('open');
-        arrow.textContent = open ? '▴' : '▾';
-      };
-
-      document.getElementById('btn-toggle-group-folder').onclick = () => {
-        const content = document.getElementById('group-folder-content');
-        const arrow = document.getElementById('group-folder-arrow');
-        const open = content.classList.toggle('open');
-        arrow.textContent = open ? '▴' : '▾';
-      };
-
-      // Chat Drawer
-      document.getElementById('btn-open-chat').onclick = () => {
-        appState.activeChatContext = 'general';
-        document.getElementById('chat-title-heading').textContent = '💬 Chat Geral';
-        document.getElementById('chat-drawer').classList.add('open');
-        renderChatMessages();
-      };
-
-      document.getElementById('btn-close-chat').onclick = () => {
-        document.getElementById('chat-drawer').classList.remove('open');
+      document.getElementById('btn-chat-float-menu').onclick = (e) => {
+        e.stopPropagation();
+        document.getElementById('chat-mode-popup').classList.toggle('show');
       };
 
       document.getElementById('btn-send-chat').onclick = () => {
@@ -828,95 +894,67 @@
         if (input.value.trim()) {
           const now = new Date();
           const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-          const newMsg = { sender: appState.profile.name, text: input.value.trim(), time: timeStr };
 
-          if (appState.activeChatContext === 'general') {
-            appState.chatMessagesGeneral.push(newMsg);
-          } else {
-            const grp = appState.groups.find(g => g.id === appState.activeChatContext);
-            if (grp) grp.messages.push(newMsg);
-          }
+          appState.chatMessages.push({
+            sender: appState.profile.name,
+            text: input.value.trim(),
+            time: timeStr,
+            isPremium: appState.profile.isPremium,
+            nameClass: appState.profile.chatColorClass || 'chat-name-purple',
+            userId: appState.profile.id,
+            userBio: appState.profile.bio,
+            userSocials: appState.profile.socials
+          });
 
           input.value = '';
           renderChatMessages();
           saveState();
         }
       };
+    }
 
-      document.getElementById('btn-chat-voice').onclick = () => {
-        const text = prompt('Digite a mensagem de voz simulada ou áudio:');
-        if (text) {
-          const now = new Date();
-          const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
-          const newMsg = { sender: appState.profile.name, text: `🎵 Áudio: "${text}"`, time: timeStr };
+    /* Seletor Único de Cor */
+    function initColorPalette() {
+      const trigger = document.getElementById('color-picker-trigger');
+      const menu = document.getElementById('color-palette-menu');
+      const display = document.getElementById('current-color-display');
 
-          if (appState.activeChatContext === 'general') appState.chatMessagesGeneral.push(newMsg);
-          else {
-            const grp = appState.groups.find(g => g.id === appState.activeChatContext);
-            if (grp) grp.messages.push(newMsg);
-          }
-          renderChatMessages();
-          saveState();
-        }
-      };
-
-      // Modal Criar Grupo
-      document.getElementById('btn-save-group').onclick = () => {
-        const name = document.getElementById('input-group-name').value.trim();
-        const bio = document.getElementById('input-group-bio').value.trim();
-        const randomNum = Math.floor(10000 + Math.random() * 90000);
-
-        if (name) {
-          appState.groups.push({
-            id: 'grp_' + Date.now(),
-            groupId: `Id-g: ${randomNum}`,
-            name: name,
-            bio: bio || 'Grupo de estudos',
-            membersCount: 1,
-            avatar: null,
-            messages: []
-          });
-          document.getElementById('input-group-name').value = '';
-          document.getElementById('input-group-bio').value = '';
-          document.getElementById('create-group-modal').classList.remove('open');
-          renderGroups();
-          saveState();
-        }
-      };
-
-      // Perfil Options & Modal
-      document.getElementById('btn-profile-options').onclick = (e) => {
+      trigger.onclick = (e) => {
         e.stopPropagation();
-        document.getElementById('input-prof-id').value = appState.profile.id;
-        document.getElementById('input-prof-name').value = appState.profile.name;
-        document.getElementById('input-prof-bio').value = appState.profile.bio;
-        document.getElementById('profile-modal').classList.add('open');
+        menu.classList.toggle('show');
       };
 
-      document.getElementById('btn-save-prof').onclick = () => {
-        appState.profile.name = document.getElementById('input-prof-name').value;
-        appState.profile.bio = document.getElementById('input-prof-bio').value;
-        document.getElementById('profile-modal').classList.remove('open');
-        updateProfileUI();
-        saveState();
+      document.querySelectorAll('.palette-dot').forEach(dot => {
+        dot.onclick = (e) => {
+          e.stopPropagation();
+          const color = dot.dataset.color;
+          appState.color = color;
+          display.style.backgroundColor = color;
+          menu.classList.remove('show');
+        };
+      });
+    }
+
+    function closeDropdown() {
+      document.getElementById('app-dropdown').classList.remove('show');
+      document.getElementById('color-palette-menu').classList.remove('show');
+      document.getElementById('chat-mode-popup').classList.remove('show');
+    }
+
+    function initControls() {
+      window.onclick = () => closeDropdown();
+
+      document.getElementById('btn-toggle-sidebar').onclick = () => {
+        document.getElementById('sidebar').classList.toggle('closed');
       };
 
-      // Gravador
-      document.getElementById('btn-rec-audio').onclick = startAudioRecording;
-      document.getElementById('btn-stop-audio').onclick = stopAudioRecording;
-
-      // Ferramentas de Desenho
-      document.getElementById('btn-tool-pen').onclick = () => {
-        appState.tool = 'pen';
-        document.getElementById('btn-tool-pen').classList.add('active');
-        document.getElementById('btn-tool-eraser').classList.remove('active');
-      };
-
-      document.getElementById('btn-tool-eraser').onclick = () => {
-        appState.tool = 'eraser';
-        document.getElementById('btn-tool-eraser').classList.add('active');
-        document.getElementById('btn-tool-pen').classList.remove('active');
-      };
+      document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          appState.tool = btn.dataset.type;
+        };
+      });
 
       document.querySelectorAll('.preset-btn').forEach(btn => {
         btn.onclick = () => {
@@ -927,45 +965,173 @@
         };
       });
 
-      document.getElementById('brush-size').oninput = (e) => {
-        appState.brushSize = parseInt(e.target.value);
+      document.getElementById('brush-size').oninput = (e) => appState.brushSize = parseInt(e.target.value);
+
+      document.getElementById('btn-add-folder').onclick = () => {
+        const name = prompt('Nome da Pasta:');
+        if (name) {
+          appState.folders.push({
+            id: 'f_' + Date.now(),
+            name: name.trim(),
+            icon: '📁',
+            color: '#38bdf8',
+            parentId: null,
+            date: new Date().toLocaleDateString()
+          });
+          renderFolders(); saveState();
+        }
       };
 
-      // Dropdown de Cores
-      const colorPickerTrigger = document.getElementById('color-picker-trigger');
-      const colorPaletteMenu = document.getElementById('color-palette-menu');
+      document.getElementById('btn-add-note').onclick = () => {
+        const n = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title: 'Nova Página', pagesData: [] };
+        appState.notes.push(n); appState.activeNoteId = n.id;
+        renderNotes(); loadActiveNoteContent(); saveState();
+      };
 
-      colorPickerTrigger.onclick = (e) => {
+      document.getElementById('btn-profile-options').onclick = (e) => {
         e.stopPropagation();
-        colorPaletteMenu.classList.toggle('show');
+        const menu = document.getElementById('app-dropdown');
+        menu.innerHTML = `
+          <div class="dropdown-item" onclick="openProfileEdit()">✏️ Editar Perfil</div>
+          <div class="dropdown-item" onclick="togglePremiumMode()">👑 Modo Premium: ${appState.profile.isPremium ? 'Ativado' : 'Ativar'}</div>
+        `;
+        menu.style.top = e.clientY + 'px';
+        menu.style.left = e.clientX + 'px';
+        menu.classList.add('show');
       };
 
-      document.querySelectorAll('.palette-dot').forEach(dot => {
-        dot.onclick = (e) => {
-          e.stopPropagation();
-          appState.color = dot.dataset.color;
-          document.getElementById('current-color-display').style.background = appState.color;
-          colorPaletteMenu.classList.remove('show');
+      document.querySelectorAll('.social-check').forEach(cb => {
+        cb.onchange = () => {
+          const key = cb.dataset.key;
+          const urlInput = document.getElementById(`url-${key}`);
+          if (cb.checked) {
+            const checkedCount = document.querySelectorAll('.social-check:checked').length;
+            if (checkedCount > 3) {
+              alert('Você só pode escolher no máximo 3 redes sociais!');
+              cb.checked = false;
+              return;
+            }
+            urlInput.style.display = 'block';
+          } else {
+            urlInput.style.display = 'none';
+          }
         };
       });
 
-      // PDF
-      document.getElementById('btn-export-pdf').onclick = exportToPDF;
+      document.getElementById('btn-cancel-prof').onclick = () => document.getElementById('profile-modal').classList.remove('open');
+      
+      document.getElementById('btn-save-prof').onclick = () => {
+        const newName = document.getElementById('input-prof-name').value.trim();
+        const now = Date.now();
+
+        if (newName !== appState.profile.name) {
+          if (appState.profile.lastNameChange) {
+            const diffDays = (now - appState.profile.lastNameChange) / (1000 * 60 * 60 * 24);
+            if (diffDays < 7) {
+              alert('Você só pode alterar seu nome a cada 7 dias!');
+              return;
+            }
+          }
+          appState.profile.name = newName;
+          appState.profile.lastNameChange = now;
+        }
+
+        appState.profile.bio = document.getElementById('input-prof-bio').value;
+
+        if (appState.profile.isPremium) {
+          appState.profile.chatColorClass = document.getElementById('premium-chat-color-select').value;
+          
+          const selectedSocials = [];
+          document.querySelectorAll('.social-check:checked').forEach(cb => {
+            const key = cb.dataset.key;
+            const url = document.getElementById(`url-${key}`).value || '#';
+            selectedSocials.push({ name: cb.value, url: url });
+          });
+          appState.profile.socials = selectedSocials;
+        }
+
+        const avatarInput = document.getElementById('input-prof-avatar');
+        if (avatarInput.files && avatarInput.files[0]) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            appState.profile.avatarImg = e.target.result;
+            updateProfileUI(); renderChatMessages(); saveState();
+            document.getElementById('profile-modal').classList.remove('open');
+          };
+          reader.readAsDataURL(avatarInput.files[0]);
+        } else {
+          updateProfileUI(); renderChatMessages(); saveState();
+          document.getElementById('profile-modal').classList.remove('open');
+        }
+      };
+
+      document.getElementById('btn-export-pdf').onclick = () => {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const canvases = document.querySelectorAll('.paint-canvas');
+
+        canvases.forEach((c, index) => {
+          if (index > 0) pdf.addPage();
+          pdf.addImage(c.toDataURL('image/png'), 'PNG', 10, 10, 190, 250);
+        });
+
+        pdf.save('estudus_bem_anotacoes.pdf');
+      };
     }
 
-    function closeDropdown() {
-      document.getElementById('app-dropdown').classList.remove('show');
-      document.getElementById('color-palette-menu').classList.remove('show');
+    function openProfileEdit() {
+      document.getElementById('input-prof-id').value = appState.profile.id || 22;
+      document.getElementById('input-prof-name').value = appState.profile.name || '';
+      document.getElementById('input-prof-bio').value = appState.profile.bio || '';
+      
+      const premiumSocial = document.getElementById('premium-social-section');
+      const modalSocialLeft = document.getElementById('modal-social-left-display');
+
+      if (appState.profile.isPremium) {
+        premiumSocial.style.display = 'block';
+        document.getElementById('premium-chat-color-select').value = appState.profile.chatColorClass || 'chat-name-purple';
+
+        document.querySelectorAll('.social-check').forEach(cb => {
+          const key = cb.dataset.key;
+          const found = (appState.profile.socials || []).find(s => s.name === cb.value);
+          const urlInput = document.getElementById(`url-${key}`);
+          if (found) {
+            cb.checked = true;
+            urlInput.style.display = 'block';
+            urlInput.value = found.url || '';
+          } else {
+            cb.checked = false;
+            urlInput.style.display = 'none';
+            urlInput.value = '';
+          }
+        });
+
+        modalSocialLeft.innerHTML = (appState.profile.socials || []).map(s => SOCIAL_SVGS[s.name] ? `<span style="width:20px; height:20px; display:inline-block;">${SOCIAL_SVGS[s.name]}</span>` : '').join('');
+      } else {
+        premiumSocial.style.display = 'none';
+        modalSocialLeft.innerHTML = '';
+      }
+
+      document.getElementById('profile-modal').classList.add('open');
+      closeDropdown();
     }
 
-    window.onclick = () => closeDropdown();
+    function togglePremiumMode() {
+      appState.profile.isPremium = !appState.profile.isPremium;
+      alert(appState.profile.isPremium ? '👑 Modo Premium Ativado!' : 'Modo Premium Desativado.');
+      updateProfileUI(); renderChatMessages(); saveState(); closeDropdown();
+    }
 
-    // Startup
     window.addEventListener('DOMContentLoaded', () => {
       loadState();
-      initCanvas();
-      initEvents();
-      initSearchHoldEvents();
+      initAudioRecorder();
+      initChatEvents();
+      initColorPalette();
+      initControls();
+      renderFolders();
+      renderNotes();
+      renderAudioList();
+      loadActiveNoteContent();
     });
   </script>
 </body>
