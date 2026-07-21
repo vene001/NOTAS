@@ -24,7 +24,7 @@
     .user-avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; overflow: hidden; background-size: cover; background-position: center; flex-shrink: 0; color: #fff; }
     .user-info { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
     .user-name-box { display: flex; align-items: center; gap: 6px; }
-    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
     .user-name.gold-name { background: linear-gradient(90deg, #ffd700, #ffa500, #ffd700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; animation: shimmer 2s infinite linear; }
     
     @keyframes shimmer { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
@@ -34,7 +34,7 @@
     
     .social-icons-preview { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
     .social-link-icon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; cursor: pointer; transition: transform 0.2s; }
-    .social-link-icon:hover { transform: scale(1.15); }
+    .social-link-icon:hover { transform: scale(1.2); }
     .social-link-icon svg { width: 100%; height: 100%; }
 
     .menu-dots-btn { background: transparent; border: none; color: #94a3b8; font-size: 15px; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
@@ -46,11 +46,12 @@
     /* Folder e Note Lists */
     .folder-tree, .note-list { list-style: none; margin-bottom: 12px; }
     .tree-item, .note-item { padding: 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; background: #0f172a; }
-    .tree-item.subfolder { margin-left: 16px; border-left: 2px solid #334155; }
+    .tree-item.subfolder { margin-left: 16px; border-left: 2px solid #38bdf8; }
     .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
 
-    /* Pasta de Áudios Retrátil */
-    .audio-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; }
+    /* Pasta de Áudios Retrátil com Borda Premium */
+    .audio-folder-header { background: #0f172a; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; font-size: 12px; font-weight: 600; color: #38bdf8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; margin-top: 8px; transition: all 0.3s ease; }
+    .audio-folder-header.premium-border { border: 2px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
     .audio-folder-content { display: none; margin-top: 6px; flex-direction: column; gap: 6px; }
     .audio-folder-content.open { display: flex; }
     .audio-card { background: #0f172a; border: 1px solid #334155; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
@@ -89,30 +90,42 @@
     .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
     .paint-canvas { display: block; touch-action: none; cursor: crosshair; }
 
-    /* Chat Estilo Telegram */
+    /* Chat Estilo Telegram com Borda Premium */
     .chat-drawer { position: fixed; right: -380px; top: 0; bottom: 0; width: 360px; background: #0f172a; border-left: 1px solid #334155; z-index: 300; display: flex; flex-direction: column; transition: right 0.3s ease; }
     .chat-drawer.open { right: 0; }
     .chat-header { padding: 14px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
     
-    .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 16px 16px; }
+    .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-image: radial-gradient(#1e293b 1px, transparent 1px); background-size: 16px 16px; }
     
-    .telegram-msg { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; word-break: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+    .telegram-msg { max-width: 82%; padding: 8px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; display: flex; flex-direction: column; word-break: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.3); border: 1px solid transparent; }
     .telegram-msg.other { align-self: flex-start; background: #1e293b; color: #f1f5f9; border-bottom-left-radius: 2px; }
     .telegram-msg.me { align-self: flex-end; background: #2b5278; color: #ffffff; border-bottom-right-radius: 2px; }
     
-    .telegram-msg-author { font-weight: 700; font-size: 11px; margin-bottom: 2px; }
-    .telegram-msg-time { font-size: 10px; color: rgba(255,255,255,0.6); align-self: flex-end; margin-top: 4px; }
+    /* Efeito de Borda Neon no Chat para Usuários Premium */
+    .telegram-msg.premium-glow-border { border: 1.5px solid #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
 
-    /* Cores Brilhantes Neon para Nomes Premium no Chat */
+    .telegram-msg-author { font-weight: 700; font-size: 11px; margin-bottom: 2px; cursor: pointer; }
+    .telegram-msg-author:hover { text-decoration: underline; }
+    .telegram-msg-time { font-size: 10px; color: rgba(255,255,255,0.6); align-self: flex-end; margin-top: 4px; }
+    .telegram-msg a { color: #38bdf8; text-decoration: underline; }
+
+    /* Cores Brilhantes Neon para Nomes Premium */
     .chat-name-purple { color: #c084fc; text-shadow: 0 0 8px #a855f7; }
     .chat-name-white { color: #ffffff; text-shadow: 0 0 8px #ffffff; }
     .chat-name-green { color: #4ade80; text-shadow: 0 0 8px #22c55e; }
     .chat-name-pink { color: #f472b6; text-shadow: 0 0 8px #ec4899; }
     .chat-name-pink-stickers { color: #ff69b4; text-shadow: 0 0 10px #ff1493; }
 
-    .chat-footer { padding: 10px; background: #1e293b; border-top: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; }
+    .chat-footer { padding: 10px; background: #1e293b; border-top: 1px solid #334155; display: flex; flex-direction: column; gap: 8px; position: relative; }
     .chat-input-row { display: flex; gap: 6px; align-items: center; }
     .chat-input { flex: 1; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 20px; outline: none; font-size: 13px; }
+
+    /* Botão Flutuante de Modo de Chat Privado / Grupo */
+    .chat-float-btn { position: absolute; bottom: 70px; right: 16px; width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #a855f7, #6366f1); border: none; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 10; }
+    .chat-mode-popup { display: none; position: absolute; bottom: 120px; right: 16px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 6px; flex-direction: column; gap: 4px; z-index: 20; box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+    .chat-mode-popup.show { display: flex; }
+    .chat-mode-item { padding: 8px 12px; font-size: 12px; color: #cbd5e1; cursor: pointer; border-radius: 4px; white-space: nowrap; }
+    .chat-mode-item:hover { background: #2563eb; color: white; }
 
     /* Modais e Dropdowns */
     .dropdown-menu { display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 500; min-width: 170px; }
@@ -235,10 +248,19 @@
   <!-- Chat Geral Estilo Telegram -->
   <div class="chat-drawer" id="chat-drawer">
     <div class="chat-header">
-      <h3 style="font-size:14px; color:#38bdf8;">💬 Chat Geral (Estudus_bem)</h3>
+      <h3 style="font-size:14px; color:#38bdf8;" id="chat-title-heading">💬 Chat Geral</h3>
       <button class="menu-dots-btn" id="btn-close-chat">✖</button>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
+    
+    <!-- Menu Flutuante de Modos de Chat (Privado e Grupo) -->
+    <button class="chat-float-btn" id="btn-chat-float-menu" title="Modos de Chat">💬</button>
+    <div class="chat-mode-popup" id="chat-mode-popup">
+      <div class="chat-mode-item" onclick="switchChatMode('geral')">🌐 Chat Geral</div>
+      <div class="chat-mode-item" onclick="switchChatMode('privado')">🔒 Chat Privado (DM)</div>
+      <div class="chat-mode-item" onclick="switchChatMode('grupo')">👥 Grupos de Estudo</div>
+    </div>
+
     <div class="chat-footer">
       <div style="display:flex; gap:6px; overflow-x:auto; padding-bottom:4px;">
         <button class="btn btn-secondary" onclick="appendEmoji('🦖')">🦖</button>
@@ -248,7 +270,8 @@
         <button class="btn btn-secondary" onclick="appendEmoji('📚')">📚</button>
       </div>
       <div class="chat-input-row">
-        <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem estilo Telegram...">
+        <button class="btn btn-secondary" id="btn-chat-voice" title="Mandar áudio no Chat" onclick="alert('Gravação rápida de áudio ativada!')">🎙️</button>
+        <input type="text" id="chat-input-text" class="chat-input" placeholder="Escreva uma mensagem ou link...">
         <button class="btn" style="background:#2b5278; color:white; border-radius:50%; width:36px; height:36px; justify-content:center;" id="btn-send-chat">➔</button>
       </div>
     </div>
@@ -257,7 +280,7 @@
   <!-- Menu Dropdown Genérico -->
   <div class="dropdown-menu" id="app-dropdown"></div>
 
-  <!-- Modal do Perfil -->
+  <!-- Modal do Perfil do Usuário -->
   <div class="modal-overlay" id="profile-modal">
     <div class="modal-card">
       <h3 style="color:#fff;">Editar Perfil</h3>
@@ -325,8 +348,24 @@
     </div>
   </div>
 
+  <!-- Modal Visualizador de Perfil de Outros Usuários -->
+  <div class="modal-overlay" id="view-user-modal">
+    <div class="modal-card" style="text-align:center; align-items:center;">
+      <div class="user-avatar" id="view-user-avatar" style="width:70px; height:70px; font-size:24px;">U</div>
+      <h3 style="color:#fff;" id="view-user-name">Nome</h3>
+      <span class="user-id-badge" id="view-user-id" style="width:fit-content;">ID: 00</span>
+      <p style="font-size:13px; color:#cbd5e1; margin-top:8px;" id="view-user-bio">Biografia...</p>
+
+      <div style="margin-top:12px;" class="form-group">
+        <label style="color:#ffd700;">Redes Sociais:</label>
+        <div class="social-icons-preview" id="view-user-socials" style="justify-content:center; margin-top:6px;"></div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="document.getElementById('view-user-modal').classList.remove('open')" style="margin-top:14px;">Fechar</button>
+    </div>
+  </div>
+
   <script>
-    // SVGs das Logos Reais das Redes
     const SOCIAL_SVGS = {
       TikTok: `<svg viewBox="0 0 24 24" fill="#ffffff"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-2.81V7.6a6.34 6.34 0 0 0-5.36 6.25 6.34 6.34 0 1 0 10.66-4.63 8.28 8.28 0 0 0 4.81 1.51V7.27a4.85 4.85 0 0 1-1-.58z"/></svg>`,
       Instagram: `<svg viewBox="0 0 24 24" fill="#e1306c"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
@@ -358,7 +397,7 @@
       notes: [{ id: 'n_1', folderId: 'f_root', title: 'Minha primeira nota', pagesData: [] }],
       audios: [],
       chatMessages: [
-        { sender: 'Comunidade', text: 'Bem-vindo ao Chat Geral estilo Telegram! 🦖', time: '10:00', isPremium: false, nameClass: '' }
+        { sender: 'Comunidade', text: 'Bem-vindo ao Chat Geral do Estudus_bem! Visite https://estudus.com 🦖', time: '10:00', isPremium: false, nameClass: '', userId: 5, userBio: 'Membro da comunidade', userSocials: [] }
       ],
       activeFolderId: 'f_root',
       activeNoteId: 'n_1',
@@ -373,7 +412,7 @@
     let mediaRecorder, audioChunks = [], recInterval, recSeconds = 0;
 
     function loadState() {
-      const saved = localStorage.getItem('estudus_bem_v5_data');
+      const saved = localStorage.getItem('estudus_bem_v6_data');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -392,7 +431,7 @@
 
     function saveState() {
       saveCurrentNoteData();
-      localStorage.setItem('estudus_bem_v5_data', JSON.stringify(appState));
+      localStorage.setItem('estudus_bem_v6_data', JSON.stringify(appState));
     }
 
     function saveCurrentNoteData() {
@@ -430,7 +469,12 @@
         avatarEl.textContent = (p.name || 'U').charAt(0).toUpperCase();
       }
 
-      // Renderizar Logos Reais com Links Ativos
+      // Efeito de Borda Premium na Pasta de Áudios Gravados
+      const audioHeader = document.getElementById('btn-toggle-audio-folder');
+      if (p.isPremium) audioHeader.classList.add('premium-border');
+      else audioHeader.classList.remove('premium-border');
+
+      // Logos Reais com Links Ativos Diretos
       const socialContainer = document.getElementById('social-icons-preview');
       socialContainer.innerHTML = '';
       (p.socials || []).forEach(soc => {
@@ -446,7 +490,7 @@
       });
     }
 
-    /* Pastas e Notas */
+    /* Pastas e Subpastas com Três Pontinhos */
     function renderFolders() {
       const container = document.getElementById('folder-tree');
       container.innerHTML = '';
@@ -465,11 +509,63 @@
         <span style="color:${folder.color || '#38bdf8'}; font-weight:bold;">${folder.icon || '📁'} ${folder.name}</span>
         <button class="menu-dots-btn" onclick="openFolderMenu(event, '${folder.id}', ${isSub})">⋮</button>
       `;
-      li.onclick = () => {
+      li.onclick = (e) => {
+        if (e.target.classList.contains('menu-dots-btn')) return;
         appState.activeFolderId = folder.id;
         renderFolders(); renderNotes();
       };
       return li;
+    }
+
+    function openFolderMenu(e, folderId, isSub) {
+      e.stopPropagation();
+      const menu = document.getElementById('app-dropdown');
+      let options = `
+        <div class="dropdown-item" onclick="renameFolder('${folderId}')">✏️ Renomear</div>
+        <div class="dropdown-item" style="color:#ef4444;" onclick="deleteFolder('${folderId}')">🗑️ Excluir</div>
+      `;
+      if (!isSub) {
+        options = `<div class="dropdown-item" onclick="createSubFolder('${folderId}')">📂 Criar Subpasta</div>` + options;
+      }
+
+      menu.innerHTML = options;
+      menu.style.top = e.clientY + 'px';
+      menu.style.left = e.clientX + 'px';
+      menu.classList.add('show');
+    }
+
+    function createSubFolder(parentId) {
+      const name = prompt('Nome da Subpasta:');
+      if (name) {
+        appState.folders.push({
+          id: 'f_' + Date.now(),
+          name: name.trim(),
+          icon: '📂',
+          color: '#38bdf8',
+          parentId: parentId,
+          date: new Date().toLocaleDateString()
+        });
+        renderFolders(); saveState();
+      }
+      closeDropdown();
+    }
+
+    function renameFolder(id) {
+      const folder = appState.folders.find(f => f.id === id);
+      if (folder) {
+        const newName = prompt('Novo nome da pasta:', folder.name);
+        if (newName) { folder.name = newName.trim(); renderFolders(); saveState(); }
+      }
+      closeDropdown();
+    }
+
+    function deleteFolder(id) {
+      if (confirm('Deseja excluir esta pasta e suas subpastas/notas?')) {
+        appState.folders = appState.folders.filter(f => f.id !== id && f.parentId !== id);
+        appState.notes = appState.notes.filter(n => n.folderId !== id);
+        renderFolders(); renderNotes(); saveState();
+      }
+      closeDropdown();
     }
 
     function renderNotes() {
@@ -489,7 +585,7 @@
       });
     }
 
-    /* Desenho no Caderno */
+    /* Desenho no Caderno com Suporte a Toque/Dedo */
     function createPageElement(initialData = null) {
       const container = document.getElementById('pages-container');
       const sheet = document.createElement('div');
@@ -529,7 +625,9 @@
     function bindCanvasEvents(canvas, ctx) {
       function getCoords(e) {
         const rect = canvas.getBoundingClientRect();
-        return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
       }
 
       function startStroke(e) {
@@ -578,10 +676,15 @@
         }
       }
 
+      // Eventos de Mouse e Toque/Dedo
       canvas.addEventListener('pointerdown', startStroke);
       canvas.addEventListener('pointermove', drawStroke);
       canvas.addEventListener('pointerup', stopStroke);
       canvas.addEventListener('pointerleave', stopStroke);
+
+      canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startStroke(e); });
+      canvas.addEventListener('touchmove', (e) => { e.preventDefault(); drawStroke(e); });
+      canvas.addEventListener('touchend', stopStroke);
     }
 
     /* Gravador de Áudio & Pasta Retrátil */
@@ -638,7 +741,6 @@
         btnStop.disabled = true;
       };
 
-      // Pasta de Áudios Retrátil
       const header = document.getElementById('btn-toggle-audio-folder');
       const content = document.getElementById('audio-folder-content');
       const arrow = document.getElementById('audio-folder-arrow');
@@ -698,22 +800,27 @@
       closeDropdown();
     }
 
-    /* Chat Estilo Telegram */
+    /* Chat Estilo Telegram com Borda Premium, Links e Visualização de Perfil */
+    function formatLinks(text) {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+    }
+
     function renderChatMessages() {
       const box = document.getElementById('chat-messages');
       box.innerHTML = '';
 
-      appState.chatMessages.forEach(msg => {
+      appState.chatMessages.forEach((msg, idx) => {
         const isMe = msg.sender === appState.profile.name;
         const msgDiv = document.createElement('div');
-        msgDiv.className = `telegram-msg ${isMe ? 'me' : 'other'}`;
+        msgDiv.className = `telegram-msg ${isMe ? 'me' : 'other'} ${msg.isPremium ? 'premium-glow-border' : ''}`;
 
         const nameClass = msg.isPremium ? (msg.nameClass || 'chat-name-purple') : '';
         const stickersExtra = (nameClass === 'chat-name-pink-stickers') ? ' 🌸✨' : '';
 
         msgDiv.innerHTML = `
-          <span class="telegram-msg-author ${nameClass}">${msg.sender}${stickersExtra}</span>
-          <span>${msg.text}</span>
+          <span class="telegram-msg-author ${nameClass}" onclick="viewUserProfile(${idx})">${msg.sender}${stickersExtra}</span>
+          <span>${formatLinks(msg.text)}</span>
           <span class="telegram-msg-time">${msg.time || '12:00'}</span>
         `;
         box.appendChild(msgDiv);
@@ -721,14 +828,66 @@
       box.scrollTop = box.scrollHeight;
     }
 
+    function viewUserProfile(msgIndex) {
+      const msg = appState.chatMessages[msgIndex];
+      const isMe = msg.sender === appState.profile.name;
+
+      const modal = document.getElementById('view-user-modal');
+      const avatar = document.getElementById('view-user-avatar');
+      const name = document.getElementById('view-user-name');
+      const idBadge = document.getElementById('view-user-id');
+      const bio = document.getElementById('view-user-bio');
+      const socials = document.getElementById('view-user-socials');
+
+      if (isMe) {
+        const p = appState.profile;
+        name.textContent = p.name;
+        idBadge.textContent = `ID: ${p.id}`;
+        idBadge.style.color = getIdColor(p.id);
+        bio.textContent = p.bio || 'Sem biografia';
+        if (p.avatarImg) avatar.style.backgroundImage = `url(${p.avatarImg})`;
+        else avatar.textContent = p.name.charAt(0).toUpperCase();
+
+        socials.innerHTML = (p.socials || []).map(s => 
+          `<a class="social-link-icon" href="${s.url}" target="_blank" title="${s.name}">${SOCIAL_SVGS[s.name] || ''}</a>`
+        ).join('');
+      } else {
+        name.textContent = msg.sender;
+        idBadge.textContent = `ID: ${msg.userId || 99}`;
+        idBadge.style.color = getIdColor(msg.userId || 99);
+        bio.textContent = msg.userBio || 'Membro do Estudus_bem';
+        avatar.style.backgroundImage = 'none';
+        avatar.textContent = msg.sender.charAt(0).toUpperCase();
+
+        socials.innerHTML = (msg.userSocials || []).map(s => 
+          `<a class="social-link-icon" href="${s.url}" target="_blank" title="${s.name}">${SOCIAL_SVGS[s.name] || ''}</a>`
+        ).join('');
+      }
+
+      modal.classList.add('open');
+    }
+
     function appendEmoji(emoji) {
       document.getElementById('chat-input-text').value += emoji;
+    }
+
+    function switchChatMode(mode) {
+      const heading = document.getElementById('chat-title-heading');
+      if (mode === 'geral') heading.textContent = '💬 Chat Geral';
+      else if (mode === 'privado') heading.textContent = '🔒 Chat Privado (DM)';
+      else if (mode === 'grupo') heading.textContent = '👥 Grupos de Estudo';
+      document.getElementById('chat-mode-popup').classList.remove('show');
     }
 
     function initChatEvents() {
       const drawer = document.getElementById('chat-drawer');
       document.getElementById('btn-open-chat').onclick = () => drawer.classList.add('open');
       document.getElementById('btn-close-chat').onclick = () => drawer.classList.remove('open');
+
+      document.getElementById('btn-chat-float-menu').onclick = (e) => {
+        e.stopPropagation();
+        document.getElementById('chat-mode-popup').classList.toggle('show');
+      };
 
       document.getElementById('btn-send-chat').onclick = () => {
         const input = document.getElementById('chat-input-text');
@@ -741,7 +900,10 @@
             text: input.value.trim(),
             time: timeStr,
             isPremium: appState.profile.isPremium,
-            nameClass: appState.profile.chatColorClass || 'chat-name-purple'
+            nameClass: appState.profile.chatColorClass || 'chat-name-purple',
+            userId: appState.profile.id,
+            userBio: appState.profile.bio,
+            userSocials: appState.profile.socials
           });
 
           input.value = '';
@@ -776,6 +938,7 @@
     function closeDropdown() {
       document.getElementById('app-dropdown').classList.remove('show');
       document.getElementById('color-palette-menu').classList.remove('show');
+      document.getElementById('chat-mode-popup').classList.remove('show');
     }
 
     function initControls() {
@@ -825,7 +988,6 @@
         renderNotes(); loadActiveNoteContent(); saveState();
       };
 
-      /* Menu do Perfil & Eventos de Redes Sociais */
       document.getElementById('btn-profile-options').onclick = (e) => {
         e.stopPropagation();
         const menu = document.getElementById('app-dropdown');
@@ -838,7 +1000,6 @@
         menu.classList.add('show');
       };
 
-      // Exibir/Ocultar campos de URL conforme Checkbox das Redes
       document.querySelectorAll('.social-check').forEach(cb => {
         cb.onchange = () => {
           const key = cb.dataset.key;
@@ -930,7 +1091,6 @@
         premiumSocial.style.display = 'block';
         document.getElementById('premium-chat-color-select').value = appState.profile.chatColorClass || 'chat-name-purple';
 
-        // Restaurar redes selecionadas e seus links
         document.querySelectorAll('.social-check').forEach(cb => {
           const key = cb.dataset.key;
           const found = (appState.profile.socials || []).find(s => s.name === cb.value);
@@ -959,7 +1119,7 @@
     function togglePremiumMode() {
       appState.profile.isPremium = !appState.profile.isPremium;
       alert(appState.profile.isPremium ? '👑 Modo Premium Ativado!' : 'Modo Premium Desativado.');
-      updateProfileUI(); saveState(); closeDropdown();
+      updateProfileUI(); renderChatMessages(); saveState(); closeDropdown();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
