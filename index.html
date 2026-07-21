@@ -2,8 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Bloco de Notas & Anotações</title>
-  <!-- Biblioteca jsPDF via CDN para exportação -->
+  <title>Bloco de Notas & Anotações Avançado</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -11,220 +10,320 @@
     .app-layout { display: flex; height: 100vh; width: 100vw; }
 
     /* Sidebar */
-    .sidebar { width: 260px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; }
-    .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
+    .sidebar { width: 280px; background-color: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; padding: 16px; overflow-y: auto; }
+    .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #334155; }
     .brand { display: flex; align-items: center; gap: 8px; }
     .brand h2 { font-size: 16px; font-weight: 700; color: #f8fafc; }
-    #btn-close-widget { background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 16px; padding: 4px; border-radius: 4px; }
-    #btn-close-widget:hover { color: #f1f5f9; background: #334155; }
+    
+    /* Perfil do Usuário */
+    .user-profile { display: flex; align-items: center; gap: 10px; padding: 8px; background: #0f172a; border-radius: 8px; margin-bottom: 16px; }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+    .user-info { display: flex; flex-direction: column; }
+    .user-name { font-size: 13px; font-weight: 600; color: #f8fafc; }
+    .user-status { font-size: 10px; color: #38bdf8; font-weight: bold; }
 
     .section-title { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.05em; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 8px; }
-    .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; width: 20px; height: 20px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .icon-btn { background: #334155; color: #f8fafc; border: none; border-radius: 4px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
     .icon-btn:hover { background: #2563eb; }
 
-    .folder-list, .note-list { list-style: none; overflow-y: auto; max-height: 160px; margin-bottom: 12px; }
-    .folder-item, .note-item { padding: 8px 10px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; transition: background 0.15s ease; }
-    .folder-item:hover, .note-item:hover { background: #334155; }
-    .folder-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
-    .folder-item .badge { font-size: 10px; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 10px; }
+    .folder-tree, .note-list { list-style: none; margin-bottom: 12px; }
+    .tree-item, .note-item { padding: 6px 8px; border-radius: 6px; font-size: 13px; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+    .tree-item:hover, .note-item:hover { background: #334155; }
+    .tree-item.active, .note-item.active { background: #2563eb; color: #ffffff; font-weight: 600; }
+    .subfolder { margin-left: 14px; border-left: 1px dashed #475569; padding-left: 6px; }
+    .item-actions { display: none; gap: 4px; }
+    .tree-item:hover .item-actions, .note-item:hover .item-actions { display: flex; }
 
-    .sidebar-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid #334155; font-size: 11px; color: #94a3b8; }
-    .status-indicator { display: flex; align-items: center; gap: 6px; }
-    .status-indicator .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
-
-    /* Area do Editor */
+    /* Area Principal */
     .main-editor { flex: 1; display: flex; flex-direction: column; background-color: #0f172a; }
     .editor-header { height: 56px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
     .note-info { display: flex; align-items: center; gap: 10px; }
     #note-title-input { background: transparent; border: 1px solid transparent; color: #f8fafc; font-size: 16px; font-weight: 600; padding: 4px 8px; border-radius: 4px; outline: none; }
     #note-title-input:focus { border-color: #3b82f6; background: #0f172a; }
-    .meta-tag { font-size: 10px; background: #334155; color: #94a3b8; padding: 3px 8px; border-radius: 12px; }
 
-    .actions-bar { display: flex; gap: 8px; }
-    .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; transition: background 0.15s ease; }
+    .actions-bar { display: flex; gap: 8px; align-items: center; }
+    .btn { padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: none; cursor: pointer; }
     .btn-secondary { background: #334155; color: #f8fafc; }
     .btn-secondary:hover { background: #475569; }
     .btn-danger-soft { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
-    .btn-danger-soft:hover { background: rgba(239, 68, 68, 0.3); }
-    /* Ferramentas de Desenho */
-    .drawing-toolbar { height: 48px; background: #182232; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 16px; }
-    .tool-group { display: flex; align-items: center; gap: 8px; }
-    .tool-group.right { margin-left: auto; }
+
+    /* Ferramentas */
+    .drawing-toolbar { height: 52px; background: #182232; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 16px; gap: 12px; flex-wrap: wrap; }
+    .tool-group { display: flex; align-items: center; gap: 6px; }
     .tool-btn { background: #334155; color: #cbd5e1; border: none; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
     .tool-btn.active { background: #2563eb; color: #ffffff; font-weight: 600; }
-    .label { font-size: 11px; color: #94a3b8; }
-    #brush-size { width: 80px; cursor: pointer; }
-    #size-display { font-size: 11px; color: #cbd5e1; min-width: 25px; }
-
-    .color-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+    .color-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
     .color-dot.active { border-color: #ffffff; transform: scale(1.15); }
-    #custom-color-picker { width: 24px; height: 24px; border: none; border-radius: 50%; background: none; cursor: pointer; }
 
-    /* Canvas / Folha Finita */
-    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
-    .page-sheet { background: #ffffff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); border-radius: 4px; position: relative; background-image: linear-gradient(#f1f5f9 1px, transparent 1px); background-size: 100% 28px; }
-    #paint-canvas { display: block; cursor: crosshair; touch-action: none; }
+    /* Gravador de Áudio */
+    .audio-panel { background: #1e293b; padding: 6px 12px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; font-size: 12px; }
+    #audio-player { height: 28px; }
+
+    /* Canvas Viewport */
+    .canvas-viewport { flex: 1; overflow: auto; background-color: #0b0f19; display: flex; justify-content: center; align-items: flex-start; padding: 20px; position: relative; }
+    .page-sheet { background: #18181b; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 4px; position: relative; background-image: linear-gradient(#27272a 1px, transparent 1px); background-size: 100% 28px; }
+    #paint-canvas { display: block; cursor: crosshair; }
+
+    /* Régua Virtual */
+    #virtual-ruler { position: absolute; width: 400px; height: 40px; background: rgba(255, 255, 255, 0.2); border: 2px dashed #38bdf8; top: 100px; left: 100px; cursor: move; display: none; backdrop-filter: blur(2px); border-radius: 4px; }
+    #virtual-ruler::after { content: "RÉGUA (Móvel)"; font-size: 10px; color: #38bdf8; position: absolute; top: 10px; left: 10px; font-weight: bold; }
+
+    /* Caixa de Texto Dinâmica */
+    .canvas-text-input { position: absolute; background: transparent; border: 1px dashed #38bdf8; color: #ffffff; font-size: 16px; outline: none; padding: 2px; }
   </style>
 </head>
 <body>
   <div class="app-layout">
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="brand"><span class="icon">📓</span><h2>Anotações</h2></div>
-        <button id="btn-close-widget" title="Fechar Widget">✖</button>
+        <div class="brand"><span>📓</span><h2>Anotações Pro</h2></div>
       </div>
 
-      <div class="section-title">PASTAS <button id="btn-add-folder" class="icon-btn" title="Nova Pasta">+</button></div>
-      <ul id="folder-list" class="folder-list"></ul>
+      <!-- Perfil de Usuário Persistente -->
+      <div class="user-profile">
+        <div class="user-avatar" id="user-avatar">U</div>
+        <div class="user-info">
+          <span class="user-name" id="user-name">Usuário</span>
+          <span class="user-status" id="user-status">⚡ Premium</span>
+        </div>
+      </div>
 
-      <div class="section-title">NOTAS DA PASTA <button id="btn-add-note" class="icon-btn" title="Nova Nota">+</button></div>
+      <div class="section-title">
+        PASTAS <button id="btn-add-folder" class="icon-btn">+ Pasta</button>
+      </div>
+      <ul id="folder-tree" class="folder-tree"></ul>
+
+      <div class="section-title">
+        NOTAS <button id="btn-add-note" class="icon-btn">+ Nota</button>
+      </div>
       <ul id="note-list" class="note-list"></ul>
-
-      <div class="sidebar-footer">
-        <div class="status-indicator"><span class="dot"></span> <span id="save-status">Salvo automaticamente</span></div>
-      </div>
     </aside>
 
     <main class="main-editor">
       <header class="editor-header">
         <div class="note-info">
-          <input type="text" id="note-title-input" value="Minha Anotação" placeholder="Título da Nota...">
-          <span id="note-meta" class="meta-tag">Página Finita</span>
+          <input type="text" id="note-title-input" value="Minha Anotação">
         </div>
 
         <div class="actions-bar">
-          <button id="btn-export-pdf" class="btn btn-secondary">📄 PDF</button>
-          <button id="btn-transfer-export" class="btn btn-secondary">🔄 Exportar (JSON)</button>
-          <label class="btn btn-secondary btn-file">
+          <button id="btn-export-pdf" class="btn btn-secondary">📄 Exportar PDF</button>
+          <button id="btn-transfer-export" class="btn btn-secondary">🔄 Exportar JSON</button>
+          <label class="btn btn-secondary">
             📥 Importar
             <input type="file" id="btn-transfer-import" accept=".json" style="display:none;">
           </label>
         </div>
       </header>
 
+      <!-- Painel do Gravador de Voz -->
+      <div class="audio-panel">
+        <span>🎙️ Gravador:</span>
+        <button id="btn-rec-audio" class="btn btn-secondary">🔴 Gravar Áudio</button>
+        <button id="btn-stop-audio" class="btn btn-danger-soft" disabled>⏹️ Parar</button>
+        <audio id="audio-player" controls style="display:none;"></audio>
+      </div>
+
+      <!-- Barra de Ferramentas -->
       <div class="drawing-toolbar">
         <div class="tool-group">
-          <button id="tool-pen" class="tool-btn active">✏️ Caneta</button>
-          <button id="tool-eraser" class="tool-btn">🧹 Borracha</button>
+          <button id="tool-pen" class="tool-btn active" data-type="pen">✏️ Caneta</button>
+          <button id="tool-highlighter" class="tool-btn" data-type="highlighter">🖍️ Marca-texto</button>
+          <button id="tool-pencil" class="tool-btn" data-type="pencil">✏️ Lápis</button>
+          <button id="tool-text" class="tool-btn" data-type="text">🔤 Texto</button>
+          <button id="tool-eraser" class="tool-btn" data-type="eraser">🧹 Borracha</button>
         </div>
 
         <div class="tool-group">
-          <span class="label">Espessura:</span>
-          <input type="range" id="brush-size" min="1" max="25" value="3">
-          <span id="size-display">3px</span>
+          <button id="btn-toggle-ruler" class="tool-btn">📏 Régua</button>
+        </div>
+
+        <div class="tool-group">
+          <span style="font-size: 11px; color: #94a3b8;">Espessura:</span>
+          <input type="range" id="brush-size" min="1" max="30" value="3" style="width:70px;">
         </div>
 
         <div class="tool-group colors">
-          <span class="label">Cores:</span>
-          <button class="color-dot active" data-color="#000000" style="background:#000000;"></button>
-          <button class="color-dot" data-color="#2563eb" style="background:#2563eb;"></button>
-          <button class="color-dot" data-color="#dc2626" style="background:#dc2626;"></button>
-          <button class="color-dot" data-color="#16a34a" style="background:#16a34a;"></button>
-          <button class="color-dot" data-color="#d97706" style="background:#d97706;"></button>
-          <button class="color-dot" data-color="#9333ea" style="background:#9333ea;"></button>
-          <input type="color" id="custom-color-picker" value="#000000">
+          <button class="color-dot active" data-color="#ffffff" style="background:#ffffff;"></button>
+          <button class="color-dot" data-color="#38bdf8" style="background:#38bdf8;"></button>
+          <button class="color-dot" data-color="#ef4444" style="background:#ef4444;"></button>
+          <button class="color-dot" data-color="#22c55e" style="background:#22c55e;"></button>
+          <button class="color-dot" data-color="#eab308" style="background:#eab308;"></button>
+          <input type="color" id="custom-color-picker" value="#ffffff" style="width:22px; height:22px; border:none; background:none;">
         </div>
 
-        <div class="tool-group right">
-          <button id="btn-clear-canvas" class="btn btn-danger-soft">🗑️ Limpar Folha</button>
-        </div>
+        <button id="btn-clear-canvas" class="btn btn-danger-soft" style="margin-left:auto;">🗑️ Limpar Folha</button>
       </div>
 
-      <div class="canvas-viewport">
+      <div class="canvas-viewport" id="viewport">
         <div class="page-sheet">
           <canvas id="paint-canvas" width="600" height="800"></canvas>
+          <div id="virtual-ruler"></div>
         </div>
       </div>
     </main>
   </div>
 
   <script>
+    // Estado Geral do App (Preserva dados do usuário ao atualizar)
     const appState = {
+      profile: { name: 'Usuário', status: '⚡ Premium', avatar: 'U' },
       folders: [
-        { id: 'f_geral', name: 'Geral' },
-        { id: 'f_matematica', name: 'Matemática' },
-        { id: 'f_programacao', name: 'Programação' }
+        { id: 'f_root', name: 'Geral', icon: '📁', color: '#38bdf8', parentId: null },
+        { id: 'f_sub', name: 'Exercícios', icon: '📂', color: '#eab308', parentId: 'f_root' }
       ],
-      activeFolderId: 'f_geral',
       notes: [
-        { id: 'n_1', folderId: 'f_geral', title: 'Minhas Anotações', canvasData: null, updatedAt: Date.now() }
+        { id: 'n_1', folderId: 'f_root', title: 'Minha Anotação', canvasData: null, audioData: null }
       ],
+      activeFolderId: 'f_root',
       activeNoteId: 'n_1',
       tool: 'pen',
-      color: '#000000',
+      color: '#ffffff',
       brushSize: 3,
-      isDrawing: false
+      isDrawing: false,
+      rulerActive: false
     };
 
     const canvas = document.getElementById('paint-canvas');
     const ctx = canvas.getContext('2d');
+    let mediaRecorder, audioChunks = [];
 
     function loadState() {
-      const saved = localStorage.getItem('app_note_extension_data');
+      const saved = localStorage.getItem('app_notes_full_data');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
+          appState.profile = parsed.profile || appState.profile;
           appState.folders = parsed.folders || appState.folders;
           appState.notes = parsed.notes || appState.notes;
           appState.activeFolderId = parsed.activeFolderId || appState.folders[0].id;
           appState.activeNoteId = parsed.activeNoteId || appState.notes[0]?.id;
         } catch(e) {}
       }
+      document.getElementById('user-name').textContent = appState.profile.name;
+      document.getElementById('user-status').textContent = appState.profile.status;
+      document.getElementById('user-avatar').textContent = appState.profile.avatar;
     }
 
     function saveState() {
-      saveCurrentCanvasToNote();
-      localStorage.setItem('app_note_extension_data', JSON.stringify({
-        folders: appState.folders,
-        notes: appState.notes,
-        activeFolderId: appState.activeFolderId,
-        activeNoteId: appState.activeNoteId
-      }));
-      document.getElementById('save-status').textContent = 'Salvo às ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      saveCurrentNoteData();
+      localStorage.setItem('app_notes_full_data', JSON.stringify(appState));
     }
 
-    function saveCurrentCanvasToNote() {
+    function saveCurrentNoteData() {
       const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
       if (currentNote) {
         currentNote.canvasData = canvas.toDataURL();
         currentNote.title = document.getElementById('note-title-input').value || 'Sem Título';
-        currentNote.updatedAt = Date.now();
       }
     }
 
+    /* Árvore de Pastas e Subpastas */
     function renderFolders() {
-      const list = document.getElementById('folder-list');
-      list.innerHTML = '';
-      appState.folders.forEach(folder => {
-        const noteCount = appState.notes.filter(n => n.folderId === folder.id).length;
-        const li = document.createElement('li');
-        li.className = folder-item ${folder.id === appState.activeFolderId ? 'active' : ''};
-        li.innerHTML = <span>📁 ${folder.name}</span> <span class="badge">${noteCount}</span>;
-        li.onclick = () => {
-          appState.activeFolderId = folder.id;
-          const firstNote = appState.notes.find(n => n.folderId === folder.id);
-          if (firstNote) appState.activeNoteId = firstNote.id;
-          renderFolders(); renderNotes(); loadActiveNoteContent(); saveState();
-        };
-        list.appendChild(li);
-      });
+      const container = document.getElementById('folder-tree');
+      container.innerHTML = '';
+      
+      function buildTree(parentId, targetElem) {
+        const children = appState.folders.filter(f => f.parentId === parentId);
+        children.forEach(folder => {
+          const li = document.createElement('li');
+          li.className = `tree-item ${folder.id === appState.activeFolderId ? 'active' : ''}`;
+          li.innerHTML = `
+            <span style="color:${folder.color};">${folder.icon} ${folder.name}</span>
+            <div class="item-actions">
+              <button onclick="addSubfolder('${folder.id}', event)" title="Subpasta">+</button>
+              <button onclick="editFolder('${folder.id}', event)" title="Editar">✏️</button>
+              <button onclick="deleteFolder('${folder.id}', event)" title="Excluir">🗑️</button>
+            </div>
+          `;
+          li.onclick = (e) => {
+            e.stopPropagation();
+            appState.activeFolderId = folder.id;
+            renderFolders(); renderNotes();
+          };
+          targetElem.appendChild(li);
+
+          const subUl = document.createElement('ul');
+          subUl.className = 'subfolder';
+          buildTree(folder.id, subUl);
+          if(subUl.children.length > 0) targetElem.appendChild(subUl);
+        });
+      }
+      buildTree(null, container);
     }
 
+    function addSubfolder(parentId, e) {
+      e.stopPropagation();
+      const name = prompt('Nome da Subpasta:');
+      if (name) {
+        const color = prompt('Cor em hex ou nome (ex: #ef4444):', '#38bdf8') || '#38bdf8';
+        appState.folders.push({ id: 'f_' + Date.now(), name, icon: '📂', color, parentId });
+        renderFolders(); saveState();
+      }
+    }
+
+    function editFolder(id, e) {
+      e.stopPropagation();
+      const folder = appState.folders.find(f => f.id === id);
+      if (folder) {
+        const name = prompt('Novo nome da pasta:', folder.name);
+        if (name) { folder.name = name; renderFolders(); saveState(); }
+      }
+    }
+
+    function deleteFolder(id, e) {
+      e.stopPropagation();
+      if (confirm('Deseja excluir esta pasta e suas notas?')) {
+        appState.folders = appState.folders.filter(f => f.id !== id);
+        appState.notes = appState.notes.filter(n => n.folderId !== id);
+        appState.activeFolderId = appState.folders[0]?.id || null;
+        renderFolders(); renderNotes(); saveState();
+      }
+    }
+
+    /* Lista de Notas e Edição de Nome */
     function renderNotes() {
       const list = document.getElementById('note-list');
       list.innerHTML = '';
       const filtered = appState.notes.filter(n => n.folderId === appState.activeFolderId);
       filtered.forEach(note => {
         const li = document.createElement('li');
-        li.className = note-item ${note.id === appState.activeNoteId ? 'active' : ''};
-        li.innerHTML = <span>📝 ${note.title}</span>;
+        li.className = `note-item ${note.id === appState.activeNoteId ? 'active' : ''}`;
+        li.innerHTML = `
+          <span>📝 ${note.title}</span>
+          <div class="item-actions">
+            <button onclick="editNoteTitle('${note.id}', event)">✏️</button>
+            <button onclick="deleteNote('${note.id}', event)">🗑️</button>
+          </div>
+        `;
         li.onclick = () => {
-          saveCurrentCanvasToNote();
+          saveCurrentNoteData();
           appState.activeNoteId = note.id;
           renderNotes(); loadActiveNoteContent(); saveState();
         };
         list.appendChild(li);
       });
+    }
+
+    function editNoteTitle(id, e) {
+      e.stopPropagation();
+      const note = appState.notes.find(n => n.id === id);
+      if (note) {
+        const title = prompt('Novo nome da nota:', note.title);
+        if (title) {
+          note.title = title;
+          if (id === appState.activeNoteId) document.getElementById('note-title-input').value = title;
+          renderNotes(); saveState();
+        }
+      }
+    }
+
+    function deleteNote(id, e) {
+      e.stopPropagation();
+      if (confirm('Excluir esta nota?')) {
+        appState.notes = appState.notes.filter(n => n.id !== id);
+        appState.activeNoteId = appState.notes[0]?.id || null;
+        renderNotes(); loadActiveNoteContent(); saveState();
+      }
     }
 
     function loadActiveNoteContent() {
@@ -237,92 +336,211 @@
         img.onload = () => ctx.drawImage(img, 0, 0);
         img.src = note.canvasData;
       }
+      const player = document.getElementById('audio-player');
+      if (note.audioData) {
+        player.src = note.audioData;
+        player.style.display = 'block';
+      } else {
+        player.style.display = 'none';
+      }
     }
 
+    /* Desenho & Ferramentas */
     function initCanvas() {
       ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       function getPos(e) {
         const rect = canvas.getBoundingClientRect();
         return { x: e.clientX - rect.left, y: e.clientY - rect.top };
       }
-      function startDraw(e) { appState.isDrawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
-      function draw(e) {
-        if (!appState.isDrawing) return;
-        const p = getPos(e);
-        ctx.lineWidth = appState.tool === 'eraser' ? appState.brushSize * 4 : appState.brushSize;
-        ctx.strokeStyle = appState.tool === 'eraser' ? '#ffffff' : appState.color;
-        ctx.lineTo(p.x, p.y); ctx.stroke();
-      }
-      function stopDraw() { if (appState.isDrawing) { appState.isDrawing = false; saveState(); } }
 
-      canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw);
-      canvas.addEventListener('mouseup', stopDraw); canvas.addEventListener('mouseleave', stopDraw);
-      canvas.addEventListener('touchstart', (e) => { startDraw(e.touches[0]); e.preventDefault(); });
-      canvas.addEventListener('touchmove', (e) => { draw(e.touches[0]); e.preventDefault(); });
-      canvas.addEventListener('touchend', stopDraw);
+      function startDraw(e) {
+        if (appState.tool === 'text') {
+          addTextInput(getPos(e));
+          return;
+        }
+        appState.isDrawing = true;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      }
+
+      function draw(e) {
+        if (!appState.isDrawing || appState.tool === 'text') return;
+        const p = getPos(e);
+        ctx.lineWidth = appState.brushSize;
+
+        if (appState.tool === 'eraser') {
+          ctx.strokeStyle = '#18181b';
+          ctx.lineWidth = appState.brushSize * 4;
+        } else if (appState.tool === 'highlighter') {
+          ctx.strokeStyle = appState.color + '44'; // Transparência
+          ctx.lineWidth = appState.brushSize * 3;
+        } else if (appState.tool === 'pencil') {
+          ctx.strokeStyle = appState.color;
+          ctx.lineWidth = Math.max(1, appState.brushSize / 2);
+        } else {
+          ctx.strokeStyle = appState.color;
+        }
+
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+
+      function stopDraw() {
+        if (appState.isDrawing) { appState.isDrawing = false; saveState(); }
+      }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
     }
 
-    function initControls() {
-      document.getElementById('tool-pen').onclick = () => { appState.tool = 'pen'; updateToolUI(); };
-      document.getElementById('tool-eraser').onclick = () => { appState.tool = 'eraser'; updateToolUI(); };
-      
-      function updateToolUI() {
-        document.getElementById('tool-pen').classList.toggle('active', appState.tool === 'pen');
-        document.getElementById('tool-eraser').classList.toggle('active', appState.tool === 'eraser');
-      }
+    /* Ferramenta de Escrever (Texto) */
+    function addTextInput(pos) {
+      const input = document.createElement('input');
+      input.className = 'canvas-text-input';
+      input.style.left = (pos.x + canvas.offsetLeft) + 'px';
+      input.style.top = (pos.y + canvas.offsetTop) + 'px';
+      input.style.color = appState.color;
+      document.querySelector('.page-sheet').appendChild(input);
+      input.focus();
 
-      document.getElementById('brush-size').oninput = (e) => {
-        appState.brushSize = e.target.value;
-        document.getElementById('size-display').textContent = e.target.value + 'px';
+      input.onblur = () => {
+        if (input.value) {
+          ctx.font = '16px sans-serif';
+          ctx.fillStyle = appState.color;
+          ctx.fillText(input.value, pos.x, pos.y + 14);
+          saveState();
+        }
+        input.remove();
+      };
+    }
+
+    /* Gravador de Voz (Captura Microfone/Sistema) */
+    function initAudioRecorder() {
+      const btnRec = document.getElementById('btn-rec-audio');
+      const btnStop = document.getElementById('btn-stop-audio');
+      const player = document.getElementById('audio-player');
+
+      btnRec.onclick = async () => {
+        try {
+          // Solicita áudio do microfone ou áudio do sistema/aba
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunks, { type: 'audio/mp3' });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
+              if (currentNote) {
+                currentNote.audioData = reader.result;
+                player.src = reader.result;
+                player.style.display = 'block';
+                saveState();
+              }
+            };
+            reader.readAsDataURL(blob);
+          };
+
+          mediaRecorder.start();
+          btnRec.disabled = true;
+          btnStop.disabled = false;
+        } catch(err) { alert('Acesso ao áudio negado ou não suportado.'); }
       };
 
-      document.querySelectorAll('.color-dot').forEach(dot => {
-        dot.onclick = () => {
-          document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
-          dot.classList.add('active'); appState.color = dot.dataset.color; appState.tool = 'pen'; updateToolUI();
+      btnStop.onclick = () => {
+        if (mediaRecorder) mediaRecorder.stop();
+        btnRec.disabled = false;
+        btnStop.disabled = true;
+      };
+    }
+
+    /* Régua Virtual */
+    function initRuler() {
+      const ruler = document.getElementById('virtual-ruler');
+      document.getElementById('btn-toggle-ruler').onclick = () => {
+        appState.rulerActive = !appState.rulerActive;
+        ruler.style.display = appState.rulerActive ? 'block' : 'none';
+      };
+
+      let isDragging = false, offset = { x: 0, y: 0 };
+      ruler.onmousedown = (e) => {
+        isDragging = true;
+        offset = { x: e.clientX - ruler.offsetLeft, y: e.clientY - ruler.offsetTop };
+      };
+      document.onmousemove = (e) => {
+        if (isDragging) {
+          ruler.style.left = (e.clientX - offset.x) + 'px';
+          ruler.style.top = (e.clientY - offset.y) + 'px';
+        }
+      };
+      document.onmouseup = () => isDragging = false;
+    }
+
+    /* Controles da Interface */
+    function initControls() {
+      document.querySelectorAll('.drawing-toolbar .tool-btn[data-type]').forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll('.drawing-toolbar .tool-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          appState.tool = btn.dataset.type;
         };
       });
 
-      document.getElementById('custom-color-picker').oninput = (e) => { appState.color = e.target.value; appState.tool = 'pen'; updateToolUI(); };
-      document.getElementById('btn-clear-canvas').onclick = () => { if (confirm('Limpar esta folha?')) { ctx.clearRect(0, 0, canvas.width, canvas.height); saveState(); } };
+      document.getElementById('brush-size').oninput = (e) => appState.brushSize = e.target.value;
+      
+      document.querySelectorAll('.color-dot').forEach(dot => {
+        dot.onclick = () => {
+          document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+          dot.classList.add('active');
+          appState.color = dot.dataset.color;
+        };
+      });
+
+      document.getElementById('custom-color-picker').oninput = (e) => appState.color = e.target.value;
 
       document.getElementById('btn-add-folder').onclick = () => {
-        const name = prompt('Nome da Pasta:');
+        const name = prompt('Nome da Pasta Raiz:');
         if (name) {
-          const f = { id: 'f_' + Date.now(), name };
-          appState.folders.push(f); appState.activeFolderId = f.id;
-          renderFolders(); renderNotes(); saveState();
+          appState.folders.push({ id: 'f_' + Date.now(), name, icon: '📁', color: '#38bdf8', parentId: null });
+          renderFolders(); saveState();
         }
       };
 
       document.getElementById('btn-add-note').onclick = () => {
-        const n = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title: 'Nova Nota', canvasData: null, updatedAt: Date.now() };
+        const n = { id: 'n_' + Date.now(), folderId: appState.activeFolderId, title: 'Nova Nota', canvasData: null, audioData: null };
         appState.notes.push(n); appState.activeNoteId = n.id;
-        renderFolders(); renderNotes(); loadActiveNoteContent(); saveState();
+        renderNotes(); loadActiveNoteContent(); saveState();
       };
+
+      document.getElementById('btn-clear-canvas').onclick = () => {
+        if (confirm('Limpar esta folha?')) { ctx.clearRect(0, 0, canvas.width, canvas.height); saveState(); }
+      };
+
       document.getElementById('note-title-input').onchange = () => { saveState(); renderNotes(); };
-      document.getElementById('btn-close-widget').onclick = () => { window.parent.postMessage({ type: 'CLOSE_NOTE_WIDGET' }, '*'); };
 
       // PDF
       document.getElementById('btn-export-pdf').onclick = () => {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgData = canvas.toDataURL('image/png');
-        const currentNote = appState.notes.find(n => n.id === appState.activeNoteId);
-        pdf.setFontSize(16); pdf.text(currentNote ? currentNote.title : 'Anotação', 15, 15);
+        const note = appState.notes.find(n => n.id === appState.activeNoteId);
+        pdf.text(note ? note.title : 'Anotação', 15, 15);
         pdf.addImage(imgData, 'PNG', 15, 25, 180, 240);
-        pdf.save((currentNote ? currentNote.title : 'anotacao') + '.pdf');
+        pdf.save((note ? note.title : 'anotacao') + '.pdf');
       };
 
-      // Exportar JSON (Transferir)
+      // Backup JSON
       document.getElementById('btn-transfer-export').onclick = () => {
         saveState();
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
-        const a = document.createElement('a'); a.href = dataStr; a.download = notas_backup_${Date.now()}.json;
+        const a = document.createElement('a'); a.href = dataStr; a.download = `backup_notas_${Date.now()}.json`;
         document.body.appendChild(a); a.click(); a.remove();
       };
 
-      // Importar JSON
       document.getElementById('btn-transfer-import').onchange = (e) => {
         const file = e.target.files[0]; if (!file) return;
         const reader = new FileReader();
@@ -330,22 +548,20 @@
           try {
             const imp = JSON.parse(evt.target.result);
             if (imp.folders && imp.notes) {
+              appState.profile = imp.profile || appState.profile;
               appState.folders = imp.folders; appState.notes = imp.notes;
-              appState.activeFolderId = imp.folders[0]?.id || 'f_geral';
-              appState.activeNoteId = imp.notes[0]?.id || 'n_1';
               renderFolders(); renderNotes(); loadActiveNoteContent(); saveState();
               alert('Dados importados com sucesso!');
             }
-          } catch(err) { alert('Arquivo JSON inválido!'); }
+          } catch(err) { alert('Arquivo inválido!'); }
         };
         reader.readAsText(file);
       };
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadState(); initCanvas(); initControls(); renderFolders(); renderNotes(); loadActiveNoteContent();
+      loadState(); initCanvas(); initAudioRecorder(); initRuler(); initControls(); renderFolders(); renderNotes(); loadActiveNoteContent();
     });
   </script>
 </body>
 </html>
-  
